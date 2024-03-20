@@ -4,6 +4,7 @@ export default {
   content: [
     './src/pages/**/*.{ts,tsx,astro}',
     './src/components/**/*.{ts,tsx,astro}',
+    './src/layouts/**/*.{ts,tsx,astro}',
   ],
   prefix: "",
   theme: {

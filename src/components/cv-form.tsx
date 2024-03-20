@@ -1,25 +1,31 @@
-import type {
-  ClientUploadedFileData,
-  UploadFileResult,
-} from "uploadthing/types";
 import { useUploadThing } from "../utils/uploadthing";
 import CVFormFields, { type FormValues } from "./cv-form-fields";
+import type { InsertCVParams, UploadedFile } from "../pages/api/insert-cv";
+import { useMutation } from "react-query";
 
-export type UploadedFileInfo = {
-  name: string;
-  url: string;
-  key: string;
-  size: number;
-  type: string;
+const insertCV = async (params: InsertCVParams) => {
+  const response = await fetch("/api/insert-cv", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to insert CV");
+  }
 };
 
 export default function CVForm() {
+  const insertCVMutation = useMutation(insertCV, {
+    onSuccess: () => {
+      console.log("CV inserted successfully");
+    },
+  });
+
   const { startUpload, permittedFileInfo, isUploading } = useUploadThing(
     "videoAndImage",
     {
-      onClientUploadComplete: (files: UploadedFileInfo[]) => {
-        console.log("uploaded successfully!");
-        console.log(files);
+      onClientUploadComplete: () => {
+        console.log("upload completed on client");
       },
       onUploadError: () => {
         console.log("error occurred while uploading");
@@ -30,11 +36,29 @@ export default function CVForm() {
     }
   );
 
-  function onSubmit(values: FormValues) {
-    console.log(values);
+  async function onSubmit(values: FormValues) {
     console.log("Files uploading");
-    startUpload([values.cvTextFile!, values.cvVideoFile!]);
+    const uploadedFiles = await startUpload([
+      values.cvTextFile!,
+      values.cvVideoFile!,
+    ]);
+
+    const inserParams = {
+      name: values.name,
+      email: values.email,
+      place: values.place,
+      position: values.position,
+      attachments: uploadedFiles as UploadedFile[],
+    };
+
+    console.log("Inserting CV");
+    insertCVMutation.mutate(inserParams);
   }
 
-  return <CVFormFields onSubmit={onSubmit} isWorking={isUploading} />;
+  return (
+    <CVFormFields
+      onSubmit={onSubmit}
+      isWorking={isUploading || insertCVMutation.isLoading}
+    />
+  );
 }

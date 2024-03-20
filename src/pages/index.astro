@@ -1,17 +1,11 @@
 ---
-import "../styles/globals.css";
-import CVForm from "../components/cv-form.tsx";
+import BaseLayout from "../layouts/base.astro";
+import CVFormQuery from "../components/cv-form-query";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
-  </head>
-  <body class="min-h-screen bg-background grid items-center">
-    <CVForm client:load />
-  </body>
-</html>
+<BaseLayout
+  title="Diaz Cadenas - Trabaja con nostros"
+  classNames="min-h-screen grid items-center"
+>
+  <CVFormQuery client:load />
+</BaseLayout>

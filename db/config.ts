@@ -1,27 +1,31 @@
 import { NOW, column, defineDb, defineTable } from 'astro:db';
 
-const CV = defineTable({
+const CVS = defineTable({
  columns: {
   id: column.text({primaryKey: true, unique: true}),
   name: column.text(),
   email: column.text(),
+  place: column.text(),
+  position: column.text(),
+  status: column.text({default: "pending"}),
   createdAt: column.date({default: NOW}),
  } 
 });
 
-const Attachment = defineTable({
+const ATTACHMENTS = defineTable({
   columns: {
     id: column.number({primaryKey: true}),
     name: column.text(),
     url: column.text(),
     size: column.number(),
     type: column.text(),
-    cvId: column.text({references: () => CV.columns.id}),
+    key: column.text(),
+    cvId: column.text({references: () => CVS.columns.id}),
   }
 });
 
 
 // https://astro.build/db/config
 export default defineDb({
-  tables: {CV, Attachment}
+  tables: {CVS, ATTACHMENTS}
 });

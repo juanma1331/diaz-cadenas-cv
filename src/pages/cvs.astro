@@ -1,0 +1,16 @@
+---
+import BaseLayout from "../layouts/base.astro";
+import CVTableQuery from "../components/cv-table-query";
+import { getCVS } from "../server/get-cvs";
+
+const data = await getCVS();
+---
+
+<BaseLayout
+  title="Diaz Cadenas - Curriculums"
+  classNames="min-h-screen items-center"
+>
+  <div class="container pt-24">
+    <CVTableQuery client:load rows={data} />
+  </div>
+</BaseLayout>
