@@ -63,7 +63,7 @@ export async function selectAllCVSWithAttachments(
 
   const { page, limit } = pagination;
   const offset = (page - 1) * limit;
-  query.offset(offset).limit(limit);
+  query.offset(offset).limit(limit * 2);
 
   const rows = await query.all();
 

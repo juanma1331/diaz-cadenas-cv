@@ -5,7 +5,7 @@ import { selectCVS } from "../server/select-cvs";
 import { selectAllCVSWithAttachments } from "../../db/select-all-cvs-with-attachments";
 import { type CVRow } from "../components/cv-table-columns";
 
-const data = await selectAllCVSWithAttachments({pagination: {page: 1, limit: 10}});
+const data = await selectAllCVSWithAttachments({pagination: {page: 1, limit: 20}});
 console.log(data)
 const rows: CVRow[] = data.map((cv) => {
   return {

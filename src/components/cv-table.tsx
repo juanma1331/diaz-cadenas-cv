@@ -12,6 +12,7 @@ export default function CVTable(props: CVTableProps) {
     () => fetch("/api/cvs").then((res) => res.json()),
     {
       initialData: props.rows,
+      enabled: false,
     }
   );
 
