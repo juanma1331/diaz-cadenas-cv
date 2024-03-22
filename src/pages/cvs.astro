@@ -1,16 +1,36 @@
 ---
 import BaseLayout from "../layouts/base.astro";
 import CVTableQuery from "../components/cv-table-query";
-import { getCVS } from "../server/get-cvs";
+import { selectCVS } from "../server/select-cvs";
+import { selectAllCVSWithAttachments } from "../../db/select-all-cvs-with-attachments";
+import { type CVRow } from "../components/cv-table-columns";
 
-const data = await getCVS();
+const data = await selectAllCVSWithAttachments({pagination: {page: 1, limit: 10}});
+console.log(data)
+const rows: CVRow[] = data.map((cv) => {
+  return {
+    id: cv.id,
+    name: cv.name,
+    email: cv.email,
+   place: cv.place,
+   position: cv.position,
+   status: cv.status,
+   attachments: cv.attachments.map((a) => {
+     return {
+       name: a.name,
+       url: a.url,
+       type: a.type,
+     };
+   }),
+  };
+});
 ---
 
 <BaseLayout
   title="Diaz Cadenas - Curriculums"
-  classNames="min-h-screen items-center"
+  classNames="min-h-screen items-center overflow-hidden"
 >
-  <div class="container pt-24">
-    <CVTableQuery client:load rows={data} />
+  <div class="container">
+    <CVTableQuery client:load rows={rows} />
   </div>
 </BaseLayout>

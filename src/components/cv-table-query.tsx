@@ -1,17 +1,18 @@
 import { QueryClient, QueryClientProvider } from "react-query";
+import CVTableRows from "./cv-table-rows";
+import { type CVRow } from "./cv-table-columns";
 import CVTable from "./cv-table";
-import { columns, type CVRow } from "./cv-table-columns";
+
+const queryClient = new QueryClient();
 
 export type CVTableQueryProps = {
   rows: CVRow[];
 };
 
-const queryClient = new QueryClient();
-
 export default function CVTableQuery(props: CVTableQueryProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <CVTable columns={columns} data={props.rows} />
+      <CVTable rows={props.rows} />
     </QueryClientProvider>
   );
 }

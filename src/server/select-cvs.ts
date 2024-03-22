@@ -1,8 +1,16 @@
 import { db, CVS, ATTACHMENTS } from "astro:db";
 import { eq } from "astro:db";
 
+export type SelectCVSParams = {
+  filter?: {field: string, value: string};
+  sorting?: {field: string, direction: "asc" | "desc"};
+  pagination: {
+    page: number;
+    pageSize: number;
+  }
+}
 
-export async function getCVS() {
+export async function selectCVS(params: SelectCVSParams) {
     const rows = await db
     .select({
       cv: CVS,
@@ -45,5 +53,5 @@ export async function getCVS() {
     };
   });
 
-    return tableData;
+  return tableData;
 }

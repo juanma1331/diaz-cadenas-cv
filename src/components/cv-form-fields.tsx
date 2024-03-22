@@ -18,6 +18,7 @@ import {
   SelectContent,
   SelectItem,
 } from "../components/ui/select";
+// TODO: We got two different libraries for icons, we should use only one.
 import { ReloadIcon } from "@radix-ui/react-icons";
 
 const textFileSchema = z.instanceof(File);
@@ -194,10 +195,10 @@ export default function CVFormFields(props: CVFormFieldsProps) {
                 <Input
                   type="file"
                   {...field}
-                  value={undefined} // Esto evita el error de TypeScript.
+                  value={undefined}
                   onChange={(e) => {
                     if (e.target.files) {
-                      field.onChange(e.target.files[0]); // Actualiza el valor con el primer archivo seleccionado.
+                      field.onChange(e.target.files[0]);
                     }
                   }}
                 />
