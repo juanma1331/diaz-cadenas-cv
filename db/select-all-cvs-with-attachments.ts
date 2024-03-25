@@ -142,6 +142,7 @@ export async function selectAllCVSWithAttachments2(
 
   const cvIds = (await baseQuery.all()).map((cv) => cv.id as string);
 
+  console.log("offSet", offset);
   console.log("cvIds", cvIds.length);
 
   // Si no se encontraron CVs, retorna un arreglo vacío

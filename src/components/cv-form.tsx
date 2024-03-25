@@ -1,25 +1,15 @@
 import { useUploadThing } from "../utils/uploadthing";
 import CVFormFields, { type FormValues } from "./cv-form-fields";
-import type { InsertCVParams, UploadedFile } from "../pages/api/insert-cv";
-import { useMutation } from "react-query";
-
-const insertCV = async (params: InsertCVParams) => {
-  const response = await fetch("/api/insert-cv", {
-    method: "POST",
-    body: JSON.stringify(params),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to insert CV");
-  }
-};
+import { trpcReact } from "../client";
+import type { UploadedFile } from "@/server/routes/insert-cv.route";
 
 export default function CVForm() {
-  const insertCVMutation = useMutation(insertCV, {
-    onSuccess: () => {
-      console.log("CV inserted successfully");
-    },
-  });
+  const { mutate: insertCV, isLoading: isInsertingCV } =
+    trpcReact.insertCV.useMutation({
+      onSuccess: () => {
+        console.log("CV inserted successfully");
+      },
+    });
 
   const { startUpload, permittedFileInfo, isUploading } = useUploadThing(
     "videoAndImage",
@@ -52,13 +42,13 @@ export default function CVForm() {
     };
 
     console.log("Inserting CV");
-    insertCVMutation.mutate(inserParams);
+    insertCV(inserParams);
   }
 
   return (
     <CVFormFields
       onSubmit={onSubmit}
-      isWorking={isUploading || insertCVMutation.isLoading}
+      isWorking={isUploading || isInsertingCV}
     />
   );
 }

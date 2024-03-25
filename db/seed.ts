@@ -1,14 +1,13 @@
 import { db, CVS, ATTACHMENTS } from "astro:db";
 import { generateId } from "lucia";
 import { faker } from "@faker-js/faker";
-// or, if desiring a different locale
-// import { fakerDE as faker } from '@faker-js/faker';
-
-const randomName = faker.person.fullName(); // Rowan Nikolaus
-const randomEmail = faker.internet.email(); // Kassandra.Haley@erich.biz
 
 // https://astro.build/db/seed
 export default async function seed() {
+  //  await generateCVS();
+}
+
+async function generateCVS() {
   for (let i = 0; i < 30; i++) {
     const cvId = generateId(20);
     await db.insert(CVS).values({
@@ -45,7 +44,6 @@ export default async function seed() {
       ]),
       status: faker.helpers.arrayElement(["pending", "reviewed", "rejected"]),
     });
-
     await db.insert(ATTACHMENTS).values({
       name: `Attachment ${i}`,
       url: `https://example.com/attachment-${i}`,
@@ -54,7 +52,6 @@ export default async function seed() {
       key: `key-${i}`,
       cvId: cvId,
     });
-
     await db.insert(ATTACHMENTS).values({
       name: `Attachment-2 ${i}`,
       url: `https://example.com/attachment-2-${i}`,

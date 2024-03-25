@@ -20,49 +20,24 @@ import {
 } from "../components/ui/select";
 // TODO: We got two different libraries for icons, we should use only one.
 import { ReloadIcon } from "@radix-ui/react-icons";
+import {
+  emailSchema,
+  nameSchema,
+  placeSchema,
+  positionSchema,
+} from "@/server/routes/insert-cv.route";
 
 const textFileSchema = z.instanceof(File);
 
 const videoFileSchema = z.instanceof(File);
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Nombre debe tener al menos 2 caracteres.",
-  }),
-  email: z.string().email({
-    message: "Email no es válido.",
-  }),
-  place: z.enum([
-    "Andújar",
-    "Brenes",
-    "Bollullos Par del Condado",
-    "Cádiz",
-    "Coria del Rio",
-    "Estepa",
-    "Gilena",
-    "Hytasa",
-    "La Carolina",
-    "Lantejuela",
-    "Lantejuela",
-    "Moguer",
-    "Osuna",
-    "Sanlúcar de Barrameda",
-    "Sevilla",
-    "Utrera",
-  ]),
-  position: z.enum([
-    "Carnicería",
-    "Charcutería",
-    "Pescadería",
-    "Frutería",
-    "Panadería",
-    "Pastelería",
-    "Cajero",
-    "Reponedor",
-    "Limpieza",
-  ]),
-  cvTextFile: textFileSchema.optional(),
-  cvVideoFile: videoFileSchema.optional(),
+  name: nameSchema,
+  email: emailSchema,
+  place: placeSchema,
+  position: positionSchema,
+  cvTextFile: textFileSchema,
+  cvVideoFile: videoFileSchema,
 });
 
 export type FormValues = z.infer<typeof formSchema>;
