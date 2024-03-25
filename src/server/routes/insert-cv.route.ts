@@ -47,7 +47,7 @@ const uploadedFileSchema = z.object({
   type: z.string(),
 });
 
-const insertCVSchema = z.object({
+const inputSchema = z.object({
   name: nameSchema,
   email: emailSchema,
   place: placeSchema,
@@ -58,7 +58,7 @@ const insertCVSchema = z.object({
 export type UploadedFile = z.infer<typeof uploadedFileSchema>;
 
 export const insertCVProdedure = publicProcedure
-  .input(insertCVSchema)
+  .input(inputSchema)
   .mutation(async ({ input, ctx }) => {
     const queries = [];
     const cvId = generateId(15);
@@ -87,5 +87,5 @@ export const insertCVProdedure = publicProcedure
     }
 
     // @ts-ignore TODO: Requires a tuple with at least 1 element
-    await db.batch(queries);
+    await ctx.db.batch(queries);
   });

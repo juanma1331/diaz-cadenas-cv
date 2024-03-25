@@ -1,32 +1,6 @@
 ---
 import BaseLayout from "../layouts/base.astro";
-import CVTableQuery from "../components/cv-table-query";
-import {
-  selectAllCVSWithAttachments,
-  selectAllCVSWithAttachments2,
-} from "../../db/select-all-cvs-with-attachments";
-import { type CVRow } from "../components/cv-table-columns";
-
-const data = await selectAllCVSWithAttachments2({
-  pagination: { page: 1, limit: 20 },
-});
-const rows: CVRow[] = data.map((cv) => {
-  return {
-    id: cv.id,
-    name: cv.name,
-    email: cv.email,
-    place: cv.place,
-    position: cv.position,
-    status: cv.status,
-    attachments: cv.attachments.map((a) => {
-      return {
-        name: a.name,
-        url: a.url,
-        type: a.type,
-      };
-    }),
-  };
-});
+import CVTableIsland from "../components/cv-table.island";
 ---
 
 <BaseLayout
@@ -34,6 +8,6 @@ const rows: CVRow[] = data.map((cv) => {
   classNames="min-h-screen items-center overflow-hidden"
 >
   <div class="container">
-    <CVTableQuery client:load rows={rows} />
+    <CVTableIsland client:load />
   </div>
 </BaseLayout>

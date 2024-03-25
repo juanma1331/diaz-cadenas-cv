@@ -1,3 +1,4 @@
+import { getAllCVSProcedure } from "./routes/get-cvs-with-attachments.route";
 import { insertCVProdedure } from "./routes/insert-cv.route";
 import { t } from "./utils";
 
@@ -16,6 +17,7 @@ import { t } from "./utils";
 
 export const appRouter = t.router({
   insertCV: insertCVProdedure,
+  getAllCVS: getAllCVSProcedure,
 });
 
 export type AppRouter = typeof appRouter;

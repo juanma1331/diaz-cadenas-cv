@@ -22,7 +22,6 @@ import {
 } from "src/components/ui/alert-dialog";
 
 import { ArrowUpDown, FileDown, MoreHorizontal } from "lucide-react";
-import type { CVStatus } from "@/types";
 
 export type RowAttachment = {
   url: string;
@@ -36,7 +35,7 @@ export type CVRow = {
   email: string;
   place: string;
   position: string;
-  status: CVStatus;
+  status: string;
   attachments: RowAttachment[];
 };
 

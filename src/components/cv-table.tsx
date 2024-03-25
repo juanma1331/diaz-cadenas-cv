@@ -1,20 +1,10 @@
 import { useQuery } from "react-query";
 import { generateColumns, type CVRow } from "./cv-table-columns";
 import CVTableRows from "./cv-table-rows";
+import { trpcReact } from "@/client";
 
-export type CVTableProps = {
-  rows: CVRow[];
-};
-
-export default function CVTable(props: CVTableProps) {
-  const { data } = useQuery(
-    "cvs",
-    () => fetch("/api/cvs").then((res) => res.json()),
-    {
-      initialData: props.rows,
-      enabled: false,
-    }
-  );
+export default function CVTable() {
+  const { data, isLoading, isError } = trpcReact.getAllCVS.useQuery();
 
   const columns = generateColumns({
     onSortingChange: (field, direction) => {
@@ -27,5 +17,16 @@ export default function CVTable(props: CVTableProps) {
       console.log("pagination", { page });
     },
   });
-  return <CVTableRows columns={columns} data={data} />;
+
+  if (isError) {
+    return <div>Error</div>;
+  }
+
+  return (
+    <CVTableRows
+      columns={columns}
+      data={data?.cvs ?? []}
+      isLoading={isLoading}
+    />
+  );
 }

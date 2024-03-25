@@ -28,16 +28,18 @@ import {
 } from "./ui/select";
 import { Button } from "./ui/button";
 import { Eraser } from "lucide-react";
-import { generateColumns } from "./cv-table-columns";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 export interface CVTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  isLoading: boolean;
 }
 
 export default function CVTableRows<TData, TValue>({
   columns,
   data,
+  isLoading,
 }: CVTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -90,7 +92,7 @@ export default function CVTableRows<TData, TValue>({
           <Eraser className="stroke-slate-500" />
         </Button>
       </div>
-      <div className="rounded-md border-border">
+      <div>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -111,35 +113,59 @@ export default function CVTableRows<TData, TValue>({
             ))}
           </TableHeader>
 
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="text-center">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24">
-                  Actualmente no hay CVs para mostrar.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
+          {isLoading
+            ? loadingTableBody(columns.length)
+            : dataTableBody(table, columns.length)}
         </Table>
       </div>
     </div>
   );
+}
+
+function loadingTableBody(colCount: number) {
+  return (
+    <TableBody>
+      <TableRow>
+        <TableCell colSpan={7} className="h-44">
+          <div className="flex items-center flex-col gap-2">
+            <ReloadIcon className="h-4 w-4 animate-spin mx-auto" />
+            <p>Cargando...</p>
+          </div>
+        </TableCell>
+      </TableRow>
+    </TableBody>
+  );
+}
+
+function dataTableBody<TData>(table: TableType<TData>, colCount: number) {
+  if (table.getRowModel().rows?.length) {
+    return (
+      <TableBody>
+        {table.getRowModel().rows.map((row) => (
+          <TableRow
+            key={row.id}
+            data-state={row.getIsSelected() ? "selected" : undefined}
+          >
+            {row.getVisibleCells().map((cell) => (
+              <TableCell key={cell.id} className="text-center">
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    );
+  } else {
+    return (
+      <TableBody>
+        <TableRow>
+          <TableCell colSpan={7} className="h-44 text-center">
+            Actualmente no hay CVs para mostrar
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    );
+  }
 }
 
 function getFilterComponent<TData>(
