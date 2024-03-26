@@ -1,11 +1,8 @@
 import {
   type ColumnDef,
-  type SortingState,
-  type ColumnFiltersState,
   useReactTable,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   type Table as TableType,
 } from "@tanstack/react-table";
 
@@ -17,82 +14,51 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
-import { Input } from "./ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { Button } from "./ui/button";
-import { Eraser } from "lucide-react";
+
 import { ReloadIcon } from "@radix-ui/react-icons";
+import CVTablePagination from "./cv-table-pagination";
+import CVTableSearch from "./cv-table-search";
+import CVTableFilters from "./cv-table-filters";
 
 export interface CVTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  pages: number[];
   isLoading: boolean;
+  page: number;
+  limit: number;
+  onPageChage: (page: number) => void;
+  onLimitChange: (limit: number) => void;
 }
 
 export default function CVTableRows<TData, TValue>({
   columns,
   data,
   isLoading,
+  onPageChage,
+  onLimitChange,
+  pages,
+  limit,
+  page,
 }: CVTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [filterBy, setFilterBy] = useState<
-    "name" | "email" | "place" | "position" | "status"
-  >("name");
-
   const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    state: {
-      sorting,
-      columnFilters,
-    },
   });
 
   function clearFiltersAndSorting() {
-    setColumnFilters([]);
-    setSorting([]);
+    console.log("clearFiltersAndSorting");
   }
 
   return (
     <div className="space-y-2 mt-4">
-      <div className="flex items-center gap-2">
-        <Select
-          onValueChange={(value) => {
-            setFilterBy(value as any);
-          }}
-          defaultValue="name"
-        >
-          <SelectTrigger className="max-w-sm">
-            <SelectValue placeholder="Seleccione el filtro" />
-          </SelectTrigger>
-          <SelectContent className="max-w-sm">
-            <SelectItem value="name">Nombre</SelectItem>
-            <SelectItem value="email">Email</SelectItem>
-            <SelectItem value="place">Lugar</SelectItem>
-            <SelectItem value="position">Puesto</SelectItem>
-            <SelectItem value="status">Estado</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex items-center justify-between">
+        <CVTableSearch />
 
-        {getFilterComponent(table, filterBy)}
-
-        <Button variant="outline" size="icon" onClick={clearFiltersAndSorting}>
-          <Eraser className="stroke-slate-500" />
-        </Button>
+        <CVTableFilters />
       </div>
-      <div>
+      <div className="max-h-[80vh] overflow-x-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -118,6 +84,15 @@ export default function CVTableRows<TData, TValue>({
             : dataTableBody(table, columns.length)}
         </Table>
       </div>
+      {pages.length > 0 && (
+        <CVTablePagination
+          pages={pages}
+          page={page}
+          limit={limit}
+          onLimitChange={onLimitChange}
+          onPageChange={onPageChage}
+        />
+      )}
     </div>
   );
 }
@@ -165,111 +140,5 @@ function dataTableBody<TData>(table: TableType<TData>, colCount: number) {
         </TableRow>
       </TableBody>
     );
-  }
-}
-
-function getFilterComponent<TData>(
-  table: TableType<TData>,
-  filterBy: "name" | "email" | "place" | "position" | "status"
-) {
-  if (filterBy === "name") {
-    return (
-      <Input
-        placeholder="Nombre"
-        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          table.getColumn("name")?.setFilterValue(event.target.value)
-        }
-        className="max-w-sm"
-      />
-    );
-  } else if (filterBy === "email") {
-    return (
-      <Input
-        placeholder="Email"
-        value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          table.getColumn("email")?.setFilterValue(event.target.value)
-        }
-        className="max-w-sm"
-      />
-    );
-  } else if (filterBy === "place") {
-    return (
-      <Select
-        value={(table.getColumn("place")?.getFilterValue() as string) ?? ""}
-        onValueChange={(value) => {
-          table.getColumn("place")?.setFilterValue(value);
-        }}
-      >
-        <SelectTrigger className="max-w-sm">
-          <SelectValue placeholder="Seleccione el lugar" />
-        </SelectTrigger>
-        <SelectContent className="max-w-sm">
-          <SelectItem value="Andújar">Andújar</SelectItem>
-          <SelectItem value="Brenes">Brenes</SelectItem>
-          <SelectItem value="Bollullos Par del Condado">
-            Bollullos Par del Condado
-          </SelectItem>
-          <SelectItem value="Cádiz">Cádiz</SelectItem>
-          <SelectItem value="Coria del Rio">Coria del Rio</SelectItem>
-          <SelectItem value="Estepa">Estepa</SelectItem>
-          <SelectItem value="Gilena">Gilena</SelectItem>
-          <SelectItem value="Hytasa">Hytasa</SelectItem>
-          <SelectItem value="La Carolina">La Carolina</SelectItem>
-          <SelectItem value="Lantejuela">Lantejuela</SelectItem>
-          <SelectItem value="Moguer">Moguer</SelectItem>
-          <SelectItem value="Osuna">Osuna</SelectItem>
-          <SelectItem value="Sanlúcar de Barrameda">
-            Sanlúcar de Barrameda
-          </SelectItem>
-          <SelectItem value="Sevilla">Sevilla</SelectItem>
-          <SelectItem value="Utrera">Utrera</SelectItem>
-        </SelectContent>
-      </Select>
-    );
-  } else if (filterBy === "position") {
-    return (
-      <Select
-        onValueChange={(value) => {
-          table.getColumn("position")?.setFilterValue(value);
-        }}
-      >
-        <SelectTrigger className="max-w-sm">
-          <SelectValue placeholder="Seleccione la posición" />
-        </SelectTrigger>
-        <SelectContent className="max-w-sm">
-          <SelectItem value="Carnicería">Carnicería</SelectItem>
-          <SelectItem value="Charcutería">Charcutería</SelectItem>
-          <SelectItem value="Pescadería">Pescadería</SelectItem>
-          <SelectItem value="Frutería">Frutería</SelectItem>
-          <SelectItem value="Panadería">Panadería</SelectItem>
-          <SelectItem value="Pastelería">Pastelería</SelectItem>
-          <SelectItem value="Cajero">Cajero</SelectItem>
-          <SelectItem value="Reponedor">Reponedor</SelectItem>
-          <SelectItem value="Limpieza">Limpieza</SelectItem>
-        </SelectContent>
-      </Select>
-    );
-  } else if (filterBy === "status") {
-    return (
-      <Select
-        value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
-        onValueChange={(value) => {
-          table.getColumn("status")?.setFilterValue(value);
-        }}
-      >
-        <SelectTrigger className="max-w-sm">
-          <SelectValue placeholder="Seleccione el estado" />
-        </SelectTrigger>
-        <SelectContent className="max-w-sm">
-          <SelectItem value="pending">Pendiente</SelectItem>
-          <SelectItem value="reviewed">Revisado</SelectItem>
-          <SelectItem value="rejected">Rechazado</SelectItem>
-        </SelectContent>
-      </Select>
-    );
-  } else {
-    throw new Error("Invalid filterBy value");
   }
 }

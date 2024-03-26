@@ -4,11 +4,11 @@ import { faker } from "@faker-js/faker";
 
 // https://astro.build/db/seed
 export default async function seed() {
-  //  await generateCVS();
+  await generateCVS(100);
 }
 
-async function generateCVS() {
-  for (let i = 0; i < 30; i++) {
+async function generateCVS(qty: number) {
+  for (let i = 0; i < qty; i++) {
     const cvId = generateId(20);
     await db.insert(CVS).values({
       id: cvId,

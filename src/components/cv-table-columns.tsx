@@ -41,8 +41,6 @@ export type CVRow = {
 
 export type GenerateColumnsParams = {
   onSortingChange: (field: string, direction: "asc" | "desc") => void;
-  onFilterChange: (field: string, value: string) => void;
-  onPaginationChange: (page: number) => void;
 };
 
 export function generateColumns(
