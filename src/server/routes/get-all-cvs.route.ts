@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { publicProcedure } from "../utils";
-import { inArray, type db, like, asc, desc, eq } from "astro:db";
-import { count } from "drizzle-orm";
+import { asc, desc, eq } from "astro:db";
 
 export const cvSchema = z.object({
   id: z.string(),
@@ -34,6 +33,7 @@ export const getAllCVSProcedure = publicProcedure
         attachment: ctx.ATTACHMENTS,
       })
       .from(ctx.CVS)
+      .orderBy(desc(ctx.CVS.createdAt))
       .innerJoin(ctx.ATTACHMENTS, eq(ctx.ATTACHMENTS.cvId, ctx.CVS.id));
     const endTime = Date.now();
     console.log(`Query took ${endTime - startTime}ms`);

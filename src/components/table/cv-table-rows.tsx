@@ -25,7 +25,7 @@ import CVTablePagination from "./cv-table-pagination";
 import CVTableSearch from "./cv-table-search";
 import CVTableFilters from "./cv-table-filters";
 import { useState } from "react";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export interface CVTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -62,7 +62,7 @@ export default function CVTableRows<TData, TValue>({
 
         <CVTableFilters />
       </div>
-      <ScrollArea className="h-[80vh] overflow-y-auto">
+      <ScrollArea className="h-[740px] overflow-y-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
