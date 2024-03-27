@@ -62,7 +62,7 @@ export default function CVTableRows<TData, TValue>({
 
         <CVTableFilters />
       </div>
-      <ScrollArea className="max-h-[80vh] overflow-y-auto">
+      <ScrollArea className="h-[80vh] overflow-y-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
