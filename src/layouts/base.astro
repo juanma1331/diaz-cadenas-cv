@@ -14,7 +14,7 @@ const { classNames } = Astro.props;
     <title>{title}</title>
   </head>
 
-  <body class={cn("bg-background", classNames)}>
+  <body class={classNames}>
     <slot />
   </body>
 </html>
