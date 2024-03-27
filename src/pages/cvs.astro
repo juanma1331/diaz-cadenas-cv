@@ -1,13 +1,13 @@
 ---
 import BaseLayout from "../layouts/base.astro";
-import CVTableIsland from "../components/cv-table.island";
+import CVTableIsland from "../components/table/cv-table.island";
 ---
 
 <BaseLayout
   title="Diaz Cadenas - Curriculums"
   classNames="min-h-screen items-center"
 >
-  <div class="container overflow-hidden">
+  <div class="container min-h-screen overflow-hidden">
     <CVTableIsland client:load />
   </div>
 </BaseLayout>

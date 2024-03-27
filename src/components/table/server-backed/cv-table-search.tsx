@@ -1,4 +1,4 @@
-import { Input } from "./ui/input";
+import { Input } from "../../ui/input";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import {
   Select,
@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../../ui/select";
 
 export default function CVTableSearch() {
   return (

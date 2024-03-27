@@ -1,4 +1,4 @@
-import { getAllCVSProcedure } from "./routes/get-cvs-with-attachments.route";
+import { getAllCVSProcedure } from "./routes/get-all-cvs.route";
 import { insertCVProdedure } from "./routes/insert-cv.route";
 import { t } from "./utils";
 

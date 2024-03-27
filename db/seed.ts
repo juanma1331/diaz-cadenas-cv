@@ -42,7 +42,8 @@ async function generateCVS(qty: number) {
         "Reponedor",
         "Limpieza",
       ]),
-      status: faker.helpers.arrayElement(["pending", "reviewed", "rejected"]),
+      status: faker.helpers.arrayElement(["pending", "reviewed"]),
+      createdAt: faker.date.past(),
     });
     await db.insert(ATTACHMENTS).values({
       name: `Attachment ${i}`,
