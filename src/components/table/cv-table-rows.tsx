@@ -7,6 +7,8 @@ import {
   type Table as TableType,
   type SortingState,
   getSortedRowModel,
+  type ColumnFiltersState,
+  getFilteredRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -37,22 +39,26 @@ export default function CVTableRows<TData, TValue>({
   isLoading,
 }: CVTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnFiltersChange: setColumnFilters,
     onSortingChange: setSorting,
     state: {
       sorting,
+      columnFilters,
     },
   });
 
   return (
     <div className="space-y-2 mt-4">
       <div className="flex items-center justify-between">
-        <CVTableSearch />
+        <CVTableSearch table={table} />
 
         <CVTableFilters />
       </div>
