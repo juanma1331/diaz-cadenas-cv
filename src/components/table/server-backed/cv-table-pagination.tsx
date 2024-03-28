@@ -52,9 +52,6 @@ export default function CVTablePagination({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Página {page} de {pages.length}
-        </div>
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
@@ -76,6 +73,9 @@ export default function CVTablePagination({
             <span className="sr-only">Ir a la página anterior</span>
             <ChevronLeftIcon className="h-4 w-4" />
           </Button>
+          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+            Página {page} de {pages.length}
+          </div>
           <Button
             variant="outline"
             className="h-8 w-8 p-0"

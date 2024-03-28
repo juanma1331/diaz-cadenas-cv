@@ -44,7 +44,6 @@ export type FormValues = z.infer<typeof formSchema>;
 
 export type CVFormFieldsProps = {
   onSubmit: (values: FormValues) => void;
-  isWorking: boolean;
 };
 
 export default function CVFormFields(props: CVFormFieldsProps) {
@@ -206,14 +205,7 @@ export default function CVFormFields(props: CVFormFieldsProps) {
           )}
         />
 
-        {!props.isWorking ? (
-          <Button type="submit">Enviar</Button>
-        ) : (
-          <Button disabled>
-            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-            Por favor, espere...
-          </Button>
-        )}
+        <Button type="submit">Enviar</Button>
       </form>
     </Form>
   );

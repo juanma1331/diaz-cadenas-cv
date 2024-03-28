@@ -86,7 +86,9 @@ export default function CVTableRows<TData, TValue>({
           {isLoading ? <LoadingTableBody /> : <DataTableBody table={table} />}
         </Table>
       </ScrollArea>
-      {!isLoading && <CVTablePagination table={table} />}
+      <div className="flex items-center justify-end px-2">
+        {!isLoading && <CVTablePagination table={table} />}
+      </div>
     </div>
   );
 }
