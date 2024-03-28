@@ -79,7 +79,7 @@ export function PositionFilteringColumnHeader<TData, TValue>({
           size="sm"
           className={`-ml-3 h-8 data-[state=open]:bg-accent`}
         >
-          <span>Posición</span>
+          <span>Puesto</span>
           <ListFilter className={`h-3.5 w-3.5 ml-2`} />
         </Button>
       </DropdownMenuTrigger>
@@ -110,7 +110,6 @@ type PlaceFilteringColumnHeaderProps<TData, TValue> = {
 export function PlaceFilteringColumnHeader<TData, TValue>({
   column,
 }: PlaceFilteringColumnHeaderProps<TData, TValue>) {
-  const isFiltered = column.getIsFiltered();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

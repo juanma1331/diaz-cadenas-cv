@@ -27,6 +27,7 @@ import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CVTableStorageUsed from "./cv-table-storage";
 import CVTableVisibilityToggler from "./cv-table-visibility-toggler";
+import CVTableFilters from "./cv-table-filters";
 
 export interface CVTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -64,6 +65,10 @@ export default function CVTableRows<TData, TValue>({
         <CVTableSearch table={table} />
 
         <div className="flex items-center space-x-2">
+          <CVTableFilters
+            filters={columnFilters}
+            setFilters={setColumnFilters}
+          />
           <CVTableVisibilityToggler columns={table.getAllColumns()} />
           <CVTableStorageUsed storageUsed={storageUsed} />
         </div>
