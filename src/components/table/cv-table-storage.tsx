@@ -23,7 +23,7 @@ export default function CVTableStorageUsed({
   const colorClass = getColorBasedOnStorageUsed(storageUsed);
 
   return (
-    <div className="flex items-center space-x-2 border border-border py-1.5 px-2.5 rounded-md">
+    <div className="flex items-center justify-center space-x-2 border border-border h-10 w-32 rounded-md">
       <HardDrive className="h-3.5 w-3.5 text-slate-800" />
       <span className="font-semibold text-sm text-slate-600">En uso:</span>
       <span className={`font-bold text-xs ${colorClass}`}>

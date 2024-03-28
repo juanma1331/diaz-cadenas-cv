@@ -26,6 +26,7 @@ import CVTableSearch from "./cv-table-search";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CVTableStorageUsed from "./cv-table-storage";
+import CVTableVisibilityToggler from "./cv-table-visibility-toggler";
 
 export interface CVTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -62,16 +63,19 @@ export default function CVTableRows<TData, TValue>({
       <div className="flex items-center justify-between">
         <CVTableSearch table={table} />
 
-        <CVTableStorageUsed storageUsed={storageUsed} />
+        <div className="flex items-center space-x-2">
+          <CVTableVisibilityToggler columns={table.getAllColumns()} />
+          <CVTableStorageUsed storageUsed={storageUsed} />
+        </div>
       </div>
-      <ScrollArea className="h-[740px] overflow-y-auto">
+      <ScrollArea className="h-[740px] overflow-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="text-center">
+                    <TableHead key={header.id} className="text-left">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -120,7 +124,7 @@ function DataTableBody<TData>({ table }: { table: TableType<TData> }) {
             data-state={row.getIsSelected() ? "selected" : undefined}
           >
             {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id} className="text-center">
+              <TableCell key={cell.id} className="text-left">
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </TableCell>
             ))}

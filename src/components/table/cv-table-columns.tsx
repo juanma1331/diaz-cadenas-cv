@@ -119,12 +119,12 @@ export const columns: ColumnDef<CVRow>[] = [
       };
       return (
         <div className="flex justify-center gap-2">
-          {attachments.map((attachment, index) => (
+          {attachments.map((attachment, i) => (
             <Button
               variant="outline"
               size="sm"
               className="font-normal"
-              key={index}
+              key={`attachment-${i}`}
               asChild
             >
               <a
@@ -142,7 +142,6 @@ export const columns: ColumnDef<CVRow>[] = [
     },
   },
   {
-    id: "actions",
     header: "Acciones",
     cell: ({ row }) => {
       return (

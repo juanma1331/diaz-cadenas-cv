@@ -27,48 +27,40 @@ interface SortingColumnHeaderProps<TData, TValue>
 export function SortingColumnHeader<TData, TValue>({
   column,
   title,
-  className,
 }: SortingColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
-    return <div className={cn(className)}>{title}</div>;
+    return <div>{title}</div>;
   }
 
   return (
-    <div className={cn("flex items-center space-x-2", className)}>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="-ml-3 h-8 data-[state=open]:bg-accent"
-          >
-            <span>{title}</span>
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 h-4 w-4" />
-            ) : (
-              <CaretSortIcon className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-            <ArrowUpIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Asc
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-            <ArrowDownIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Desc
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-            <EyeNoneIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Ocultar
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="-ml-3 h-8 data-[state=open]:bg-accent"
+        >
+          <span>{title}</span>
+          {column.getIsSorted() === "desc" ? (
+            <ArrowDownIcon className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "asc" ? (
+            <ArrowUpIcon className="ml-2 h-4 w-4" />
+          ) : (
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
+          <ArrowUpIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+          Asc
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
+          <ArrowDownIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+          Desc
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -79,48 +71,35 @@ type PositionFilteringColumnHeaderProps<TData, TValue> = {
 export function PositionFilteringColumnHeader<TData, TValue>({
   column,
 }: PositionFilteringColumnHeaderProps<TData, TValue>) {
-  const isFiltered = column.getIsFiltered();
   return (
-    <div className="flex items-center space-x-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`-ml-3 h-8 data-[state=open]:bg-accent ${
-              isFiltered ? "border border-blue-800" : ""
-            } ${isFiltered ? "text-blue-800" : ""}`}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className={`-ml-3 h-8 data-[state=open]:bg-accent`}
+        >
+          <span>Posición</span>
+          <ListFilter className={`h-3.5 w-3.5 ml-2`} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        {positions.map((position, i) => (
+          <DropdownMenuItem
+            key={`dropdown-filter-${position}-${i}`}
+            onClick={() => column.setFilterValue(position)}
           >
-            <span>Posición</span>
-            <ListFilter
-              className={`h-4 w-4 ml-2 ${
-                isFiltered ? "text-blue-800" : "text-slate-400"
-              }`}
-            />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          {positions.map((position) => (
-            <DropdownMenuItem
-              key={position}
-              onClick={() => column.setFilterValue(position)}
-            >
-              <Dot className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-              {position}
-            </DropdownMenuItem>
-          ))}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => column.setFilterValue("")}>
-            <Eraser className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Limpiar
+            <Dot className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+            {position}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-            <EyeNoneIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Ocultar
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+        ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => column.setFilterValue("")}>
+          <Eraser className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+          Limpiar
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -133,45 +112,33 @@ export function PlaceFilteringColumnHeader<TData, TValue>({
 }: PlaceFilteringColumnHeaderProps<TData, TValue>) {
   const isFiltered = column.getIsFiltered();
   return (
-    <div className="flex items-center space-x-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`-ml-3 h-8 data-[state=open]:bg-accent ${
-              isFiltered ? "border border-blue-800" : ""
-            } ${isFiltered ? "text-blue-800" : ""}`}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className={`-ml-3 h-8 data-[state=open]:bg-accent`}
+        >
+          <span>Ubicación</span>
+          <ListFilter className={`h-3.5 w-3.5 ml-2`} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        {places.map((place, i) => (
+          <DropdownMenuItem
+            key={`dropdown-filter-${place}-${i}`}
+            onClick={() => column.setFilterValue(place)}
           >
-            <span>Ubicación</span>
-            <ListFilter
-              className={`h-4 w-4 ml-2 ${
-                isFiltered ? "text-blue-800" : "text-slate-400"
-              }`}
-            />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          {places.map((place) => (
-            <DropdownMenuItem
-              key={place}
-              onClick={() => column.setFilterValue(place)}
-            >
-              <Dot className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-              {place}
-            </DropdownMenuItem>
-          ))}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => column.setFilterValue("")}>
-            <Eraser className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Limpiar
+            <Dot className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+            {place}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-            <EyeNoneIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Ocultar
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+        ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => column.setFilterValue("")}>
+          <Eraser className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+          Limpiar
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
