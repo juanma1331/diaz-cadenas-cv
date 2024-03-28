@@ -26,18 +26,19 @@ import {
   placeSchema,
   positionSchema,
 } from "@/server/routes/insert-cv.route";
+import { places, positions } from "@/constants";
 
-const textFileSchema = z.instanceof(File);
+const pdfSchema = z.instanceof(File);
 
-const videoFileSchema = z.instanceof(File);
+const videoSchema = z.instanceof(File);
 
 const formSchema = z.object({
   name: nameSchema,
   email: emailSchema,
   place: placeSchema,
   position: positionSchema,
-  cvTextFile: textFileSchema,
-  cvVideoFile: videoFileSchema,
+  pdf: pdfSchema,
+  video: videoSchema,
 });
 
 export type FormValues = z.infer<typeof formSchema>;
@@ -104,25 +105,11 @@ export default function CVFormFields(props: CVFormFieldsProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Andújar">Andújar</SelectItem>
-                  <SelectItem value="Brenes">Brenes</SelectItem>
-                  <SelectItem value="Bollullos Par del Condado">
-                    Bollullos Par del Condado
-                  </SelectItem>
-                  <SelectItem value="Cádiz">Cádiz</SelectItem>
-                  <SelectItem value="Coria del Rio">Coria del Rio</SelectItem>
-                  <SelectItem value="Estepa">Estepa</SelectItem>
-                  <SelectItem value="Gilena">Gilena</SelectItem>
-                  <SelectItem value="Hytasa">Hytasa</SelectItem>
-                  <SelectItem value="La Carolina">La Carolina</SelectItem>
-                  <SelectItem value="Lantejuela">Lantejuela</SelectItem>
-                  <SelectItem value="Moguer">Moguer</SelectItem>
-                  <SelectItem value="Osuna">Osuna</SelectItem>
-                  <SelectItem value="Sanlúcar de Barrameda">
-                    Sanlúcar de Barrameda
-                  </SelectItem>
-                  <SelectItem value="Sevilla">Sevilla</SelectItem>
-                  <SelectItem value="Utrera">Utrera</SelectItem>
+                  {places.map((place) => (
+                    <SelectItem key={place} value={place}>
+                      {place}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -143,15 +130,11 @@ export default function CVFormFields(props: CVFormFieldsProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Carnicería">Carnicería</SelectItem>
-                  <SelectItem value="Charcutería">Charcutería</SelectItem>
-                  <SelectItem value="Pescadería">Pescadería</SelectItem>
-                  <SelectItem value="Frutería">Frutería</SelectItem>
-                  <SelectItem value="Panadería">Panadería</SelectItem>
-                  <SelectItem value="Pastelería">Pastelería</SelectItem>
-                  <SelectItem value="Cajero">Cajero</SelectItem>
-                  <SelectItem value="Reponedor">Reponedor</SelectItem>
-                  <SelectItem value="Limpieza">Limpieza</SelectItem>
+                  {positions.map((position) => (
+                    <SelectItem key={position} value={position}>
+                      {position}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -161,7 +144,7 @@ export default function CVFormFields(props: CVFormFieldsProps) {
 
         <FormField
           control={form.control}
-          name="cvTextFile"
+          name="pdf"
           render={({ field }) => (
             <FormItem>
               <FormLabel>CV</FormLabel>
@@ -184,7 +167,7 @@ export default function CVFormFields(props: CVFormFieldsProps) {
 
         <FormField
           control={form.control}
-          name="cvVideoFile"
+          name="video"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Video</FormLabel>

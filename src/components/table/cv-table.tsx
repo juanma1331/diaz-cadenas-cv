@@ -14,6 +14,7 @@ export default function CVTable() {
       columns={columns}
       data={data?.cvs ?? []}
       isLoading={isLoading}
+      storageUsed={data?.storageUsed ?? 0}
     />
   );
 }

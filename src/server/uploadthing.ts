@@ -19,13 +19,14 @@ const f = createUploadthing({
  * @see https://docs.uploadthing.com/api-reference/server#file-routes
  */
 export const uploadRouter = {
-  videoAndImage: f({
-    image: {
+  pdfAndVideo: f({
+    pdf: {
       maxFileSize: "4MB",
-      maxFileCount: 4,
+      maxFileCount: 1,
     },
     video: {
-      maxFileSize: "16MB",
+      maxFileSize: "64MB",
+      maxFileCount: 1,
     },
   })
     .middleware(({ req }) => {
@@ -35,7 +36,7 @@ export const uploadRouter = {
     })
     .onUploadComplete((data) => {
       // Return some data which will be available in `onClientUploadComplete`
-      return  {
+      return {
         url: data.file.url,
         key: data.file.key,
         name: data.file.name,

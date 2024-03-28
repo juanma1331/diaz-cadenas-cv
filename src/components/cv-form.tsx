@@ -18,30 +18,25 @@ export default function CVForm() {
   const [params, setParams] = useState<InsertParams | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { mutate: insertCV, isLoading: isInsertingCV } =
-    trpcReact.insertCV.useMutation({
-      onSuccess: () => setMode("success"),
-      onError: (error) => {
-        setMode("error");
-        setError(error.message || "Upload failed");
-      },
-    });
+  const { mutate: insertCV } = trpcReact.insertCV.useMutation({
+    onSuccess: () => setMode("success"),
+    onError: (error) => {
+      setMode("error");
+      setError(error.message || "Upload failed");
+    },
+  });
 
-  const { startUpload, permittedFileInfo, isUploading } = useUploadThing(
-    "videoAndImage",
-    {
-      onUploadError: (error) => {
-        setMode("error");
-        setError(error.message || "Upload failed");
-      },
-    }
-  );
+  const { startUpload } = useUploadThing("pdfAndVideo", {
+    onUploadError: (error) => {
+      setMode("error");
+      setError(error.message || "Upload failed");
+    },
+  });
 
   async function onSubmit(values: FormValues) {
-    console.log("Files uploading");
     setMode("loading");
     const uploadedFiles = await startUpload(
-      [values.cvTextFile, values.cvVideoFile].filter(Boolean)
+      [values.pdf, values.video].filter(Boolean)
     );
 
     if (!uploadedFiles || uploadedFiles.length < MAX_FILES) {
@@ -57,7 +52,7 @@ export default function CVForm() {
       position: values.position,
       attachments: uploadedFiles as UploadedFile[],
     });
-    setMode("success"); // Moved this here to ensure params are set before mode changes to "success"
+    setMode("success");
   }
 
   function tryAgain() {
@@ -87,7 +82,7 @@ export default function CVForm() {
     return (
       <div className="flex flex-col items-center gap-2">
         <h1>Lamentablemente no pudimos recibir tu CV</h1>
-        <span>{error}</span> {/* Displaying the error message */}
+        <span>{error}</span>
         <Button onClick={tryAgain}>Inténtelo de nuevo</Button>
       </div>
     );

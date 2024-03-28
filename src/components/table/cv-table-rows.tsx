@@ -23,20 +23,22 @@ import {
 import { ReloadIcon } from "@radix-ui/react-icons";
 import CVTablePagination from "./cv-table-pagination";
 import CVTableSearch from "./cv-table-search";
-import CVTableFilters from "./cv-table-filters";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import CVTableStorageUsed from "./cv-table-storage";
 
 export interface CVTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isLoading: boolean;
+  storageUsed: number;
 }
 
 export default function CVTableRows<TData, TValue>({
   columns,
   data,
   isLoading,
+  storageUsed,
 }: CVTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -60,7 +62,7 @@ export default function CVTableRows<TData, TValue>({
       <div className="flex items-center justify-between">
         <CVTableSearch table={table} />
 
-        <CVTableFilters />
+        <CVTableStorageUsed storageUsed={storageUsed} />
       </div>
       <ScrollArea className="h-[740px] overflow-y-auto">
         <Table>
