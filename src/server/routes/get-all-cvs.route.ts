@@ -45,7 +45,6 @@ export const getAllCVSProcedure = publicProcedure
       if (!acc[cvs.id]) {
         acc[cvs.id] = {
           ...cvs,
-          createdAt: cvs.createdAt.toISOString(),
           attachments: [],
         };
       }

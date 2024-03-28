@@ -70,6 +70,7 @@ export const insertCVProdedure = publicProcedure
         email: input.email,
         place: input.place,
         position: input.position,
+        createdAt: new Date().toISOString(),
       })
     );
 

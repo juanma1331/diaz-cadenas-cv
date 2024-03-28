@@ -22,12 +22,18 @@ import {
 } from "src/components/ui/alert-dialog";
 
 import { FileDown, MoreHorizontal } from "lucide-react";
-import { DataTableColumnHeader } from "./cv-table-column";
+import {
+  PlaceFilteringColumnHeader,
+  PositionFilteringColumnHeader,
+  SortingColumnHeader,
+} from "./cv-table-column";
 
 import dayJS from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import utc from "dayjs/plugin/utc";
 import "dayjs/locale/es";
 
+dayJS.extend(utc);
 dayJS.extend(relativeTime);
 dayJS.locale("es");
 
@@ -52,33 +58,34 @@ export const columns: ColumnDef<CVRow>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nombre" />
+      <SortingColumnHeader column={column} title="Nombre" />
     ),
   },
   {
     accessorKey: "email",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
+      <SortingColumnHeader column={column} title="Email" />
     ),
   },
   {
     accessorKey: "createdAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Enviado" />
+      <SortingColumnHeader column={column} title="Enviado" />
     ),
     cell: ({ row }) => {
       const createdAt = row.getValue("createdAt") as string;
-      const date = dayJS().from(dayJS(createdAt), true);
+      const local = dayJS.utc(createdAt).local();
+      const date = dayJS().from(dayJS(local), true);
       return date;
     },
   },
   {
     accessorKey: "place",
-    header: "Lugar",
+    header: ({ column }) => <PlaceFilteringColumnHeader column={column} />,
   },
   {
     accessorKey: "position",
-    header: "Puesto",
+    header: ({ column }) => <PositionFilteringColumnHeader column={column} />,
   },
   {
     accessorKey: "status",

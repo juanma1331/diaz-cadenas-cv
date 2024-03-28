@@ -17,7 +17,7 @@ export default function CVTableFilters() {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="outline">
-          <ListFilter className="h-5 w-5 mr-2 text-slate-400" /> Filtros
+          <ListFilter className="h-4 w-4 mr-2 text-slate-400" /> Filtros
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

@@ -211,7 +211,7 @@ export default function CVFormFields(props: CVFormFieldsProps) {
         ) : (
           <Button disabled>
             <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-            Por favor espere...
+            Por favor, espere...
           </Button>
         )}
       </form>
