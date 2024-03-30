@@ -4,11 +4,11 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import type { Column } from "@tanstack/react-table";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { Columns3 } from "lucide-react";
-import { DropdownMenuContent } from "../ui/dropdown-menu";
-import { Switch } from "../ui/switch";
-import { Label } from "../ui/label";
+import { DropdownMenuContent } from "../../ui/dropdown-menu";
+import { Switch } from "../../ui/switch";
+import { Label } from "../../ui/label";
 
 export type CVTableVisibilityTogglerProps<TData, TValue> = {
   columns: Column<TData, TValue>[];

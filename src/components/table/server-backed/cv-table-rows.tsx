@@ -16,30 +16,18 @@ import {
 } from "@/components/ui/table";
 
 import { ReloadIcon } from "@radix-ui/react-icons";
-import CVTablePagination from "./cv-table-pagination";
-import CVTableSearch from "./cv-table-search";
-import CVTableFilters from "./cv-table-filters";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export interface CVTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  pages: number[];
   isLoading: boolean;
-  page: number;
-  limit: number;
-  onPageChage: (page: number) => void;
-  onLimitChange: (limit: number) => void;
 }
 
 export default function CVTableRows<TData, TValue>({
   columns,
   data,
   isLoading,
-  onPageChage,
-  onLimitChange,
-  pages,
-  limit,
-  page,
 }: CVTableProps<TData, TValue>) {
   const table = useReactTable({
     columns,
@@ -47,57 +35,35 @@ export default function CVTableRows<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
   });
 
-  function clearFiltersAndSorting() {
-    console.log("clearFiltersAndSorting");
-  }
-
   return (
-    <div className="space-y-2 mt-4">
-      <div className="flex items-center justify-between">
-        <CVTableSearch />
+    <ScrollArea className="h-[740px] overflow-auto">
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id} className="text-left">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
 
-        <CVTableFilters />
-      </div>
-      <div className="max-h-[80vh] overflow-x-auto">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className="text-center">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-
-          {isLoading
-            ? loadingTableBody(columns.length)
-            : dataTableBody(table, columns.length)}
-        </Table>
-      </div>
-      {pages.length > 0 && (
-        <CVTablePagination
-          pages={pages}
-          page={page}
-          limit={limit}
-          onLimitChange={onLimitChange}
-          onPageChange={onPageChage}
-        />
-      )}
-    </div>
+        {isLoading ? <LoadingTableBody /> : <DataTableBody table={table} />}
+      </Table>
+    </ScrollArea>
   );
 }
 
-function loadingTableBody(colCount: number) {
+function LoadingTableBody() {
   return (
     <TableBody>
       <TableRow>
@@ -112,7 +78,7 @@ function loadingTableBody(colCount: number) {
   );
 }
 
-function dataTableBody<TData>(table: TableType<TData>, colCount: number) {
+function DataTableBody<TData>({ table }: { table: TableType<TData> }) {
   if (table.getRowModel().rows?.length) {
     return (
       <TableBody>
@@ -122,7 +88,7 @@ function dataTableBody<TData>(table: TableType<TData>, colCount: number) {
             data-state={row.getIsSelected() ? "selected" : undefined}
           >
             {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id} className="text-center">
+              <TableCell key={cell.id} className="text-left">
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </TableCell>
             ))}

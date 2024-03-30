@@ -1,4 +1,5 @@
-import { getAllCVSProcedure } from "./routes/get-all-cvs.route";
+import { getAllCVSClientProcedure } from "./routes/get-all-cvs.client";
+import { getAllCVSServerProcedure } from "./routes/get-all-cvs.server";
 import { insertCVProdedure } from "./routes/insert-cv.route";
 import { t } from "./utils";
 
@@ -17,7 +18,8 @@ import { t } from "./utils";
 
 export const appRouter = t.router({
   insertCV: insertCVProdedure,
-  getAllCVS: getAllCVSProcedure,
+  getAllCVSClient: getAllCVSClientProcedure,
+  getAllCVSServer: getAllCVSServerProcedure,
 });
 
 export type AppRouter = typeof appRouter;

@@ -3,7 +3,7 @@ import CVTableRows from "./cv-table-rows";
 import { trpcReact } from "@/client";
 
 export default function CVTable() {
-  const { data, isLoading, isError } = trpcReact.getAllCVS.useQuery();
+  const { data, isLoading, isError } = trpcReact.getAllCVSClient.useQuery();
 
   if (isError) {
     return <div>Error</div>;

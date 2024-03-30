@@ -45,7 +45,7 @@ async function generateCVS(qty: number) {
           "Limpieza",
         ]),
         status: faker.helpers.arrayElement(["pending", "reviewed"]),
-        createdAt: faker.date.past().toISOString(),
+        createdAt: faker.date.past(),
       })
     );
 

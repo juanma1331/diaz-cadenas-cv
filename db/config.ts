@@ -8,7 +8,7 @@ const CVS = defineTable({
     place: column.text(),
     position: column.text(),
     status: column.text({ default: "pending" }),
-    createdAt: column.text(),
+    createdAt: column.date(),
   },
 });
 

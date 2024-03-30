@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { publicProcedure } from "../utils";
-import { asc, desc, eq, CVS, ATTACHMENTS } from "astro:db";
+import { desc, eq, CVS, ATTACHMENTS, db } from "astro:db";
 
 export const cvSchema = z.object({
   id: z.string(),
@@ -25,13 +25,14 @@ export const outputSchema = z.object({
 });
 
 type ProcessedResult = typeof CVS.$inferSelect & {
+  createdAt: string;
   attachments: (typeof ATTACHMENTS.$inferSelect)[];
 };
 
-export const getAllCVSProcedure = publicProcedure
+export const getAllCVSClientProcedure = publicProcedure
   .output(outputSchema)
   .query(async ({ ctx }) => {
-    const queryResult = await ctx.db
+    const queryResult = await db
       .select({
         cvs: CVS,
         attachment: ATTACHMENTS,
@@ -47,6 +48,7 @@ export const getAllCVSProcedure = publicProcedure
         if (!acc[cvs.id]) {
           acc[cvs.id] = {
             ...cvs,
+            createdAt: cvs.createdAt.toISOString(),
             attachments: [],
           };
         }
@@ -61,8 +63,6 @@ export const getAllCVSProcedure = publicProcedure
     const cvs = Object.values(processed);
     const storageUsed = calculateTotalSpaceUsed(cvs);
 
-    console.log("storageUsed", storageUsed);
-
     return {
       cvs,
       storageUsed,
@@ -73,7 +73,6 @@ export function calculateTotalSpaceUsed(cvs: ProcessedResult[]) {
   const sum = cvs.reduce((acc, cv) => {
     const totalSize = cv.attachments.reduce(
       (acc: number, attachment: ProcessedResult["attachments"][number]) => {
-        console.log("attachment.size", attachment.size);
         return acc + attachment.size;
       },
       0

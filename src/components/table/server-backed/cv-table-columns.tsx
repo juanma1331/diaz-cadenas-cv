@@ -1,4 +1,8 @@
-import { type ColumnDef } from "@tanstack/react-table";
+import {
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+} from "@tanstack/react-table";
 import { Button } from "../../ui/button";
 import { Badge } from "../../ui/badge";
 import {
@@ -21,7 +25,25 @@ import {
   AlertDialogTrigger,
 } from "src/components/ui/alert-dialog";
 
-import { ArrowUpDown, FileDown, MoreHorizontal } from "lucide-react";
+import { FileDown, MoreHorizontal } from "lucide-react";
+import dayJS from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import utc from "dayjs/plugin/utc";
+import "dayjs/locale/es";
+import {
+  SortingColumnHeader,
+  type OnSort,
+  PositionFilteringColumnHeader,
+  type OnFilter,
+  PlaceFilteringColumnHeader,
+  StatusFilteringColumnHeader,
+  type OnCleanSort,
+  type OnClearFilter,
+} from "./cv-table-column";
+
+dayJS.extend(utc);
+dayJS.extend(relativeTime);
+dayJS.locale("es");
 
 export type RowAttachment = {
   url: string;
@@ -36,70 +58,107 @@ export type CVRow = {
   place: string;
   position: string;
   status: string;
+  createdAt: string;
   attachments: RowAttachment[];
 };
 
 export type GenerateColumnsParams = {
-  onSortingChange: (field: string, direction: "asc" | "desc") => void;
+  sortingState: SortingState;
+  onSortingChange: OnSort;
+  onCleanSort: OnCleanSort;
+  filteringState: ColumnFiltersState;
+  onFilteringChange: OnFilter;
+  onClearFilter: OnClearFilter;
 };
 
-export function generateColumns(
-  params: GenerateColumnsParams
-): ColumnDef<CVRow>[] {
+export function generateColumns({
+  sortingState,
+  onSortingChange,
+  onCleanSort,
+  filteringState,
+  onFilteringChange,
+  onClearFilter,
+}: GenerateColumnsParams): ColumnDef<CVRow>[] {
   const columns: ColumnDef<CVRow>[] = [
     {
       accessorKey: "name",
-      header: ({ column }) => {
+      header: () => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              params.onSortingChange(
-                "name",
-                column.getIsSorted() === "asc" ? "desc" : "asc"
-              );
-
-              column.toggleSorting(column.getIsSorted() === "asc");
+          <SortingColumnHeader
+            sort={{
+              desc: isDescending(sortingState, "name"),
+              id: "name",
             }}
-          >
-            Nombre
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
+            title="Nombre"
+            onSort={onSortingChange}
+            isSorting={sortingState.some((s) => s.id === "name")}
+            onCleanSort={onCleanSort}
+          />
         );
       },
     },
     {
       accessorKey: "email",
-      header: ({ column }) => {
+      header: () => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              params.onSortingChange(
-                "email",
-                column.getIsSorted() === "asc" ? "desc" : "asc"
-              );
-
-              column.toggleSorting(column.getIsSorted() === "asc");
+          <SortingColumnHeader
+            sort={{
+              desc: isDescending(sortingState, "email"),
+              id: "email",
             }}
-          >
-            Email
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
+            title="Email"
+            onSort={onSortingChange}
+            isSorting={sortingState.some((s) => s.id === "email")}
+            onCleanSort={onCleanSort}
+          />
         );
       },
     },
     {
+      accessorKey: "createdAt",
+      header: "Enviado",
+      cell: ({ row }) => {
+        const createdAt = row.getValue("createdAt") as string;
+        const local = dayJS.utc(createdAt).local();
+        const date = dayJS().from(dayJS(local), true);
+        return date;
+      },
+    },
+    {
       accessorKey: "place",
-      header: "Lugar",
+      header: () => {
+        return (
+          <PlaceFilteringColumnHeader
+            filteringState={filteringState}
+            onFilter={onFilteringChange}
+            onClearFilter={onClearFilter}
+          />
+        );
+      },
     },
     {
       accessorKey: "position",
-      header: "Puesto",
+      header: () => {
+        return (
+          <PositionFilteringColumnHeader
+            filteringState={filteringState}
+            onFilter={onFilteringChange}
+            onClearFilter={onClearFilter}
+          />
+        );
+      },
     },
     {
       accessorKey: "status",
-      header: "Estado",
+      header: () => {
+        return (
+          <StatusFilteringColumnHeader
+            filteringState={filteringState}
+            onFilter={onFilteringChange}
+            onClearFilter={onClearFilter}
+          />
+        );
+      },
       cell: ({ row }) => {
         const status = row.getValue("status") as CVRow["status"];
         let badgeColor = "";
@@ -107,16 +166,12 @@ export function generateColumns(
 
         if (status === "pending") {
           badgeColor =
-            "bg-yellow-300 text-yellow-800 hover:bg-yellow-300/80 hover:text-yellow-800";
+            "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80 hover:text-yellow-900";
           badgeText = "Pendiente";
-        } else if (status === "approved") {
-          badgeColor =
-            "bg-green-300 text-green-800 hover:bg-green-300/80 hover:text-green-800";
-          badgeText = "Revisado";
         } else {
           badgeColor =
-            "bg-red-300 text-red-800 hover:bg-red-300/80 hover:text-red-800";
-          badgeText = "Rechazado";
+            "bg-green-300 text-green-900 hover:bg-green-300/80 hover:text-green-900";
+          badgeText = "Revisado";
         }
 
         return <Badge className={badgeColor}>{badgeText}</Badge>;
@@ -205,4 +260,8 @@ export function generateColumns(
   ];
 
   return columns;
+}
+
+function isDescending(sortingState: SortingState, id: string): boolean {
+  return sortingState.some((s) => s.id === id && s.desc === true);
 }

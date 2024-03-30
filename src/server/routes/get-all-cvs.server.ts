@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { publicProcedure } from "../utils";
-import { inArray, type db, like, asc, desc } from "astro:db";
+import { inArray, db, like, asc, desc, CVS, ATTACHMENTS } from "astro:db";
 import { count } from "drizzle-orm";
 
 export const inputSchema = z.object({
@@ -15,7 +15,8 @@ export const inputSchema = z.object({
       field: z.string(),
       direction: z.string(),
     })
-    .optional(),
+    .optional()
+    .default({ field: "createdAt", direction: "desc" }),
   pagination: z.object({
     page: z.number().default(1),
     limit: z.number().default(10),
@@ -29,6 +30,7 @@ export const cvSchema = z.object({
   status: z.string(),
   place: z.string(),
   position: z.string(),
+  createdAt: z.string(),
   attachments: z.array(
     z.object({
       name: z.string(),
@@ -46,16 +48,13 @@ export const outputSchema = z.object({
 export const getAllCVSServerProcedure = publicProcedure
   .input(inputSchema)
   .output(outputSchema)
-  .query(async ({ input, ctx }) => {
-    const startTime = Date.now();
+  .query(async ({ input }) => {
     const { filter, sorting, pagination } = input;
 
     const offset = (pagination.page - 1) * pagination.limit;
 
     const pagesCountStartTime = Date.now();
-    const pagesCount = (
-      await ctx.db.select({ count: count() }).from(ctx.CVS)
-    )[0].count;
+    const pagesCount = (await db.select({ count: count() }).from(CVS))[0].count;
     const pagesCountEndTime = Date.now();
     console.log(
       `Pages count query took ${
@@ -75,7 +74,7 @@ export const getAllCVSServerProcedure = publicProcedure
     }
 
     const cvsStartTime = Date.now();
-    const cvsQuery = ctx.db.select().from(ctx.CVS);
+    const cvsQuery = db.select().from(CVS);
 
     // Pagination
     cvsQuery.offset(offset).limit(pagination.limit);
@@ -85,19 +84,19 @@ export const getAllCVSServerProcedure = publicProcedure
       const { field, value } = filter;
       switch (field) {
         case "name":
-          cvsQuery.where(like(ctx.CVS.name, value));
+          cvsQuery.where(like(CVS.name, value));
           break;
         case "email":
-          cvsQuery.where(like(ctx.CVS.email, value));
+          cvsQuery.where(like(CVS.email, value));
           break;
         case "place":
-          cvsQuery.where(like(ctx.CVS.place, value));
+          cvsQuery.where(like(CVS.place, value));
           break;
         case "position":
-          cvsQuery.where(like(ctx.CVS.position, value));
+          cvsQuery.where(like(CVS.position, value));
           break;
         case "status":
-          cvsQuery.where(like(ctx.CVS.status, value));
+          cvsQuery.where(like(CVS.status, value));
           break;
         default:
           throw new Error(`Unknown filter field: ${field}`);
@@ -110,12 +109,17 @@ export const getAllCVSServerProcedure = publicProcedure
       switch (field) {
         case "name":
           cvsQuery.orderBy(
-            direction === "asc" ? asc(ctx.CVS.name) : desc(ctx.CVS.name)
+            direction === "asc" ? asc(CVS.name) : desc(CVS.name)
           );
           break;
         case "email":
           cvsQuery.orderBy(
-            direction === "asc" ? asc(ctx.CVS.email) : desc(ctx.CVS.email)
+            direction === "asc" ? asc(CVS.email) : desc(CVS.email)
+          );
+          break;
+        case "createdAt":
+          cvsQuery.orderBy(
+            direction === "asc" ? asc(CVS.createdAt) : desc(CVS.createdAt)
           );
           break;
         default:
@@ -129,10 +133,10 @@ export const getAllCVSServerProcedure = publicProcedure
     const cvsIDs = cvsResults.map((cv) => cv.id);
 
     const attachmentsStartTime = Date.now();
-    const attachmentsResults = await ctx.db
+    const attachmentsResults = await db
       .select()
-      .from(ctx.ATTACHMENTS)
-      .where(inArray(ctx.ATTACHMENTS.cvId, cvsIDs));
+      .from(ATTACHMENTS)
+      .where(inArray(ATTACHMENTS.cvId, cvsIDs));
 
     const attachmentsEndTime = Date.now();
     console.log(
@@ -146,6 +150,8 @@ export const getAllCVSServerProcedure = publicProcedure
         (attachment) => attachment.cvId === cv.id
       );
 
+      console.log(typeof cv.createdAt);
+
       return {
         id: cv.id,
         name: cv.name,
@@ -153,6 +159,7 @@ export const getAllCVSServerProcedure = publicProcedure
         status: cv.status,
         place: cv.place,
         position: cv.position,
+        createdAt: cv.createdAt.toISOString(),
         attachments: attachments.map((attachment) => ({
           name: attachment.name,
           url: attachment.url,
