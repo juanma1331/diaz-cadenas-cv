@@ -16,18 +16,22 @@ import { Button } from "../../ui/button";
 
 type CVTablePaginationProps = {
   pages: Array<number>;
-  page: number;
   limit: number;
   onLimitChange: (page: number) => void;
-  onPageChange: (page: number) => void;
+  onPrevPage: () => void;
+  onNextPage: () => void;
+  onLastPage: () => void;
+  onFirstPage: () => void;
 };
 
 export default function CVTablePagination({
   pages,
-  page,
   limit,
   onLimitChange,
-  onPageChange,
+  onPrevPage,
+  onNextPage,
+  onLastPage,
+  onFirstPage,
 }: CVTablePaginationProps) {
   return (
     <div className="flex items-center justify-end px-2">
@@ -41,7 +45,7 @@ export default function CVTablePagination({
             }}
           >
             <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue placeholder={page} />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent side="top">
               {[10, 20, 30, 40, 50].map((pageSize) => (
@@ -57,9 +61,8 @@ export default function CVTablePagination({
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
             onClick={() => {
-              onPageChange(1);
+              onFirstPage();
             }}
-            disabled={page === 1}
           >
             <span className="sr-only">Ir a la primera página</span>
             <DoubleArrowLeftIcon className="h-4 w-4" />
@@ -67,20 +70,18 @@ export default function CVTablePagination({
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
-            onClick={() => onPageChange(page - 1)}
-            disabled={page === 1}
+            onClick={() => onPrevPage()}
           >
             <span className="sr-only">Ir a la página anterior</span>
             <ChevronLeftIcon className="h-4 w-4" />
           </Button>
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Página {page} de {pages.length}
+            Página 1 de {pages.length}
           </div>
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
-            onClick={() => onPageChange(page + 1)}
-            disabled={page === pages.length}
+            onClick={() => onNextPage()}
           >
             <span className="sr-only">Ir a la siguiente página</span>
             <ChevronRightIcon className="h-4 w-4" />
@@ -89,10 +90,8 @@ export default function CVTablePagination({
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
             onClick={() => {
-              const nextPage = page + 1;
-              onPageChange(nextPage);
+              onLastPage();
             }}
-            disabled={page === pages.length}
           >
             <span className="sr-only">Ir a la última página</span>
             <DoubleArrowRightIcon className="h-4 w-4" />

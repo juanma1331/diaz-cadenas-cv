@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { generateColumns, type CVRow } from "./cv-table-columns";
 import CVTableRows from "./cv-table-rows";
 import { trpcReact } from "@/client";
@@ -18,14 +18,24 @@ dayJS.extend(relativeTime);
 dayJS.locale("es");
 
 export default function CVTable() {
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const cursorsRef = useRef<Set<string>>(new Set());
+  const [limit, setLimit] = useState<number>(10);
+  const [cursor, setCursor] = useState<string>();
   const [sortingState, setSortingState] = useState<SortingState>([]);
   const [filteringState, setFilteringState] = useState<ColumnFiltersState>([]);
 
   const { data, isLoading, isError } = trpcReact.getAllCVSServer.useQuery({
-    pagination: { page: page, limit: limit },
+    pagination: {
+      cursor: cursor,
+      limit: limit,
+    },
   });
+
+  useEffect(() => {
+    if (cursorsRef.current && data?.cursor) {
+      cursorsRef.current.add(data.cursor);
+    }
+  }, [data]);
 
   const columns = generateColumns({
     sortingState: sortingState,
@@ -54,13 +64,30 @@ export default function CVTable() {
     },
   });
 
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-  };
+  const handleOnLimitChange = () => console.log("Limit changing");
+  const handleOnNextPage = () => {
+    const setArr = Array.from(cursorsRef.current);
+    const currentCursorIndex = setArr.findIndex((c) => c === cursor);
+    const nextCursorIndex = currentCursorIndex + 1;
 
-  const handleLimitChange = (newLimit: number) => {
-    setLimit(newLimit);
+    if (nextCursorIndex < setArr.length) {
+      const nextCursor = setArr[nextCursorIndex];
+      setCursor(nextCursor);
+    }
   };
+  const handleOnPrevPage = () => {
+    const setArr = Array.from(cursorsRef.current);
+    const currentCursorIndex = setArr.findIndex((c) => c === cursor);
+
+    if (currentCursorIndex === 0) {
+      setCursor(undefined);
+    } else if (currentCursorIndex > 0) {
+      const prevCursor = setArr[currentCursorIndex - 1];
+      setCursor(prevCursor);
+    }
+  };
+  const handleOnFirstPage = () => console.log("First page");
+  const handleOnLastPage = () => console.log("Last page");
 
   if (isError) {
     return <div>Error</div>;
@@ -92,9 +119,11 @@ export default function CVTable() {
         {!isLoading && (
           <CVTablePagination
             limit={limit}
-            onLimitChange={handlePageChange}
-            onPageChange={handleLimitChange}
-            page={page}
+            onLimitChange={handleOnLimitChange}
+            onFirstPage={handleOnFirstPage}
+            onPrevPage={handleOnPrevPage}
+            onNextPage={handleOnNextPage}
+            onLastPage={handleOnLastPage}
             pages={data.pages}
           />
         )}

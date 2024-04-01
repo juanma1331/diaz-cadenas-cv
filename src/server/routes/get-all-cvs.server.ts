@@ -1,7 +1,18 @@
 import { z } from "zod";
 import { publicProcedure } from "../utils";
-import { inArray, db, like, asc, desc, CVS, ATTACHMENTS } from "astro:db";
+import {
+  inArray,
+  db,
+  like,
+  asc,
+  desc,
+  CVS,
+  ATTACHMENTS,
+  gt,
+  lt,
+} from "astro:db";
 import { count } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
 
 export const inputSchema = z.object({
   filter: z
@@ -18,7 +29,7 @@ export const inputSchema = z.object({
     .optional()
     .default({ field: "createdAt", direction: "desc" }),
   pagination: z.object({
-    page: z.number().default(1),
+    cursor: z.string().optional(),
     limit: z.number().default(10),
   }),
 });
@@ -42,6 +53,7 @@ export const cvSchema = z.object({
 
 export const outputSchema = z.object({
   cvs: z.array(cvSchema),
+  cursor: z.string().optional(),
   pages: z.array(z.number()),
 });
 
@@ -51,15 +63,11 @@ export const getAllCVSServerProcedure = publicProcedure
   .query(async ({ input }) => {
     const { filter, sorting, pagination } = input;
 
-    const offset = (pagination.page - 1) * pagination.limit;
-
     const pagesCountStartTime = Date.now();
     const pagesCount = (await db.select({ count: count() }).from(CVS))[0].count;
     const pagesCountEndTime = Date.now();
     console.log(
-      `Pages count query took ${
-        (pagesCountEndTime - pagesCountStartTime) / 1000
-      }sec`
+      `Pages count query took ${pagesCountEndTime - pagesCountStartTime} ms`
     );
     const pages = Array.from(
       { length: Math.ceil(pagesCount / pagination.limit) },
@@ -77,7 +85,12 @@ export const getAllCVSServerProcedure = publicProcedure
     const cvsQuery = db.select().from(CVS);
 
     // Pagination
-    cvsQuery.offset(offset).limit(pagination.limit);
+    if (pagination.cursor) {
+      const cursorDate = new Date(pagination.cursor);
+      cvsQuery.where(lt(CVS.createdAt, cursorDate));
+    }
+
+    cvsQuery.limit(pagination.limit + 1); // Pick an extra item to check if there are more rows
 
     // Filtering
     if (filter) {
@@ -129,7 +142,7 @@ export const getAllCVSServerProcedure = publicProcedure
 
     const cvsResults = await cvsQuery.all();
     const cvsEndTime = Date.now();
-    console.log(`CVs query took ${(cvsEndTime - cvsStartTime) / 1000}sec`);
+    console.log(`CVs query took ${cvsEndTime - cvsStartTime} ms`);
     const cvsIDs = cvsResults.map((cv) => cv.id);
 
     const attachmentsStartTime = Date.now();
@@ -140,17 +153,13 @@ export const getAllCVSServerProcedure = publicProcedure
 
     const attachmentsEndTime = Date.now();
     console.log(
-      `Attachments query took ${
-        (attachmentsEndTime - attachmentsStartTime) / 1000
-      }sec`
+      `Attachments query took ${attachmentsEndTime - attachmentsStartTime} ms`
     );
     type Result = z.infer<typeof outputSchema>;
     const cvs: Result["cvs"] = cvsResults.map((cv) => {
       const attachments = attachmentsResults.filter(
         (attachment) => attachment.cvId === cv.id
       );
-
-      console.log(typeof cv.createdAt);
 
       return {
         id: cv.id,
@@ -168,12 +177,24 @@ export const getAllCVSServerProcedure = publicProcedure
       };
     });
 
-    const result: Result = {
-      cvs,
-      pages,
-    };
+    if (cvs.length > 0) {
+      const hasRowsLeft = cvs.length === pagination.limit + 1;
+      const newCursor = hasRowsLeft
+        ? cvs[cvs.length - 2].createdAt
+        : cvs[cvs.length - 1].createdAt;
 
-    console.log(result);
+      if (hasRowsLeft) {
+        cvs.pop(); // Delete the extra row
+      }
 
-    return result;
+      const result: Result = {
+        pages,
+        cvs,
+        cursor: hasRowsLeft ? newCursor : undefined,
+      };
+
+      return result;
+    }
+
+    throw new TRPCError({ code: "BAD_REQUEST" });
   });
