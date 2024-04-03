@@ -6,10 +6,15 @@ import dayJS from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import "dayjs/locale/es";
-import type { ColumnFiltersState, SortingState } from "@tanstack/react-table";
+import {
+  useReactTable,
+  type ColumnFiltersState,
+  type SortingState,
+  getCoreRowModel,
+  getSortedRowModel,
+} from "@tanstack/react-table";
 import CVTableSearch from "./cv-table-search";
 import CVTableFilters from "./cv-table-filters";
-import CVTableVisibilityToggler from "./cv-table-visibility-toggler";
 import CVTableStorageUsed from "./cv-table-storage";
 import CVTablePagination from "./cv-table-pagination";
 
@@ -23,12 +28,17 @@ export default function CVTable() {
   const [cursor, setCursor] = useState<string>();
   const [sortingState, setSortingState] = useState<SortingState>([]);
   const [filteringState, setFilteringState] = useState<ColumnFiltersState>([]);
+  const [currentPageIndex, setCurrentPageIndex] = useState<number>(1);
 
   const { data, isLoading, isError } = trpcReact.getAllCVSServer.useQuery({
     pagination: {
       cursor: cursor,
       limit: limit,
     },
+    filters: filteringState as {
+      id: "place" | "position" | "status";
+      value: string;
+    }[],
   });
 
   useEffect(() => {
@@ -38,15 +48,6 @@ export default function CVTable() {
   }, [data]);
 
   const columns = generateColumns({
-    sortingState: sortingState,
-    onSortingChange: ({ id, desc }) => {
-      setSortingState([{ id: id, desc: desc }]);
-    },
-    onCleanSort: (id) => {
-      setSortingState((prevSortingState) => {
-        return prevSortingState.filter((s) => s.id !== id);
-      });
-    },
     filteringState: filteringState,
     onFilteringChange: ({ id, value }) => {
       setFilteringState((prevFilters) => {
@@ -72,6 +73,7 @@ export default function CVTable() {
 
     if (nextCursorIndex < setArr.length) {
       const nextCursor = setArr[nextCursorIndex];
+      setCurrentPageIndex((prev) => prev + 1);
       setCursor(nextCursor);
     }
   };
@@ -81,13 +83,24 @@ export default function CVTable() {
 
     if (currentCursorIndex === 0) {
       setCursor(undefined);
+      setCurrentPageIndex(1);
     } else if (currentCursorIndex > 0) {
       const prevCursor = setArr[currentCursorIndex - 1];
+      setCurrentPageIndex((prev) => prev - 1);
       setCursor(prevCursor);
     }
   };
-  const handleOnFirstPage = () => console.log("First page");
-  const handleOnLastPage = () => console.log("Last page");
+
+  const table = useReactTable({
+    columns,
+    data: data?.cvs ?? [],
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSortingState,
+    state: {
+      sorting: sortingState,
+    },
+  });
 
   if (isError) {
     return <div>Error</div>;
@@ -109,21 +122,16 @@ export default function CVTable() {
         </div>
       </div>
 
-      <CVTableRows
-        columns={columns}
-        data={data?.cvs ?? []}
-        isLoading={isLoading}
-      />
+      <CVTableRows table={table} isLoading={isLoading} />
 
       <div className="flex items-center justify-end px-2">
         {!isLoading && (
           <CVTablePagination
             limit={limit}
+            currentPage={currentPageIndex}
             onLimitChange={handleOnLimitChange}
-            onFirstPage={handleOnFirstPage}
             onPrevPage={handleOnPrevPage}
             onNextPage={handleOnNextPage}
-            onLastPage={handleOnLastPage}
             pages={data.pages}
           />
         )}

@@ -1,10 +1,4 @@
-import {
-  type ColumnDef,
-  useReactTable,
-  flexRender,
-  getCoreRowModel,
-  type Table as TableType,
-} from "@tanstack/react-table";
+import { flexRender, type Table as TableType } from "@tanstack/react-table";
 
 import {
   Table,
@@ -19,22 +13,14 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export interface CVTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  table: TableType<TData>;
   isLoading: boolean;
 }
 
 export default function CVTableRows<TData, TValue>({
-  columns,
-  data,
+  table,
   isLoading,
 }: CVTableProps<TData, TValue>) {
-  const table = useReactTable({
-    columns,
-    data,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
   return (
     <ScrollArea className="h-[740px] overflow-auto">
       <Table>

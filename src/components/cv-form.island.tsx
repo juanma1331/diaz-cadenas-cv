@@ -1,8 +1,8 @@
 import { trpcReact } from "@/client";
-import CVForm from "@/components/cv-form";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useState } from "react";
+import CVForm from "./cv-form";
 
 export default function CVFormIsland() {
   const [queryClient] = useState(() => new QueryClient());

@@ -63,18 +63,12 @@ export type CVRow = {
 };
 
 export type GenerateColumnsParams = {
-  sortingState: SortingState;
-  onSortingChange: OnSort;
-  onCleanSort: OnCleanSort;
   filteringState: ColumnFiltersState;
   onFilteringChange: OnFilter;
   onClearFilter: OnClearFilter;
 };
 
 export function generateColumns({
-  sortingState,
-  onSortingChange,
-  onCleanSort,
   filteringState,
   onFilteringChange,
   onClearFilter,
@@ -82,36 +76,14 @@ export function generateColumns({
   const columns: ColumnDef<CVRow>[] = [
     {
       accessorKey: "name",
-      header: () => {
-        return (
-          <SortingColumnHeader
-            sort={{
-              desc: isDescending(sortingState, "name"),
-              id: "name",
-            }}
-            title="Nombre"
-            onSort={onSortingChange}
-            isSorting={sortingState.some((s) => s.id === "name")}
-            onCleanSort={onCleanSort}
-          />
-        );
+      header: ({ column }) => {
+        return <SortingColumnHeader column={column} title="Nombre" />;
       },
     },
     {
       accessorKey: "email",
-      header: () => {
-        return (
-          <SortingColumnHeader
-            sort={{
-              desc: isDescending(sortingState, "email"),
-              id: "email",
-            }}
-            title="Email"
-            onSort={onSortingChange}
-            isSorting={sortingState.some((s) => s.id === "email")}
-            onCleanSort={onCleanSort}
-          />
-        );
+      header: ({ column }) => {
+        return <SortingColumnHeader column={column} title="Email" />;
       },
     },
     {
