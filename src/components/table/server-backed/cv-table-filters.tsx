@@ -31,7 +31,7 @@ export default function CVTableFilters({
       <Badge
         key={`table-filter-all`}
         variant="outline"
-        className="flex items-center justify-center cursor-pointer hover:bg-slate-300"
+        className="flex items-center justify-center cursor-pointer hover:bg-slate-300 outline outline-1 outline-red-400"
         onClick={() => setFilters([])}
       >
         <span>Todos</span>

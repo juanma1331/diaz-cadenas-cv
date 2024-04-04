@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { generateColumns, type CVRow } from "./cv-table-columns";
+import { useState } from "react";
+import { generateColumns } from "./cv-table-columns";
 import CVTableRows from "./cv-table-rows";
 import { trpcReact } from "@/client";
 import dayJS from "dayjs";
@@ -11,7 +11,7 @@ import {
   type ColumnFiltersState,
   type SortingState,
   getCoreRowModel,
-  getSortedRowModel,
+  type ColumnSort,
 } from "@tanstack/react-table";
 import CVTableSearch from "./cv-table-search";
 import CVTableFilters from "./cv-table-filters";
@@ -23,29 +23,27 @@ dayJS.extend(relativeTime);
 dayJS.locale("es");
 
 export default function CVTable() {
-  const cursorsRef = useRef<Set<string>>(new Set());
   const [limit, setLimit] = useState<number>(10);
-  const [cursor, setCursor] = useState<string>();
-  const [sortingState, setSortingState] = useState<SortingState>([]);
+  const [page, setPage] = useState<number>(1);
+  const [sortingState, setSortingState] = useState<SortingState>([
+    { id: "createdAt", desc: true },
+  ]);
   const [filteringState, setFilteringState] = useState<ColumnFiltersState>([]);
-  const [currentPageIndex, setCurrentPageIndex] = useState<number>(1);
 
   const { data, isLoading, isError } = trpcReact.getAllCVSServer.useQuery({
     pagination: {
-      cursor: cursor,
+      page: page,
       limit: limit,
     },
     filters: filteringState as {
       id: "place" | "position" | "status";
       value: string;
     }[],
+    sorting: sortingState as [
+      { id: "createdAt" | "name" | "email"; desc: boolean },
+      ...{ id: "createdAt" | "name" | "email"; desc: boolean }[]
+    ],
   });
-
-  useEffect(() => {
-    if (cursorsRef.current && data?.cursor) {
-      cursorsRef.current.add(data.cursor);
-    }
-  }, [data]);
 
   const columns = generateColumns({
     filteringState: filteringState,
@@ -63,43 +61,25 @@ export default function CVTable() {
         return prevFilters.filter((f) => f.id !== id);
       });
     },
+    sortingState: sortingState,
+    onSortingChange: (sort) => {
+      setSortingState([sort]);
+    },
+    onCleanSort: () => {
+      setSortingState([{ id: "createdAt", desc: true }]);
+    },
   });
 
-  const handleOnLimitChange = () => console.log("Limit changing");
-  const handleOnNextPage = () => {
-    const setArr = Array.from(cursorsRef.current);
-    const currentCursorIndex = setArr.findIndex((c) => c === cursor);
-    const nextCursorIndex = currentCursorIndex + 1;
-
-    if (nextCursorIndex < setArr.length) {
-      const nextCursor = setArr[nextCursorIndex];
-      setCurrentPageIndex((prev) => prev + 1);
-      setCursor(nextCursor);
-    }
-  };
-  const handleOnPrevPage = () => {
-    const setArr = Array.from(cursorsRef.current);
-    const currentCursorIndex = setArr.findIndex((c) => c === cursor);
-
-    if (currentCursorIndex === 0) {
-      setCursor(undefined);
-      setCurrentPageIndex(1);
-    } else if (currentCursorIndex > 0) {
-      const prevCursor = setArr[currentCursorIndex - 1];
-      setCurrentPageIndex((prev) => prev - 1);
-      setCursor(prevCursor);
-    }
-  };
+  const handleOnLimitChange = (newLimit: number) => setLimit(newLimit);
+  const handleOnNextPage = () => setPage((currentPage) => currentPage + 1);
+  const handleOnPrevPage = () => setPage((currentPage) => currentPage - 1);
+  const handleOnFirstPage = () => setPage(1);
+  const handleOnLastPage = () => setPage(data?.pages.length!);
 
   const table = useReactTable({
     columns,
     data: data?.cvs ?? [],
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSortingState,
-    state: {
-      sorting: sortingState,
-    },
   });
 
   if (isError) {
@@ -128,10 +108,12 @@ export default function CVTable() {
         {!isLoading && (
           <CVTablePagination
             limit={limit}
-            currentPage={currentPageIndex}
+            currentPage={page}
             onLimitChange={handleOnLimitChange}
             onPrevPage={handleOnPrevPage}
             onNextPage={handleOnNextPage}
+            onFirstPage={handleOnFirstPage}
+            onLastPage={handleOnLastPage}
             pages={data.pages}
           />
         )}

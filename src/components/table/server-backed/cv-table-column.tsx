@@ -4,7 +4,6 @@ import {
   CaretSortIcon,
 } from "@radix-ui/react-icons";
 import {
-  type Column,
   type ColumnFilter,
   type ColumnFiltersState,
   type ColumnSort,
@@ -24,15 +23,23 @@ import { places, positions } from "@/constants";
 export type OnSort = (sort: ColumnSort) => void;
 export type OnCleanSort = (id: string) => void;
 
-export type SortingColumnHeaderProps<TData, TValue> = {
+export type SortingColumnHeaderProps = {
+  id: "name" | "email";
   title: string;
-  column: Column<TData, TValue>;
+  isDesc: boolean;
+  isSorting: boolean;
+  onSortingChange: OnSort;
+  onCleanSort: OnCleanSort;
 };
 
-export function SortingColumnHeader<TData, TValue>({
+export function SortingColumnHeader({
+  id,
   title,
-  column,
-}: SortingColumnHeaderProps<TData, TValue>) {
+  isDesc,
+  isSorting,
+  onSortingChange,
+  onCleanSort,
+}: SortingColumnHeaderProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -42,25 +49,41 @@ export function SortingColumnHeader<TData, TValue>({
           className="-ml-3 h-8 data-[state=open]:bg-accent"
         >
           <span>{title}</span>
-          {column.getIsSorted() === "desc" ? (
-            <ArrowDownIcon className="ml-2 h-4 w-4" />
-          ) : column.getIsSorted() === "asc" ? (
-            <ArrowUpIcon className="ml-2 h-4 w-4" />
+          {isSorting ? (
+            isDesc ? (
+              <ArrowDownIcon className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpIcon className="ml-2 h-4 w-4" />
+            )
           ) : (
             <CaretSortIcon className="ml-2 h-4 w-4" />
           )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
-        <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
+        <DropdownMenuItem
+          onClick={() => onSortingChange({ id, desc: false })}
+          className={
+            isSorting && !isDesc ? "bg-primary text-primary-foreground" : ""
+          }
+        >
           <ArrowUpIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
           Asc
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
+        <DropdownMenuItem
+          onClick={() => onSortingChange({ id, desc: true })}
+          className={
+            isSorting && isDesc ? "bg-primary text-primary-foreground" : ""
+          }
+        >
           <ArrowDownIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
           Desc
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => onCleanSort(id)}>
+          <WandSparkles className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+          Limpiar
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

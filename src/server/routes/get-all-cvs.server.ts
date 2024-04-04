@@ -1,12 +1,25 @@
 import { z } from "zod";
 import { publicProcedure } from "../utils";
-import { inArray, db, like, desc, CVS, ATTACHMENTS, lt } from "astro:db";
+import {
+  inArray,
+  db,
+  like,
+  desc as descFun,
+  CVS,
+  ATTACHMENTS,
+  asc,
+} from "astro:db";
 import { count } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 export const filterSchema = z.object({
   id: z.enum(["place", "position", "status"]),
   value: z.string(),
+});
+
+export const sortSchema = z.object({
+  id: z.enum(["name", "email", "createdAt"]),
+  desc: z.boolean(),
 });
 
 export const inputSchema = z.object({
@@ -17,8 +30,9 @@ export const inputSchema = z.object({
       value: z.string(),
     })
     .optional(),
+  sorting: z.array(sortSchema).nonempty(),
   pagination: z.object({
-    cursor: z.string().optional(),
+    page: z.number().default(1),
     limit: z.number().default(10),
   }),
 });
@@ -42,7 +56,6 @@ export const cvSchema = z.object({
 
 export const outputSchema = z.object({
   cvs: z.array(cvSchema),
-  cursor: z.string().optional(),
   pages: z.array(z.number()),
 });
 
@@ -50,14 +63,11 @@ export const getAllCVSServerProcedure = publicProcedure
   .input(inputSchema)
   .output(outputSchema)
   .query(async ({ input }) => {
-    const { filters, search, pagination } = input;
+    const { filters, search, pagination, sorting } = input;
     console.log(input);
 
-    const cvsQuery = db.select().from(CVS).orderBy(desc(CVS.createdAt));
-    const totalPagesQuery = db
-      .select({ count: count() })
-      .from(CVS)
-      .orderBy(CVS.createdAt);
+    const cvsQuery = db.select().from(CVS);
+    const totalPagesQuery = db.select({ count: count() }).from(CVS);
 
     // Filtering
     if (filters) {
@@ -98,13 +108,33 @@ export const getAllCVSServerProcedure = publicProcedure
       }
     }
 
-    // Pagination
-    if (pagination.cursor) {
-      const cursor = new Date(pagination.cursor);
-      cvsQuery.where(lt(CVS.createdAt, cursor));
+    // Sorting
+    const { id, desc } = sorting[0];
+    switch (id) {
+      case "name":
+        cvsQuery.orderBy(desc ? descFun(CVS.name) : asc(CVS.name));
+        totalPagesQuery.orderBy(desc ? descFun(CVS.name) : asc(CVS.name));
+        break;
+      case "email":
+        cvsQuery.orderBy(desc ? descFun(CVS.email) : asc(CVS.email));
+        totalPagesQuery.orderBy(desc ? descFun(CVS.email) : asc(CVS.email));
+        break;
+      case "createdAt":
+        cvsQuery.orderBy(desc ? descFun(CVS.createdAt) : asc(CVS.createdAt));
+        totalPagesQuery.orderBy(
+          desc ? descFun(CVS.createdAt) : asc(CVS.createdAt)
+        );
+        break;
+      default:
+        throw new TRPCError({ code: "BAD_REQUEST" });
     }
-    cvsQuery.limit(pagination.limit + 1); // Pick an extra item to check if there are more rows
 
+    // Pagination
+    const { page, limit } = pagination;
+    const offset = (page - 1) * limit;
+    cvsQuery.offset(offset).limit(pagination.limit);
+
+    // Select cvs attachments
     const cvsStartTime = Date.now();
     const cvsResults = await cvsQuery.all();
     const cvsEndTime = Date.now();
@@ -147,37 +177,12 @@ export const getAllCVSServerProcedure = publicProcedure
       };
     });
 
-    const totalPagesStartTime = Date.now();
     const rowsCount = (await totalPagesQuery.all())[0].count;
-    const totalPagesEndTime = Date.now();
-    console.log(
-      `TotalPages query took ${totalPagesStartTime - totalPagesEndTime} ms`
-    );
     const totalPages = Math.ceil(rowsCount / pagination.limit);
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-    if (cvs.length > 0) {
-      const hasRowsLeft = cvs.length === pagination.limit + 1;
-      const newCursor = hasRowsLeft
-        ? cvs[cvs.length - 2].createdAt
-        : cvs[cvs.length - 1].createdAt;
-
-      if (hasRowsLeft) {
-        cvs.pop(); // Delete the extra row
-      }
-
-      const result: Result = {
-        pages,
-        cvs,
-        cursor: hasRowsLeft ? newCursor : undefined,
-      };
-
-      return result;
-    } else {
-      return {
-        pages: [],
-        cvs,
-        cursor: undefined,
-      };
-    }
+    return {
+      pages,
+      cvs,
+    };
   });

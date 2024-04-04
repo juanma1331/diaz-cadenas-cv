@@ -1,6 +1,7 @@
 import {
   type ColumnDef,
   type ColumnFiltersState,
+  type ColumnSort,
   type SortingState,
 } from "@tanstack/react-table";
 import { Button } from "../../ui/button";
@@ -66,24 +67,48 @@ export type GenerateColumnsParams = {
   filteringState: ColumnFiltersState;
   onFilteringChange: OnFilter;
   onClearFilter: OnClearFilter;
+  sortingState: SortingState;
+  onSortingChange: OnSort;
+  onCleanSort: OnCleanSort;
 };
 
 export function generateColumns({
   filteringState,
   onFilteringChange,
   onClearFilter,
+  sortingState,
+  onSortingChange,
+  onCleanSort,
 }: GenerateColumnsParams): ColumnDef<CVRow>[] {
   const columns: ColumnDef<CVRow>[] = [
     {
       accessorKey: "name",
-      header: ({ column }) => {
-        return <SortingColumnHeader column={column} title="Nombre" />;
+      header: () => {
+        return (
+          <SortingColumnHeader
+            id="name"
+            title="Nombre"
+            isDesc={isDesc(sortingState, "name")}
+            isSorting={isSorting(sortingState, "name")}
+            onSortingChange={onSortingChange}
+            onCleanSort={onCleanSort}
+          />
+        );
       },
     },
     {
       accessorKey: "email",
-      header: ({ column }) => {
-        return <SortingColumnHeader column={column} title="Email" />;
+      header: () => {
+        return (
+          <SortingColumnHeader
+            id="email"
+            title="Email"
+            isDesc={isDesc(sortingState, "email")}
+            isSorting={isSorting(sortingState, "email")}
+            onSortingChange={onSortingChange}
+            onCleanSort={onCleanSort}
+          />
+        );
       },
     },
     {
@@ -234,6 +259,10 @@ export function generateColumns({
   return columns;
 }
 
-function isDescending(sortingState: SortingState, id: string): boolean {
+function isDesc(sortingState: SortingState, id: "name" | "email") {
   return sortingState.some((s) => s.id === id && s.desc === true);
+}
+
+function isSorting(sortingState: SortingState, id: "name" | "email") {
+  return sortingState.some((s) => s.id === id);
 }
