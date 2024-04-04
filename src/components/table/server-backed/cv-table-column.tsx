@@ -230,7 +230,7 @@ export function StatusFilteringColumnHeader({
       <DropdownMenuContent align="start">
         <DropdownMenuItem
           className={
-            currentFilter?.value === "Pendiente"
+            currentFilter?.value === "pending"
               ? "bg-primary text-primary-foreground"
               : ""
           }
@@ -238,7 +238,7 @@ export function StatusFilteringColumnHeader({
         >
           <Dot
             className={`mr-2 h-3.5 w-3.5 ${
-              currentFilter?.value === "Pendiente"
+              currentFilter?.value === "pending"
                 ? "text-primary-foreground"
                 : "text-muted-foreground/70"
             }`}
@@ -247,7 +247,7 @@ export function StatusFilteringColumnHeader({
         </DropdownMenuItem>
         <DropdownMenuItem
           className={
-            currentFilter?.value === "Revisado"
+            currentFilter?.value === "reviewed"
               ? "bg-primary text-primary-foreground"
               : ""
           }
@@ -255,7 +255,7 @@ export function StatusFilteringColumnHeader({
         >
           <Dot
             className={`mr-2 h-3.5 w-3.5 ${
-              currentFilter?.value === "Revisado"
+              currentFilter?.value === "reviewed"
                 ? "text-primary-foreground"
                 : "text-muted-foreground/70"
             }`}

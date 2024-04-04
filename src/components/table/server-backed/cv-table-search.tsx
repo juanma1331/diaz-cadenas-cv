@@ -7,9 +7,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useDebounce from "@/components/hooks/use-debounce";
 
-type OnSearch = (params: { field: string; search: string }) => void;
+export type Search = {
+  id: "name" | "email";
+  value: string;
+};
+
+export type OnSearch = (params: Search) => void;
 
 export type CVTableSearchProps = {
   onSearchChange: OnSearch;
@@ -19,13 +25,23 @@ type SearchState = "nombre" | "email";
 
 export default function CVTableSearch({ onSearchChange }: CVTableSearchProps) {
   const [searchBy, setSearchBy] = useState<SearchState>("nombre");
+  const [search, setSearch] = useState<Search>({ id: "name", value: "" });
+  const debaunced = useDebounce<Search>(search, 500);
+
+  useEffect(() => {
+    onSearchChange(debaunced);
+  }, [debaunced]);
+
+  const handleOnSearch: OnSearch = (params) => {
+    setSearch(params);
+  };
 
   return (
     <div className="min-w-[400px] relative">
       {searchBy === "nombre" ? (
-        <NameInput onSearchChange={onSearchChange} />
+        <NameInput onSearchChange={handleOnSearch} />
       ) : (
-        <EmailInput onSearchChange={onSearchChange} />
+        <EmailInput onSearchChange={handleOnSearch} />
       )}
       <MagnifyingGlassIcon className="absolute top-1/2 left-2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
 
@@ -57,7 +73,7 @@ function EmailInput({ onSearchChange }: EmailInputProps) {
       placeholder="Buscar por email"
       aria-label="Buscar por email"
       onChange={(e) => {
-        onSearchChange({ field: "email", search: e.target.value });
+        onSearchChange({ id: "email", value: e.target.value });
       }}
     />
   );
@@ -73,7 +89,7 @@ function NameInput<TData>({ onSearchChange }: NameInputProps) {
       placeholder="Buscar por nombre"
       aria-label="Buscar por nombre"
       onChange={(e) => {
-        onSearchChange({ field: "name", search: e.target.value });
+        onSearchChange({ id: "name", value: e.target.value });
       }}
     />
   );

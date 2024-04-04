@@ -11,9 +11,8 @@ import {
   type ColumnFiltersState,
   type SortingState,
   getCoreRowModel,
-  type ColumnSort,
 } from "@tanstack/react-table";
-import CVTableSearch from "./cv-table-search";
+import CVTableSearch, { type OnSearch, type Search } from "./cv-table-search";
 import CVTableFilters from "./cv-table-filters";
 import CVTableStorageUsed from "./cv-table-storage";
 import CVTablePagination from "./cv-table-pagination";
@@ -25,6 +24,7 @@ dayJS.locale("es");
 export default function CVTable() {
   const [limit, setLimit] = useState<number>(10);
   const [page, setPage] = useState<number>(1);
+  const [search, setSearch] = useState<Search | undefined>();
   const [sortingState, setSortingState] = useState<SortingState>([
     { id: "createdAt", desc: true },
   ]);
@@ -43,6 +43,7 @@ export default function CVTable() {
       { id: "createdAt" | "name" | "email"; desc: boolean },
       ...{ id: "createdAt" | "name" | "email"; desc: boolean }[]
     ],
+    search: search,
   });
 
   const columns = generateColumns({
@@ -70,6 +71,14 @@ export default function CVTable() {
     },
   });
 
+  const handleOnSearch: OnSearch = (params) => {
+    if (params.value === "") {
+      setSearch(undefined);
+    } else {
+      setSearch(params);
+    }
+  };
+
   const handleOnLimitChange = (newLimit: number) => setLimit(newLimit);
   const handleOnNextPage = () => setPage((currentPage) => currentPage + 1);
   const handleOnPrevPage = () => setPage((currentPage) => currentPage - 1);
@@ -89,9 +98,7 @@ export default function CVTable() {
   return (
     <div className="space-y-2 mt-4">
       <div className="flex items-center justify-between">
-        <CVTableSearch
-          onSearchChange={(params) => console.log("Searching for ", params)}
-        />
+        <CVTableSearch onSearchChange={handleOnSearch} />
 
         <div className="flex items-center space-x-2">
           <CVTableFilters

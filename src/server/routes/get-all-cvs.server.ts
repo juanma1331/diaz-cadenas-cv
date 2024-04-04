@@ -8,8 +8,9 @@ import {
   CVS,
   ATTACHMENTS,
   asc,
+  and,
 } from "astro:db";
-import { count } from "drizzle-orm";
+import { count, type SQLWrapper } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 export const filterSchema = z.object({
@@ -63,32 +64,35 @@ export const getAllCVSServerProcedure = publicProcedure
   .input(inputSchema)
   .output(outputSchema)
   .query(async ({ input }) => {
-    const { filters, search, pagination, sorting } = input;
-    console.log(input);
-
-    const cvsQuery = db.select().from(CVS);
-    const totalPagesQuery = db.select({ count: count() }).from(CVS);
+    const { pagination, sorting, filters, search } = input;
+    let cvsQuery = db.select().from(CVS).$dynamic();
+    let totalPagesQuery = db.select({ count: count() }).from(CVS).$dynamic();
 
     // Filtering
     if (filters) {
-      for (let filter of filters) {
+      const filterConditions: (SQLWrapper | undefined)[] = [];
+
+      filters.forEach((filter) => {
         const { id, value } = filter;
         switch (id) {
           case "place":
-            cvsQuery.where(like(CVS.place, value));
-            totalPagesQuery.where(like(CVS.place, value));
+            filterConditions.push(like(CVS.place, `%${value}%`));
             break;
           case "position":
-            cvsQuery.where(like(CVS.position, value));
-            totalPagesQuery.where(like(CVS.position, value));
+            filterConditions.push(like(CVS.position, `%${value}%`));
             break;
           case "status":
-            cvsQuery.where(like(CVS.status, value));
-            totalPagesQuery.where(like(CVS.status, value));
+            filterConditions.push(like(CVS.status, `%${value}%`));
             break;
           default:
             throw new TRPCError({ code: "BAD_REQUEST" });
         }
+      });
+
+      if (filterConditions.length > 0) {
+        const filterCondition = and(...filterConditions);
+        cvsQuery = cvsQuery.where(filterCondition);
+        totalPagesQuery = totalPagesQuery.where(filterCondition);
       }
     }
 
@@ -96,12 +100,14 @@ export const getAllCVSServerProcedure = publicProcedure
       const { id, value } = search;
       switch (id) {
         case "name":
-          cvsQuery.where(like(CVS.name, `%${value}%`));
-          totalPagesQuery.where(like(CVS.name, `%${value}%`));
+          cvsQuery = cvsQuery.where(like(CVS.name, `%${value}%`));
+          totalPagesQuery = totalPagesQuery.where(like(CVS.name, `%${value}%`));
           break;
         case "email":
-          cvsQuery.where(like(CVS.email, `%${value}%`));
-          totalPagesQuery.where(like(CVS.email, `%${value}%`));
+          cvsQuery = cvsQuery.where(like(CVS.email, `%${value}%`));
+          totalPagesQuery = totalPagesQuery.where(
+            like(CVS.email, `%${value}%`)
+          );
           break;
         default:
           throw new TRPCError({ code: "BAD_REQUEST" });
@@ -136,6 +142,7 @@ export const getAllCVSServerProcedure = publicProcedure
 
     // Select cvs attachments
     const cvsStartTime = Date.now();
+    console.log(cvsQuery.toString());
     const cvsResults = await cvsQuery.all();
     const cvsEndTime = Date.now();
     console.log(`CVs query took ${cvsEndTime - cvsStartTime} ms`);
