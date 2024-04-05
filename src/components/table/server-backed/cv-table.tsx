@@ -124,7 +124,7 @@ export default function CVTable() {
 
       const prevCVSIndex = prevData?.cvs.findIndex((c) => c.id === cv.id);
 
-      if (!prevCVSIndex) {
+      if (prevCVSIndex === -1) {
         throw new Error("No prev CVS Index");
       }
 
@@ -167,7 +167,7 @@ export default function CVTable() {
 
       const prevCVSIndex = prevData?.cvs.findIndex((c) => c.id === cv.id);
 
-      if (!prevCVSIndex) {
+      if (prevCVSIndex === -1) {
         throw new Error("No prev CVS Index");
       }
 
@@ -210,7 +210,7 @@ export default function CVTable() {
 
       const prevCVSIndex = prevData?.cvs.findIndex((c) => c.id === cv.id);
 
-      if (!prevCVSIndex) {
+      if (prevCVSIndex === -1) {
         throw new Error("No prev CVS Index");
       }
 
