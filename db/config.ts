@@ -1,3 +1,4 @@
+import { CVSStatus } from "@/types";
 import { NOW, column, defineDb, defineTable } from "astro:db";
 
 const CVS = defineTable({
@@ -7,7 +8,7 @@ const CVS = defineTable({
     email: column.text(),
     place: column.text(),
     position: column.text(),
-    status: column.text({ default: "pending" }),
+    status: column.number({ default: CVSStatus.PENDING }),
     createdAt: column.date(),
   },
 });

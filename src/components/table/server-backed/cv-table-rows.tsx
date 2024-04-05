@@ -53,7 +53,7 @@ function LoadingTableBody() {
   return (
     <TableBody>
       <TableRow>
-        <TableCell colSpan={7} className="h-44">
+        <TableCell colSpan={8} className="h-44">
           <div className="flex items-center flex-col gap-2">
             <ReloadIcon className="h-4 w-4 animate-spin mx-auto" />
             <p>Cargando...</p>
@@ -86,7 +86,7 @@ function DataTableBody<TData>({ table }: { table: TableType<TData> }) {
     return (
       <TableBody>
         <TableRow>
-          <TableCell colSpan={7} className="h-44 text-center">
+          <TableCell colSpan={8} className="h-44 text-center">
             Actualmente no hay CVs para mostrar
           </TableCell>
         </TableRow>

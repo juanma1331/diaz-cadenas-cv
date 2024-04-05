@@ -15,7 +15,7 @@ import { TRPCError } from "@trpc/server";
 
 export const filterSchema = z.object({
   id: z.enum(["place", "position", "status"]),
-  value: z.string(),
+  value: z.string().or(z.number()),
 });
 
 export const sortSchema = z.object({
@@ -42,7 +42,7 @@ export const cvSchema = z.object({
   id: z.string(),
   name: z.string(),
   email: z.string(),
-  status: z.string(),
+  status: z.number(),
   place: z.string(),
   position: z.string(),
   createdAt: z.string(),
@@ -82,7 +82,7 @@ export const getAllCVSServerProcedure = publicProcedure
             filterConditions.push(like(CVS.position, `%${value}%`));
             break;
           case "status":
-            filterConditions.push(like(CVS.status, `%${value}%`));
+            filterConditions.push(like(CVS.status, `${value}`));
             break;
           default:
             throw new TRPCError({ code: "BAD_REQUEST" });

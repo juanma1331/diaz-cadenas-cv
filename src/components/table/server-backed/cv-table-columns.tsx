@@ -41,6 +41,7 @@ import {
   type OnCleanSort,
   type OnClearFilter,
 } from "./cv-table-column";
+import { CVSStatus } from "@/types";
 
 dayJS.extend(utc);
 dayJS.extend(relativeTime);
@@ -58,27 +59,40 @@ export type CVRow = {
   email: string;
   place: string;
   position: string;
-  status: string;
+  status: number;
   createdAt: string;
   attachments: RowAttachment[];
 };
 
-export type GenerateColumnsParams = {
+export type Filtering = {
   filteringState: ColumnFiltersState;
   onFilteringChange: OnFilter;
   onClearFilter: OnClearFilter;
+};
+
+export type Sorting = {
   sortingState: SortingState;
   onSortingChange: OnSort;
   onCleanSort: OnCleanSort;
 };
 
+export type Actions = {
+  onMarkAsReviewed: (cv: CVRow) => void;
+  onMarkAsRejected: (cv: CVRow) => void;
+  onMarkAsSelected: (cv: CVRow) => void;
+  onDelete: (cv: CVRow) => void;
+};
+
+export type GenerateColumnsParams = {
+  filtering: Filtering;
+  sorting: Sorting;
+  actions: Actions;
+};
+
 export function generateColumns({
-  filteringState,
-  onFilteringChange,
-  onClearFilter,
-  sortingState,
-  onSortingChange,
-  onCleanSort,
+  filtering,
+  sorting,
+  actions,
 }: GenerateColumnsParams): ColumnDef<CVRow>[] {
   const columns: ColumnDef<CVRow>[] = [
     {
@@ -88,10 +102,10 @@ export function generateColumns({
           <SortingColumnHeader
             id="name"
             title="Nombre"
-            isDesc={isDesc(sortingState, "name")}
-            isSorting={isSorting(sortingState, "name")}
-            onSortingChange={onSortingChange}
-            onCleanSort={onCleanSort}
+            isDesc={isDesc(sorting.sortingState, "name")}
+            isSorting={isSorting(sorting.sortingState, "name")}
+            onSortingChange={sorting.onSortingChange}
+            onCleanSort={sorting.onCleanSort}
           />
         );
       },
@@ -103,10 +117,10 @@ export function generateColumns({
           <SortingColumnHeader
             id="email"
             title="Email"
-            isDesc={isDesc(sortingState, "email")}
-            isSorting={isSorting(sortingState, "email")}
-            onSortingChange={onSortingChange}
-            onCleanSort={onCleanSort}
+            isDesc={isDesc(sorting.sortingState, "email")}
+            isSorting={isSorting(sorting.sortingState, "email")}
+            onSortingChange={sorting.onSortingChange}
+            onCleanSort={sorting.onCleanSort}
           />
         );
       },
@@ -126,9 +140,9 @@ export function generateColumns({
       header: () => {
         return (
           <PlaceFilteringColumnHeader
-            filteringState={filteringState}
-            onFilter={onFilteringChange}
-            onClearFilter={onClearFilter}
+            filteringState={filtering.filteringState}
+            onFilter={filtering.onFilteringChange}
+            onClearFilter={filtering.onClearFilter}
           />
         );
       },
@@ -138,9 +152,9 @@ export function generateColumns({
       header: () => {
         return (
           <PositionFilteringColumnHeader
-            filteringState={filteringState}
-            onFilter={onFilteringChange}
-            onClearFilter={onClearFilter}
+            filteringState={filtering.filteringState}
+            onFilter={filtering.onFilteringChange}
+            onClearFilter={filtering.onClearFilter}
           />
         );
       },
@@ -150,9 +164,9 @@ export function generateColumns({
       header: () => {
         return (
           <StatusFilteringColumnHeader
-            filteringState={filteringState}
-            onFilter={onFilteringChange}
-            onClearFilter={onClearFilter}
+            filteringState={filtering.filteringState}
+            onFilter={filtering.onFilteringChange}
+            onClearFilter={filtering.onClearFilter}
           />
         );
       },
@@ -161,14 +175,30 @@ export function generateColumns({
         let badgeColor = "";
         let badgeText = "";
 
-        if (status === "pending") {
-          badgeColor =
-            "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80 hover:text-yellow-900";
-          badgeText = "Pendiente";
-        } else {
-          badgeColor =
-            "bg-green-300 text-green-900 hover:bg-green-300/80 hover:text-green-900";
-          badgeText = "Revisado";
+        switch (status) {
+          case CVSStatus.PENDING:
+            badgeColor =
+              "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80 hover:text-yellow-900";
+            badgeText = "Pendiente";
+            break;
+
+          case CVSStatus.REVIEWED:
+            badgeColor =
+              "bg-green-300 text-green-900 hover:bg-green-300/80 hover:text-green-900";
+            badgeText = "Revisado";
+            break;
+          case CVSStatus.REJECTED:
+            badgeColor =
+              "bg-red-300 text-red-900 hover:bg-red-300/80 hover:text-red-900";
+            badgeText = "Rechazado";
+            break;
+          case CVSStatus.SELECTED:
+            badgeColor =
+              "bg-blue-300 text-blue-900 hover:bg-blue-300/80 hover:text-blue-900";
+            badgeText = "Seleccionado";
+            break;
+          default:
+            throw new Error("Invalid status");
         }
 
         return <Badge className={badgeColor}>{badgeText}</Badge>;
@@ -221,8 +251,29 @@ export function generateColumns({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                <DropdownMenuItem>Marcar como revisado</DropdownMenuItem>
-                <DropdownMenuItem>Marcar como rechazado</DropdownMenuItem>
+                {row.original.status !== CVSStatus.REVIEWED && (
+                  <DropdownMenuItem
+                    onClick={() => actions.onMarkAsReviewed(row.original)}
+                  >
+                    Marcar como revisado
+                  </DropdownMenuItem>
+                )}
+
+                {row.original.status !== CVSStatus.REJECTED && (
+                  <DropdownMenuItem
+                    onClick={() => actions.onMarkAsRejected(row.original)}
+                  >
+                    Marcar como rechazado
+                  </DropdownMenuItem>
+                )}
+
+                {row.original.status !== CVSStatus.SELECTED && (
+                  <DropdownMenuItem
+                    onClick={() => actions.onMarkAsSelected(row.original)}
+                  >
+                    Marcar como seleccionado
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
 
                 <AlertDialogTrigger asChild>
@@ -244,7 +295,10 @@ export function generateColumns({
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction asChild>
                   {/* TODO: Fix this */}
-                  <Button className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  <Button
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    onClick={() => actions.onDelete(row.original)}
+                  >
                     Eliminar
                   </Button>
                 </AlertDialogAction>

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Dot, ListFilter, WandSparkles } from "lucide-react";
 import { places, positions } from "@/constants";
+import { CVSStatus } from "@/types";
 
 export type OnSort = (sort: ColumnSort) => void;
 export type OnCleanSort = (id: string) => void;
@@ -230,15 +231,15 @@ export function StatusFilteringColumnHeader({
       <DropdownMenuContent align="start">
         <DropdownMenuItem
           className={
-            currentFilter?.value === "pending"
+            currentFilter?.value === CVSStatus.PENDING
               ? "bg-primary text-primary-foreground"
               : ""
           }
-          onClick={() => onFilter({ id: "status", value: "pending" })}
+          onClick={() => onFilter({ id: "status", value: CVSStatus.PENDING })}
         >
           <Dot
             className={`mr-2 h-3.5 w-3.5 ${
-              currentFilter?.value === "pending"
+              currentFilter?.value === CVSStatus.PENDING
                 ? "text-primary-foreground"
                 : "text-muted-foreground/70"
             }`}
@@ -247,20 +248,54 @@ export function StatusFilteringColumnHeader({
         </DropdownMenuItem>
         <DropdownMenuItem
           className={
-            currentFilter?.value === "reviewed"
+            currentFilter?.value === CVSStatus.REVIEWED
               ? "bg-primary text-primary-foreground"
               : ""
           }
-          onClick={() => onFilter({ id: "status", value: "reviewed" })}
+          onClick={() => onFilter({ id: "status", value: CVSStatus.REVIEWED })}
         >
           <Dot
             className={`mr-2 h-3.5 w-3.5 ${
-              currentFilter?.value === "reviewed"
+              currentFilter?.value === CVSStatus.REVIEWED
                 ? "text-primary-foreground"
                 : "text-muted-foreground/70"
             }`}
           />
           Revisado
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className={
+            currentFilter?.value === CVSStatus.REJECTED
+              ? "bg-primary text-primary-foreground"
+              : ""
+          }
+          onClick={() => onFilter({ id: "status", value: CVSStatus.REJECTED })}
+        >
+          <Dot
+            className={`mr-2 h-3.5 w-3.5 ${
+              currentFilter?.value === CVSStatus.REJECTED
+                ? "text-primary-foreground"
+                : "text-muted-foreground/70"
+            }`}
+          />
+          Rechazado
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className={
+            currentFilter?.value === CVSStatus.SELECTED
+              ? "bg-primary text-primary-foreground"
+              : ""
+          }
+          onClick={() => onFilter({ id: "status", value: CVSStatus.SELECTED })}
+        >
+          <Dot
+            className={`mr-2 h-3.5 w-3.5 ${
+              currentFilter?.value === CVSStatus.SELECTED
+                ? "text-primary-foreground"
+                : "text-muted-foreground/70"
+            }`}
+          />
+          Seleccionado
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => onClearFilter("status")}>
