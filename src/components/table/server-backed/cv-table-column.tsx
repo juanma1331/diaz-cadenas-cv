@@ -17,9 +17,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Dot, ListFilter, WandSparkles } from "lucide-react";
+import {
+  Calendar,
+  CalendarDays,
+  CalendarIcon,
+  Dot,
+  ListFilter,
+  WandSparkles,
+} from "lucide-react";
 import { places, positions } from "@/constants";
 import { CVSStatus } from "@/types";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/utils/cn";
+import { format, setDate } from "date-fns";
+import { useState } from "react";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 
 export type OnSort = (sort: ColumnSort) => void;
 export type OnCleanSort = (id: string) => void;
@@ -32,7 +48,6 @@ export type SortingColumnHeaderProps = {
   onSortingChange: OnSort;
   onCleanSort: OnCleanSort;
 };
-
 export function SortingColumnHeader({
   id,
   title,
@@ -97,7 +112,6 @@ type PositionFilteringColumnHeaderProps = {
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
 };
-
 export function PositionFilteringColumnHeader({
   filteringState,
   onFilter,
@@ -153,7 +167,6 @@ type PlaceFilteringColumnHeaderProps = {
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
 };
-
 export function PlaceFilteringColumnHeader({
   onFilter,
   filteringState,
@@ -209,7 +222,6 @@ type StatusFilteringColumnHeaderProps = {
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
 };
-
 export function StatusFilteringColumnHeader({
   onFilter,
   filteringState,
@@ -302,6 +314,44 @@ export function StatusFilteringColumnHeader({
           <WandSparkles className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
           Limpiar
         </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export function DateFilteringColumnHeader() {
+  const [date, setDate] = useState<Date>();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className={`-ml-3 h-8 data-[state=open]:bg-accent`}
+        >
+          <span>Enviado</span>
+          <ListFilter className={`h-3.5 w-3.5 ml-2`} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        <Popover modal={true}>
+          <PopoverTrigger asChild>
+            <DropdownMenuItem>
+              <Calendar className="mr-2 h-3.5 w-3.5" />
+              Fecha
+            </DropdownMenuItem>
+          </PopoverTrigger>
+        </Popover>
+        {/* <DropdownMenuItem>
+          <CalendarDays className="mr-2 h-3.5 w-3.5" />
+          Rango de fechas
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => console.log("Cleaning")}>
+          <WandSparkles className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+          Limpiar
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );

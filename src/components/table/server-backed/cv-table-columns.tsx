@@ -40,6 +40,7 @@ import {
   StatusFilteringColumnHeader,
   type OnCleanSort,
   type OnClearFilter,
+  DateFilteringColumnHeader,
 } from "./cv-table-column";
 import { CVSStatus } from "@/types";
 
@@ -127,7 +128,9 @@ export function generateColumns({
     },
     {
       accessorKey: "createdAt",
-      header: "Enviado",
+      header: () => {
+        return <DateFilteringColumnHeader />;
+      },
       cell: ({ row }) => {
         const createdAt = row.getValue("createdAt") as string;
         const local = dayJS.utc(createdAt).local();
