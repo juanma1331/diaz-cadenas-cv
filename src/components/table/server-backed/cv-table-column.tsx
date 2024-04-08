@@ -33,9 +33,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/utils/cn";
-import { format, setDate } from "date-fns";
+import { addDays, format, setDate } from "date-fns";
 import { useState } from "react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { DateRange } from "react-day-picker";
 
 export type OnSort = (sort: ColumnSort) => void;
 export type OnCleanSort = (id: string) => void;
@@ -320,9 +322,15 @@ export function StatusFilteringColumnHeader({
 }
 
 export function DateFilteringColumnHeader() {
-  const [date, setDate] = useState<Date>();
+  const [open, setOpen] = useState<boolean>(false);
+  const [single, setSingle] = useState<Date>();
+  const [range, setRange] = useState<DateRange | undefined>({
+    from: new Date(2022, 0, 20),
+    to: addDays(new Date(2022, 0, 20), 20),
+  });
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
@@ -333,22 +341,44 @@ export function DateFilteringColumnHeader() {
           <ListFilter className={`h-3.5 w-3.5 ml-2`} />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start">
-        <Popover modal={true}>
-          <PopoverTrigger asChild>
-            <DropdownMenuItem>
+      <DropdownMenuContent align="start" className="w-fit">
+        <Tabs defaultValue="single">
+          <TabsList>
+            <TabsTrigger value="single">
               <Calendar className="mr-2 h-3.5 w-3.5" />
               Fecha
-            </DropdownMenuItem>
-          </PopoverTrigger>
-        </Popover>
+            </TabsTrigger>
+            <TabsTrigger value="range">
+              <CalendarDays className="mr-2 h-3.5 w-3.5" />
+              Rango
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="single">
+            <CalendarComponent
+              mode="single"
+              selected={single}
+              onSelect={setSingle}
+              initialFocus
+            />
+          </TabsContent>
+          <TabsContent value="range">
+            <CalendarComponent
+              mode="range"
+              defaultMonth={range?.from}
+              selected={range}
+              onSelect={setRange}
+              numberOfMonths={2}
+            />
+          </TabsContent>
+        </Tabs>
+
         {/* <DropdownMenuItem>
           <CalendarDays className="mr-2 h-3.5 w-3.5" />
           Rango de fechas
-        </DropdownMenuItem>
-
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => console.log("Cleaning")}>
+          </DropdownMenuItem>
+          
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => console.log("Cleaning")}>
           <WandSparkles className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
           Limpiar
         </DropdownMenuItem> */}
