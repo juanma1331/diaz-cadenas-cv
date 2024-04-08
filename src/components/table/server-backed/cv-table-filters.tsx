@@ -1,42 +1,98 @@
-import type { ColumnFiltersState } from "@tanstack/react-table";
+import type {
+  ColumnFilter,
+  ColumnFiltersState,
+  ColumnSort,
+  SortingState,
+} from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  Filter,
+  WandSparkles,
+  X,
+} from "lucide-react";
 
 export type CVTableFiltersProps = {
-  filters: ColumnFiltersState;
+  filteringState: ColumnFiltersState;
+  sortingState: SortingState;
   setFilters: (filters: ColumnFiltersState) => void;
+  setSorting: (sorting: SortingState) => void;
 };
 
 export default function CVTableFilters({
-  filters,
+  filteringState,
+  sortingState,
   setFilters,
+  setSorting,
 }: CVTableFiltersProps) {
-  if (filters.length === 0) {
+  if (filteringState.length === 0 && sortingState.length === 0) {
     return null;
   }
 
+  const sortAndFilters = [...sortingState, ...filteringState];
+
   return (
     <div className="flex items-center gap-1 h-10 p-2 border border-border rounded-md">
-      {filters.map((filter, i) => (
-        <Badge
-          key={`table-filter-${i}`}
-          variant="outline"
-          className="flex items-center justify-center cursor-pointer hover:bg-slate-300"
-          onClick={() => setFilters(filters.filter((f) => f.id !== filter.id))}
-        >
-          <span>{filter.value as string}</span>
-          <X className="h-3.5 w-3.5 ml-1" />
-        </Badge>
-      ))}
+      {sortAndFilters.map((item, i) => {
+        if (isFilter(item)) {
+          const el = item as ColumnFilter;
+          return (
+            <Badge
+              key={`table-filter-${i}`}
+              variant="outline"
+              className="flex items-center justify-center gap-1 cursor-pointer"
+              onClick={() =>
+                setFilters(filteringState.filter((f) => f.id !== el.id))
+              }
+            >
+              <span>{el.value as string}</span>
+              <Filter className="w-3.5 h-3.5" />
+            </Badge>
+          );
+        }
+
+        if (isSort(item)) {
+          const el = item as ColumnSort;
+          return (
+            <Badge
+              key={`table-filter-${i}`}
+              variant="outline"
+              className="flex items-center justify-center gap-1 cursor-pointer"
+              onClick={() =>
+                setSorting(sortingState.filter((s) => s.id !== el.id))
+              }
+            >
+              <span className="capitalize">{el.id as string}</span>
+              {el.desc ? (
+                <ArrowDownIcon className="h-3.5 w-3.5" />
+              ) : (
+                <ArrowUpIcon className="h-3.5 w-3.5" />
+              )}
+            </Badge>
+          );
+        }
+      })}
       <Badge
         key={`table-filter-all`}
-        variant="outline"
-        className="flex items-center justify-center cursor-pointer hover:bg-slate-300 outline outline-1 outline-red-400"
-        onClick={() => setFilters([])}
+        variant="destructive"
+        className="flex items-center justify-center gap-1 cursor-pointer"
+        onClick={() => {
+          setFilters([]);
+          setSorting([]);
+        }}
       >
-        <span>Todos</span>
-        <X className="h-3.5 w-3.5 ml-1" />
+        <span>Limpiar</span>
+        <WandSparkles className="h-3.5 w-3.5" />
       </Badge>
     </div>
   );
+}
+
+function isSort(obj: ColumnSort | ColumnFilter) {
+  return "desc" in obj;
+}
+
+function isFilter(obj: ColumnSort | ColumnFilter) {
+  return "value" in obj;
 }

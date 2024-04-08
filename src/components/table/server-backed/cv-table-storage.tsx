@@ -7,26 +7,28 @@ export type CVTableStorageUsedProps = {
 // Función para determinar el color basado en el almacenamiento utilizado
 const getColorBasedOnStorageUsed = (storageUsed: number): string => {
   if (storageUsed < 25) {
-    return "text-green-500";
+    return "border-green-400";
   } else if (storageUsed < 50) {
-    return "text-blue-500";
+    return "border-blue-400";
   } else if (storageUsed < 75) {
-    return "text-orange-500";
+    return "border-orange-400";
   } else {
-    return "text-red-500";
+    return "border-red-400";
   }
 };
 
 export default function CVTableStorageUsed({
   storageUsed,
 }: CVTableStorageUsedProps) {
-  const colorClass = getColorBasedOnStorageUsed(storageUsed);
+  const borderColor = getColorBasedOnStorageUsed(storageUsed);
 
   return (
-    <div className="flex items-center justify-center space-x-2 border border-border h-10 w-32 rounded-md">
+    <div
+      className={`flex items-center justify-center space-x-2 border ${borderColor} h-10 w-32 rounded-md`}
+    >
       <HardDrive className="h-3.5 w-3.5 text-slate-800" />
-      <span className="font-semibold text-sm text-slate-600">En uso:</span>
-      <span className={`font-bold text-xs ${colorClass}`}>
+      <span className="text-sm text-slate-600">En uso:</span>
+      <span className={`font-semibold text-xs text-primary`}>
         {storageUsed} GB
       </span>
     </div>

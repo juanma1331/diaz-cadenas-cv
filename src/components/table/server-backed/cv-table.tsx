@@ -41,9 +41,7 @@ export default function CVTable() {
   const [limit, setLimit] = useState<number>(10);
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<Search | undefined>();
-  const [sortingState, setSortingState] = useState<SortingState>([
-    { id: "createdAt", desc: true },
-  ]);
+  const [sortingState, setSortingState] = useState<SortingState>([]);
   const [filteringState, setFilteringState] = useState<ColumnFiltersState>([]);
   const utils = trpcReact.useUtils();
   const queryInput = {
@@ -57,12 +55,13 @@ export default function CVTable() {
   };
 
   const {
-    data,
+    data: cvsData,
     isLoading,
     isError: getAllCVSError,
-  } = trpcReact.getAllCVS.useQuery(queryInput, {
-    queryKey: ["getAllCVS", queryInput],
-  });
+  } = trpcReact.getAllCVS.useQuery(queryInput);
+
+  const { data: storageInUseData, isError: getStorageInUseError } =
+    trpcReact.storageInUse.useQuery();
 
   const {
     mutate: changeStatus,
@@ -108,7 +107,7 @@ export default function CVTable() {
       setSortingState([sort]);
     },
     onCleanSort: () => {
-      setSortingState([{ id: "createdAt", desc: true }]);
+      setSortingState([]);
     },
   };
 
@@ -291,15 +290,15 @@ export default function CVTable() {
   const handleOnNextPage = () => setPage((currentPage) => currentPage + 1);
   const handleOnPrevPage = () => setPage((currentPage) => currentPage - 1);
   const handleOnFirstPage = () => setPage(1);
-  const handleOnLastPage = () => setPage(data?.pages.length!);
+  const handleOnLastPage = () => setPage(cvsData?.pages.length!);
 
   const table = useReactTable({
     columns,
-    data: data?.cvs ?? [],
+    data: cvsData?.cvs ?? [],
     getCoreRowModel: getCoreRowModel(),
   });
 
-  if (getAllCVSError || changeStatusError) {
+  if (getAllCVSError || changeStatusError || getStorageInUseError) {
     return <div>Error</div>;
   }
 
@@ -310,10 +309,14 @@ export default function CVTable() {
 
         <div className="flex items-center space-x-2">
           <CVTableFilters
-            filters={filteringState}
+            filteringState={filteringState}
+            sortingState={sortingState}
             setFilters={setFilteringState}
+            setSorting={setSortingState}
           />
-          <CVTableStorageUsed storageUsed={0} />
+          <CVTableStorageUsed
+            storageUsed={storageInUseData?.storageInUse ?? 0}
+          />
         </div>
       </div>
 
@@ -329,7 +332,7 @@ export default function CVTable() {
             onNextPage={handleOnNextPage}
             onFirstPage={handleOnFirstPage}
             onLastPage={handleOnLastPage}
-            pages={data.pages}
+            pages={cvsData.pages}
           />
         )}
       </div>

@@ -52,12 +52,12 @@ export function SortingColumnHeader({
           <span>{title}</span>
           {isSorting ? (
             isDesc ? (
-              <ArrowDownIcon className="ml-2 h-4 w-4" />
+              <ArrowDownIcon className="ml-2 h-3.5 w-3.5" />
             ) : (
-              <ArrowUpIcon className="ml-2 h-4 w-4" />
+              <ArrowUpIcon className="ml-2 h-3.5 w-3.5" />
             )
           ) : (
-            <CaretSortIcon className="ml-2 h-4 w-4" />
+            <CaretSortIcon className="ml-2 h-3.5 w-3.5" />
           )}
         </Button>
       </DropdownMenuTrigger>

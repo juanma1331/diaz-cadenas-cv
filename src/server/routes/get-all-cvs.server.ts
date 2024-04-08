@@ -30,8 +30,9 @@ export const inputSchema = z.object({
       id: z.enum(["name", "email"]),
       value: z.string(),
     })
+
     .optional(),
-  sorting: z.array(sortSchema).nonempty(),
+  sorting: z.array(sortSchema).max(1, { message: "Only one sorting" }),
   pagination: z.object({
     page: z.number().default(1),
     limit: z.number().default(10),
@@ -115,24 +116,22 @@ export const getAllCVSServerProcedure = publicProcedure
     }
 
     // Sorting
-    const { id, desc } = sorting[0];
-    switch (id) {
-      case "name":
-        cvsQuery.orderBy(desc ? descFun(CVS.name) : asc(CVS.name));
-        totalPagesQuery.orderBy(desc ? descFun(CVS.name) : asc(CVS.name));
-        break;
-      case "email":
-        cvsQuery.orderBy(desc ? descFun(CVS.email) : asc(CVS.email));
-        totalPagesQuery.orderBy(desc ? descFun(CVS.email) : asc(CVS.email));
-        break;
-      case "createdAt":
-        cvsQuery.orderBy(desc ? descFun(CVS.createdAt) : asc(CVS.createdAt));
-        totalPagesQuery.orderBy(
-          desc ? descFun(CVS.createdAt) : asc(CVS.createdAt)
-        );
-        break;
-      default:
-        throw new TRPCError({ code: "BAD_REQUEST" });
+    if (!sorting.length) {
+      cvsQuery.orderBy(descFun(CVS.createdAt));
+      totalPagesQuery.orderBy(descFun(CVS.createdAt));
+    } else {
+      const { id, desc } = sorting[0];
+      switch (id) {
+        case "name":
+          cvsQuery.orderBy(desc ? descFun(CVS.name) : asc(CVS.name));
+          totalPagesQuery.orderBy(desc ? descFun(CVS.name) : asc(CVS.name));
+          break;
+        case "email":
+          cvsQuery.orderBy(desc ? descFun(CVS.email) : asc(CVS.email));
+          totalPagesQuery.orderBy(desc ? descFun(CVS.email) : asc(CVS.email));
+          break;
+        default:
+      }
     }
 
     // Pagination
