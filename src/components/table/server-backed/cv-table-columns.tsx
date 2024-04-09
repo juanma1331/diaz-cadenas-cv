@@ -221,14 +221,14 @@ export function generateColumns({
       header: "Adjuntos",
       cell: ({ row }) => {
         const attachments = row.getValue("attachments") as RowAttachment[];
-        const splitAttachmentText = (name: string) => {
-          return name.split("/")[1];
-        };
         return (
-          <div className="flex justify-center gap-2">
+          <div className="flex justify-center gap-2" key={"random key"}>
             {attachments.map((att, i) => {
               const isPdf = att.type.includes("application/pdf");
               const isVideo = att.type.includes("video/mp4");
+              if (!isPdf && !isVideo)
+                throw new Error("Invalid attachment type");
+
               if (isPdf) {
                 return (
                   <Button
@@ -238,7 +238,10 @@ export function generateColumns({
                     key={`attachment-header-${att.type}`}
                     asChild
                   >
-                    <a href="#" className="flex items-center gap-1">
+                    <a
+                      href="https://pdfobject.com/pdf/sample.pdf"
+                      className="flex items-center gap-1"
+                    >
                       <FileText className="h-3.5 w-3.5" />
                     </a>
                   </Button>
@@ -247,19 +250,40 @@ export function generateColumns({
 
               if (isVideo) {
                 return (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="font-normal"
-                    key={`attachment-header-${att.type}`}
-                    asChild
-                  >
-                    <a href="#" className="flex items-center gap-1">
-                      <Video className="h-3.5 w-3.5" />
-                    </a>
-                  </Button>
+                  <AlertDialog key={`attachment-header-${att.type}`}>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="font-normal"
+                        asChild
+                      >
+                        <a href="#" className="flex items-center gap-1">
+                          <Video className="h-3.5 w-3.5" />
+                        </a>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <video
+                        className="rounded-md"
+                        width={1280}
+                        height={720}
+                        controls
+                      >
+                        <source
+                          src="https://samplelib.com/lib/preview/mp4/sample-5s.mp4"
+                          type="video/mp4"
+                        />
+                      </video>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cerrar</AlertDialogCancel>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 );
               }
+
+              return null;
             })}
           </div>
         );
