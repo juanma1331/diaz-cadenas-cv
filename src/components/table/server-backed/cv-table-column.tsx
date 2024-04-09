@@ -8,6 +8,7 @@ import {
   type ColumnFiltersState,
   type ColumnSort,
 } from "@tanstack/react-table";
+import { es } from "date-fns/locale";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,9 +32,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/utils/cn";
-import { addDays, format, setDate } from "date-fns";
+} from "@/components/ui/popover"; // TODO: Uninstall component
 import { useState } from "react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -47,7 +46,7 @@ export type SortingColumnHeaderProps = {
   title: string;
   isDesc: boolean;
   isSorting: boolean;
-  onSortingChange: OnSort;
+  onSort: OnSort;
   onCleanSort: OnCleanSort;
 };
 export function SortingColumnHeader({
@@ -55,7 +54,7 @@ export function SortingColumnHeader({
   title,
   isDesc,
   isSorting,
-  onSortingChange,
+  onSort,
   onCleanSort,
 }: SortingColumnHeaderProps) {
   return (
@@ -80,7 +79,7 @@ export function SortingColumnHeader({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         <DropdownMenuItem
-          onClick={() => onSortingChange({ id, desc: false })}
+          onClick={() => onSort({ id, desc: false })}
           className={
             isSorting && !isDesc ? "bg-primary text-primary-foreground" : ""
           }
@@ -89,7 +88,7 @@ export function SortingColumnHeader({
           Asc
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => onSortingChange({ id, desc: true })}
+          onClick={() => onSort({ id, desc: true })}
           className={
             isSorting && isDesc ? "bg-primary text-primary-foreground" : ""
           }
@@ -164,7 +163,7 @@ export function PositionFilteringColumnHeader({
   );
 }
 
-type PlaceFilteringColumnHeaderProps = {
+export type PlaceFilteringColumnHeaderProps = {
   filteringState: ColumnFiltersState;
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
@@ -219,7 +218,7 @@ export function PlaceFilteringColumnHeader({
   );
 }
 
-type StatusFilteringColumnHeaderProps = {
+export type StatusFilteringColumnHeaderProps = {
   filteringState: ColumnFiltersState;
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
@@ -321,13 +320,33 @@ export function StatusFilteringColumnHeader({
   );
 }
 
-export function DateFilteringColumnHeader() {
+export type OnDateFilter = (filter: {
+  type: "single" | "range";
+  value: Date | DateRange;
+}) => void;
+export type DateFilteringColumnHeaderProps = {
+  onDateFilter: OnDateFilter;
+  onSort: OnSort;
+};
+export function DateFilteringColumnHeader({
+  onDateFilter,
+  onSort,
+}: DateFilteringColumnHeaderProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [single, setSingle] = useState<Date>();
-  const [range, setRange] = useState<DateRange | undefined>({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
-  });
+  const [range, setRange] = useState<DateRange | undefined>();
+
+  const handleOnDateFilter = (type: "single" | "range") => {
+    if (type === "single") {
+      if (!single) throw new Error("Single date undefined");
+      onDateFilter({ type: "single", value: single });
+    }
+
+    if (type === "range") {
+      if (!range) throw new Error("Range date undefined");
+      onDateFilter({ type: "range", value: range });
+    }
+  };
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -342,7 +361,15 @@ export function DateFilteringColumnHeader() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-fit">
-        <Tabs defaultValue="single">
+        <Tabs
+          defaultValue="single"
+          onValueChange={(val) => {
+            if (val === "desc") {
+              onSort({ id: "createdAt", desc: false });
+              setOpen(false);
+            }
+          }}
+        >
           <TabsList>
             <TabsTrigger value="single">
               <Calendar className="mr-2 h-3.5 w-3.5" />
@@ -352,36 +379,49 @@ export function DateFilteringColumnHeader() {
               <CalendarDays className="mr-2 h-3.5 w-3.5" />
               Rango
             </TabsTrigger>
+            <TabsTrigger value="desc">
+              <ArrowUpIcon className="mr-2 h-3.5 w-3.5" />
+              Asc
+            </TabsTrigger>
           </TabsList>
-          <TabsContent value="single">
+          <TabsContent value="single" className="space-y-2">
             <CalendarComponent
+              locale={es}
               mode="single"
               selected={single}
               onSelect={setSingle}
               initialFocus
             />
+            {single && (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleOnDateFilter("single")}
+              >
+                Aplicar
+              </Button>
+            )}
           </TabsContent>
-          <TabsContent value="range">
+          <TabsContent value="range" className="space-y-2">
             <CalendarComponent
+              locale={es}
               mode="range"
               defaultMonth={range?.from}
               selected={range}
               onSelect={setRange}
               numberOfMonths={2}
             />
+            {range && range.to && range.from && (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleOnDateFilter("range")}
+              >
+                Aplicar
+              </Button>
+            )}
           </TabsContent>
         </Tabs>
-
-        {/* <DropdownMenuItem>
-          <CalendarDays className="mr-2 h-3.5 w-3.5" />
-          Rango de fechas
-          </DropdownMenuItem>
-          
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => console.log("Cleaning")}>
-          <WandSparkles className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-          Limpiar
-        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );

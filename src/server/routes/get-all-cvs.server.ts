@@ -9,6 +9,8 @@ import {
   ATTACHMENTS,
   asc,
   and,
+  gte,
+  lt,
 } from "astro:db";
 import { count, type SQLWrapper } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
@@ -18,6 +20,22 @@ export const filterSchema = z.object({
   value: z.string().or(z.number()),
 });
 
+export const dateFilterSchema = z
+  .object({
+    type: z.literal("single"),
+    date: z.string(),
+  })
+  .optional()
+  .or(
+    z
+      .object({
+        type: z.literal("range"),
+        from: z.string(),
+        to: z.string(),
+      })
+      .optional()
+  );
+
 export const sortSchema = z.object({
   id: z.enum(["name", "email", "createdAt"]),
   desc: z.boolean(),
@@ -25,12 +43,12 @@ export const sortSchema = z.object({
 
 export const inputSchema = z.object({
   filters: z.array(filterSchema).optional(),
+  dateFilters: dateFilterSchema,
   search: z
     .object({
       id: z.enum(["name", "email"]),
       value: z.string(),
     })
-
     .optional(),
   sorting: z.array(sortSchema).max(1, { message: "Only one sorting" }),
   pagination: z.object({
@@ -65,7 +83,8 @@ export const getAllCVSServerProcedure = publicProcedure
   .input(inputSchema)
   .output(outputSchema)
   .query(async ({ input }) => {
-    const { pagination, sorting, filters, search } = input;
+    const { pagination, sorting, filters, dateFilters, search } = input;
+    console.log(input);
     let cvsQuery = db.select().from(CVS).$dynamic();
     let totalPagesQuery = db.select({ count: count() }).from(CVS).$dynamic();
 
@@ -97,6 +116,40 @@ export const getAllCVSServerProcedure = publicProcedure
       }
     }
 
+    // Date Filtering
+    if (dateFilters) {
+      const { type } = dateFilters;
+
+      switch (type) {
+        case "single":
+          const { date } = dateFilters;
+          const singleDate = new Date(date);
+          const nextDay = new Date(singleDate.getTime() + 86400000); // Add a day in miliseconds
+          cvsQuery = cvsQuery.where(
+            and(gte(CVS.createdAt, singleDate), lt(CVS.createdAt, nextDay))
+          );
+          totalPagesQuery = totalPagesQuery.where(
+            and(gte(CVS.createdAt, singleDate), lt(CVS.createdAt, nextDay))
+          );
+          break;
+        case "range": {
+          const { from, to } = dateFilters;
+          const fromDate = new Date(from);
+          const toDate = new Date(to);
+          cvsQuery = cvsQuery.where(
+            and(gte(CVS.createdAt, fromDate), lt(CVS.createdAt, toDate))
+          );
+          totalPagesQuery = totalPagesQuery.where(
+            and(gte(CVS.createdAt, fromDate), lt(CVS.createdAt, toDate))
+          );
+          break;
+        }
+        default:
+          throw new TRPCError({ code: "BAD_REQUEST" });
+      }
+    }
+
+    // Search
     if (search) {
       const { id, value } = search;
       switch (id) {
@@ -130,7 +183,14 @@ export const getAllCVSServerProcedure = publicProcedure
           cvsQuery.orderBy(desc ? descFun(CVS.email) : asc(CVS.email));
           totalPagesQuery.orderBy(desc ? descFun(CVS.email) : asc(CVS.email));
           break;
+        case "createdAt":
+          cvsQuery.orderBy(desc ? descFun(CVS.createdAt) : asc(CVS.createdAt));
+          totalPagesQuery.orderBy(
+            desc ? descFun(CVS.createdAt) : asc(CVS.createdAt)
+          );
+          break;
         default:
+          throw new TRPCError({ code: "BAD_REQUEST" });
       }
     }
 

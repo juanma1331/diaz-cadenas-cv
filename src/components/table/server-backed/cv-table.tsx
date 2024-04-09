@@ -4,6 +4,7 @@ import {
   type Filtering,
   type Sorting,
   type Actions,
+  type DateFiltering,
 } from "./cv-table-columns";
 import CVTableRows from "./cv-table-rows";
 import { trpcReact } from "@/client";
@@ -23,6 +24,7 @@ import CVTableStorageUsed from "./cv-table-storage";
 import CVTablePagination from "./cv-table-pagination";
 import { CVSStatus } from "@/types";
 import { toast } from "sonner";
+import type { DateRange } from "react-day-picker";
 
 dayJS.extend(utc);
 dayJS.extend(relativeTime);
@@ -37,12 +39,27 @@ type SortingType = {
   desc: boolean;
 };
 
+export type DateFilteringState =
+  | {
+      type: "single";
+      date: string;
+    }
+  | {
+      type: "range";
+      from: string;
+      to: string;
+    }
+  | undefined;
+
 export default function CVTable() {
   const [limit, setLimit] = useState<number>(10);
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<Search | undefined>();
   const [sortingState, setSortingState] = useState<SortingState>([]);
   const [filteringState, setFilteringState] = useState<ColumnFiltersState>([]);
+  const [dateFilteringState, setDateFilteringState] =
+    useState<DateFilteringState>();
+
   const utils = trpcReact.useUtils();
   const queryInput = {
     pagination: {
@@ -50,6 +67,7 @@ export default function CVTable() {
       limit: limit,
     },
     filters: filteringState as FilterType[],
+    dateFilters: dateFilteringState,
     sorting: sortingState as [SortingType, ...SortingType[]],
     search: search,
   };
@@ -101,9 +119,28 @@ export default function CVTable() {
     },
   };
 
+  const dateFiltering: DateFiltering = {
+    onDateFilter: (dateFilter) => {
+      if (dateFilter.type === "single") {
+        setDateFilteringState({
+          type: "single",
+          date: (dateFilter.value as Date).toISOString(),
+        });
+      } else {
+        const val = dateFilter.value as DateRange;
+        setDateFilteringState({
+          type: "range",
+          from: val.from!.toISOString(),
+          to: val.to!.toISOString(),
+        });
+      }
+    },
+    onSort: (sort) => setSortingState([sort]),
+  };
+
   const sorting: Sorting = {
     sortingState: sortingState,
-    onSortingChange: (sort) => {
+    onSort: (sort) => {
       setSortingState([sort]);
     },
     onCleanSort: () => {
@@ -276,7 +313,12 @@ export default function CVTable() {
     },
   };
 
-  const columns = generateColumns({ sorting, filtering, actions });
+  const columns = generateColumns({
+    sorting,
+    filtering,
+    actions,
+    dateFiltering,
+  });
 
   const handleOnSearch: OnSearch = (params) => {
     if (params.value === "") {
@@ -310,8 +352,10 @@ export default function CVTable() {
         <div className="flex items-center space-x-2">
           <CVTableFilters
             filteringState={filteringState}
+            dateFilteringState={dateFilteringState}
             sortingState={sortingState}
             setFilters={setFilteringState}
+            setDateFilters={setDateFilteringState}
             setSorting={setSortingState}
           />
           <CVTableStorageUsed

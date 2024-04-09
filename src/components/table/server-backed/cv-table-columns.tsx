@@ -26,11 +26,8 @@ import {
   AlertDialogTrigger,
 } from "src/components/ui/alert-dialog";
 
-import { FileDown, MoreHorizontal } from "lucide-react";
-import dayJS from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import utc from "dayjs/plugin/utc";
-import "dayjs/locale/es";
+import { FileDown, FileText, MoreHorizontal, Video } from "lucide-react";
+
 import {
   SortingColumnHeader,
   type OnSort,
@@ -41,12 +38,13 @@ import {
   type OnCleanSort,
   type OnClearFilter,
   DateFilteringColumnHeader,
+  type OnDateFilter,
 } from "./cv-table-column";
 import { CVSStatus } from "@/types";
 
-dayJS.extend(utc);
-dayJS.extend(relativeTime);
-dayJS.locale("es");
+import { formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
+import CreatedAtCell from "./cv-table-cells";
 
 export type RowAttachment = {
   url: string;
@@ -73,8 +71,13 @@ export type Filtering = {
 
 export type Sorting = {
   sortingState: SortingState;
-  onSortingChange: OnSort;
+  onSort: OnSort;
   onCleanSort: OnCleanSort;
+};
+
+export type DateFiltering = {
+  onDateFilter: OnDateFilter;
+  onSort: OnSort;
 };
 
 export type Actions = {
@@ -86,12 +89,14 @@ export type Actions = {
 
 export type GenerateColumnsParams = {
   filtering: Filtering;
+  dateFiltering: DateFiltering;
   sorting: Sorting;
   actions: Actions;
 };
 
 export function generateColumns({
   filtering,
+  dateFiltering,
   sorting,
   actions,
 }: GenerateColumnsParams): ColumnDef<CVRow>[] {
@@ -105,7 +110,7 @@ export function generateColumns({
             title="Nombre"
             isDesc={isDesc(sorting.sortingState, "name")}
             isSorting={isSorting(sorting.sortingState, "name")}
-            onSortingChange={sorting.onSortingChange}
+            onSort={sorting.onSort}
             onCleanSort={sorting.onCleanSort}
           />
         );
@@ -120,7 +125,7 @@ export function generateColumns({
             title="Email"
             isDesc={isDesc(sorting.sortingState, "email")}
             isSorting={isSorting(sorting.sortingState, "email")}
-            onSortingChange={sorting.onSortingChange}
+            onSort={sorting.onSort}
             onCleanSort={sorting.onCleanSort}
           />
         );
@@ -129,13 +134,17 @@ export function generateColumns({
     {
       accessorKey: "createdAt",
       header: () => {
-        return <DateFilteringColumnHeader />;
+        return (
+          <DateFilteringColumnHeader
+            onDateFilter={dateFiltering.onDateFilter}
+            onSort={dateFiltering.onSort}
+          />
+        );
       },
       cell: ({ row }) => {
         const createdAt = row.getValue("createdAt") as string;
-        const local = dayJS.utc(createdAt).local();
-        const date = dayJS().from(dayJS(local), true);
-        return date;
+
+        return <CreatedAtCell createdAt={createdAt} />;
       },
     },
     {
@@ -217,24 +226,41 @@ export function generateColumns({
         };
         return (
           <div className="flex justify-center gap-2">
-            {attachments.map((attachment, index) => (
-              <Button
-                variant="outline"
-                size="sm"
-                className="font-normal"
-                key={index}
-                asChild
-              >
-                <a
-                  href={attachment.url}
-                  download={attachment.name}
-                  className="flex items-center gap-1"
-                >
-                  {splitAttachmentText(attachment.type)}
-                  <FileDown className="h-4 w-4" />
-                </a>
-              </Button>
-            ))}
+            {attachments.map((att, i) => {
+              const isPdf = att.type.includes("application/pdf");
+              const isVideo = att.type.includes("video/mp4");
+              if (isPdf) {
+                return (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="font-normal"
+                    key={`attachment-header-${att.type}`}
+                    asChild
+                  >
+                    <a href="#" className="flex items-center gap-1">
+                      <FileText className="h-3.5 w-3.5" />
+                    </a>
+                  </Button>
+                );
+              }
+
+              if (isVideo) {
+                return (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="font-normal"
+                    key={`attachment-header-${att.type}`}
+                    asChild
+                  >
+                    <a href="#" className="flex items-center gap-1">
+                      <Video className="h-3.5 w-3.5" />
+                    </a>
+                  </Button>
+                );
+              }
+            })}
           </div>
         );
       },
