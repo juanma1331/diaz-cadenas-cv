@@ -27,6 +27,13 @@ import {
   positionSchema,
 } from "@/server/routes/insert-cv.route";
 import { places, positions } from "@/constants";
+import { Video } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 const pdfSchema = z.instanceof(File);
 
@@ -45,6 +52,7 @@ export type FormValues = z.infer<typeof formSchema>;
 
 export type CVFormFieldsProps = {
   onSubmit: (values: FormValues) => void;
+  onOpenVideoRecording: () => void;
 };
 
 export default function CVFormFields(props: CVFormFieldsProps) {
@@ -165,28 +173,49 @@ export default function CVFormFields(props: CVFormFieldsProps) {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="video"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Video</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  {...field}
-                  value={undefined} // Esto evita el error de TypeScript.
-                  onChange={(e) => {
-                    if (e.target.files) {
-                      field.onChange(e.target.files[0]); // Actualiza el valor con el primer archivo seleccionado.
-                    }
+        <div className="flex items-end gap-2 justify-between">
+          <FormField
+            control={form.control}
+            name="video"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Video</FormLabel>
+                <FormControl>
+                  <Input
+                    type="file"
+                    {...field}
+                    value={undefined} // Esto evita el error de TypeScript.
+                    onChange={(e) => {
+                      if (e.target.files) {
+                        field.onChange(e.target.files[0]); // Actualiza el valor con el primer archivo seleccionado.
+                      }
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    props.onOpenVideoRecording();
                   }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                >
+                  <Video className="w-3.5 h-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Grabación de vídeo</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
 
         <Button type="submit">Enviar</Button>
       </form>

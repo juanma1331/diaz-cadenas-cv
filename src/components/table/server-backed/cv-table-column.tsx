@@ -28,11 +28,7 @@ import {
 } from "lucide-react";
 import { places, positions } from "@/constants";
 import { CVSStatus } from "@/types";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"; // TODO: Uninstall component
+
 import { useState } from "react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
