@@ -2,7 +2,15 @@ import { useRecordWebcam } from "react-record-webcam";
 import { generateId } from "lucia";
 import { Button } from "../ui/button";
 import React, { useEffect, useState } from "react";
-import { Circle, OctagonX, Pause, Play } from "lucide-react";
+import {
+  Circle,
+  CircleX,
+  Eye,
+  OctagonX,
+  Pause,
+  Play,
+  Save,
+} from "lucide-react";
 import { AspectRatio } from "../ui/aspect-ratio";
 
 export type VideoRecording = {
@@ -10,6 +18,8 @@ export type VideoRecording = {
   previewRef: React.RefObject<HTMLVideoElement>;
   webcamRef: React.RefObject<HTMLVideoElement>;
   blob?: Blob;
+  fileName: string;
+  fileType: string;
   status:
     | "INITIAL"
     | "CLOSED"
@@ -20,7 +30,11 @@ export type VideoRecording = {
     | "PAUSED";
 };
 
-export default function VideoRecorder() {
+export type VideoRecorderProps = {
+  onSave: (recording: VideoRecording) => void;
+};
+
+export default function VideoRecorder({ onSave }: VideoRecorderProps) {
   const [recording, setRecording] = useState<VideoRecording | undefined>();
   const [videoUrl, setVideoUrl] = useState<string | undefined>();
   const [viewRecording, setViewRecording] = useState<boolean>(false);
@@ -79,9 +93,9 @@ export default function VideoRecorder() {
 
   if (viewRecording) {
     return (
-      <div className="space-y-2 w-[56rem] rounded-md mx-auto p-2 border border-border">
+      <VideoContainer>
         <div>
-          <AspectRatio className="bg-slate-300 relative" ratio={16 / 9}>
+          <AspectRatio className="relative" ratio={16 / 9}>
             <video className="w-full rounded-md" src={videoUrl} controls />
           </AspectRatio>
         </div>
@@ -96,16 +110,16 @@ export default function VideoRecorder() {
             Cerrar
           </Button>
         </div>
-      </div>
+      </VideoContainer>
     );
   }
 
   return (
-    <div className="space-y-2 w-[56rem] rounded-md mx-auto p-2 border border-border">
+    <VideoContainer>
       <div>
         {activeRecordings.map((r, i) => (
           <AspectRatio
-            className="bg-slate-300 relative"
+            className="relative"
             ratio={16 / 9}
             key={`active-recording-${i}`}
           >
@@ -159,22 +173,35 @@ export default function VideoRecorder() {
             </Button>
           )}
 
-          {r.status === "STOPPED" && (
-            <Button
-              size="sm"
-              variant="outline"
-              className="ml-4"
-              onClick={() => setViewRecording(true)}
-            >
-              Previsualizar
-            </Button>
+          {r.status === "STOPPED" && videoUrl && (
+            <div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setViewRecording(true)}
+              >
+                <Eye className="w-3.5 h-3.5" />
+              </Button>
+
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setViewRecording(true)}
+              >
+                <Save className="w-3.5 h-3.5" />
+              </Button>
+            </div>
           )}
         </div>
       ))}
-    </div>
+    </VideoContainer>
   );
 }
 
 function VideoContainer({ children }: { children: React.ReactNode }) {
-  return <div>{children}</div>;
+  return (
+    <div className="space-y-2 w-[32rem] rounded-md mx-auto p-2 border border-border">
+      {children}
+    </div>
+  );
 }

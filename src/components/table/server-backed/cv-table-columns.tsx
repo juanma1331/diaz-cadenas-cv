@@ -258,7 +258,7 @@ export function generateColumns({
                         className="font-normal"
                         asChild
                       >
-                        <a href="#" className="flex items-center gap-1">
+                        <a href={att.url} className="flex items-center gap-1">
                           <Video className="h-3.5 w-3.5" />
                         </a>
                       </Button>

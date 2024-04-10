@@ -18,8 +18,7 @@ import {
   SelectContent,
   SelectItem,
 } from "../components/ui/select";
-// TODO: We got two different libraries for icons, we should use only one.
-import { ReloadIcon } from "@radix-ui/react-icons";
+
 import {
   emailSchema,
   nameSchema,
@@ -34,6 +33,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { useState } from "react";
+import VideoRecorder from "./video-recorder/video-recorder";
 
 const pdfSchema = z.instanceof(File);
 
@@ -52,10 +53,10 @@ export type FormValues = z.infer<typeof formSchema>;
 
 export type CVFormFieldsProps = {
   onSubmit: (values: FormValues) => void;
-  onOpenVideoRecording: () => void;
 };
 
 export default function CVFormFields(props: CVFormFieldsProps) {
+  const [videoRecording, setVideoRecording] = useState<boolean>(false);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -70,7 +71,7 @@ export default function CVFormFields(props: CVFormFieldsProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(props.onSubmit)}
-        className="space-y-6 max-w-lg mx-auto w-full"
+        className="space-y-4 max-w-lg mx-auto w-full"
       >
         <FormField
           control={form.control}
@@ -184,10 +185,10 @@ export default function CVFormFields(props: CVFormFieldsProps) {
                   <Input
                     type="file"
                     {...field}
-                    value={undefined} // Esto evita el error de TypeScript.
+                    value={undefined}
                     onChange={(e) => {
                       if (e.target.files) {
-                        field.onChange(e.target.files[0]); // Actualiza el valor con el primer archivo seleccionado.
+                        field.onChange(e.target.files[0]);
                       }
                     }}
                   />
@@ -204,7 +205,7 @@ export default function CVFormFields(props: CVFormFieldsProps) {
                   size="icon"
                   onClick={(e) => {
                     e.preventDefault();
-                    props.onOpenVideoRecording();
+                    setVideoRecording((prev) => !prev);
                   }}
                 >
                   <Video className="w-3.5 h-3.5" />
@@ -216,6 +217,20 @@ export default function CVFormFields(props: CVFormFieldsProps) {
             </Tooltip>
           </TooltipProvider>
         </div>
+
+        {videoRecording && (
+          <div>
+            <VideoRecorder
+              onSave={(recording) => {
+                const file = new File([recording.blob!], recording.fileName, {
+                  type: recording.fileType,
+                  lastModified: Date.now(),
+                });
+                form.setValue("video", file);
+              }}
+            />
+          </div>
+        )}
 
         <Button type="submit">Enviar</Button>
       </form>

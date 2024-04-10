@@ -6,16 +6,15 @@ import { useEffect, useState } from "react";
 import type { RouterInputs } from "@/server/utils";
 import { Button } from "./ui/button";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import VideoRecorder from "./video-recorder/video-recorder";
 
 const MAX_FILES = 2;
 
 type InsertParams = RouterInputs["insertCV"];
 
 export default function CVForm() {
-  const [mode, setMode] = useState<
-    "form" | "loading" | "success" | "error" | "video-recording"
-  >("form");
+  const [mode, setMode] = useState<"form" | "loading" | "success" | "error">(
+    "form"
+  );
   const [params, setParams] = useState<InsertParams | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,10 +53,6 @@ export default function CVForm() {
       attachments: uploadedFiles as UploadedFile[],
     });
     setMode("success");
-  }
-
-  function handleOnOpenVideoRecording() {
-    setMode("video-recording");
   }
 
   function tryAgain() {
@@ -102,14 +97,5 @@ export default function CVForm() {
     );
   }
 
-  if (mode === "video-recording") {
-    return <VideoRecorder />;
-  }
-
-  return (
-    <CVFormFields
-      onSubmit={onSubmit}
-      onOpenVideoRecording={handleOnOpenVideoRecording}
-    />
-  );
+  return <CVFormFields onSubmit={onSubmit} />;
 }
