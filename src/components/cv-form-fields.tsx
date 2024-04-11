@@ -70,8 +70,6 @@ export default function CVFormFields(props: CVFormFieldsProps) {
   const videoRef = form.register("video");
   const pdfRef = form.register("pdf");
 
-  console.log(form.getValues());
-
   return (
     <Form {...form}>
       <form
