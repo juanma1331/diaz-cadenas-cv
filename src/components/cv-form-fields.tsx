@@ -36,9 +36,9 @@ import {
 import { useState } from "react";
 import VideoRecorder from "./video-recorder/video-recorder";
 
-const pdfSchema = z.instanceof(File);
+const pdfSchema = z.any();
 
-const videoSchema = z.instanceof(File);
+const videoSchema = z.any().optional();
 
 const formSchema = z.object({
   name: nameSchema,
@@ -66,6 +66,11 @@ export default function CVFormFields(props: CVFormFieldsProps) {
       position: "Carnicería",
     },
   });
+
+  const videoRef = form.register("video");
+  const pdfRef = form.register("pdf");
+
+  console.log(form.getValues());
 
   return (
     <Form {...form}>
@@ -154,20 +159,11 @@ export default function CVFormFields(props: CVFormFieldsProps) {
         <FormField
           control={form.control}
           name="pdf"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>CV</FormLabel>
               <FormControl>
-                <Input
-                  type="file"
-                  {...field}
-                  value={undefined}
-                  onChange={(e) => {
-                    if (e.target.files) {
-                      field.onChange(e.target.files[0]);
-                    }
-                  }}
-                />
+                <Input type="file" {...pdfRef} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -178,20 +174,11 @@ export default function CVFormFields(props: CVFormFieldsProps) {
           <FormField
             control={form.control}
             name="video"
-            render={({ field }) => (
+            render={() => (
               <FormItem className="w-full">
                 <FormLabel>Video</FormLabel>
                 <FormControl>
-                  <Input
-                    type="file"
-                    {...field}
-                    value={undefined}
-                    onChange={(e) => {
-                      if (e.target.files) {
-                        field.onChange(e.target.files[0]);
-                      }
-                    }}
-                  />
+                  <Input type="file" {...videoRef} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -221,12 +208,15 @@ export default function CVFormFields(props: CVFormFieldsProps) {
         {videoRecording && (
           <div>
             <VideoRecorder
-              onSave={(recording) => {
-                const file = new File([recording.blob!], recording.fileName, {
-                  type: recording.fileType,
-                  lastModified: Date.now(),
+              onAddToForm={(recording) => {
+                const fileList = new DataTransfer();
+                fileList.items.add(recording);
+
+                form.setValue("video", fileList.files, {
+                  shouldDirty: true,
+                  shouldTouch: true,
                 });
-                form.setValue("video", file);
+                setVideoRecording(false);
               }}
             />
           </div>

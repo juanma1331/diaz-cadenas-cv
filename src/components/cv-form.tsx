@@ -36,7 +36,7 @@ export default function CVForm() {
   async function onSubmit(values: FormValues) {
     setMode("loading");
     const uploadedFiles = await startUpload(
-      [values.pdf, values.video].filter(Boolean)
+      [values.pdf[0], values.video[0]].filter(Boolean)
     );
 
     if (!uploadedFiles || uploadedFiles.length < MAX_FILES) {

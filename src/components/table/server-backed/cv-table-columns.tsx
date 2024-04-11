@@ -225,7 +225,7 @@ export function generateColumns({
           <div className="flex justify-center gap-2" key={"random key"}>
             {attachments.map((att, i) => {
               const isPdf = att.type.includes("application/pdf");
-              const isVideo = att.type.includes("video/mp4");
+              const isVideo = att.type.includes("video/");
               if (!isPdf && !isVideo)
                 throw new Error("Invalid attachment type");
 
@@ -233,13 +233,15 @@ export function generateColumns({
                 return (
                   <Button
                     variant="outline"
-                    size="sm"
+                    size="icon"
                     className="font-normal"
                     key={`attachment-header-${att.type}`}
                     asChild
                   >
                     <a
-                      href="https://pdfobject.com/pdf/sample.pdf"
+                      href={att.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="flex items-center gap-1"
                     >
                       <FileText className="h-3.5 w-3.5" />
@@ -254,13 +256,10 @@ export function generateColumns({
                     <AlertDialogTrigger asChild>
                       <Button
                         variant="outline"
-                        size="sm"
+                        size="icon"
                         className="font-normal"
-                        asChild
                       >
-                        <a href={att.url} className="flex items-center gap-1">
-                          <Video className="h-3.5 w-3.5" />
-                        </a>
+                        <Video className="h-3.5 w-3.5" />
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
@@ -270,10 +269,7 @@ export function generateColumns({
                         height={720}
                         controls
                       >
-                        <source
-                          src="https://samplelib.com/lib/preview/mp4/sample-5s.mp4"
-                          type="video/mp4"
-                        />
+                        <source src={att.url} type={att.type} />
                       </video>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cerrar</AlertDialogCancel>

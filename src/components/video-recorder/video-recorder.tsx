@@ -1,17 +1,28 @@
-import { useRecordWebcam } from "react-record-webcam";
+import { useRecordWebcam, ERROR_MESSAGES } from "react-record-webcam";
 import { generateId } from "lucia";
 import { Button } from "../ui/button";
 import React, { useEffect, useState } from "react";
 import {
   Circle,
   CircleX,
+  Download,
   Eye,
   OctagonX,
   Pause,
   Play,
+  Plus,
   Save,
+  Square,
+  SwitchCamera,
+  Video,
 } from "lucide-react";
 import { AspectRatio } from "../ui/aspect-ratio";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 export type VideoRecording = {
   id: string;
@@ -20,24 +31,15 @@ export type VideoRecording = {
   blob?: Blob;
   fileName: string;
   fileType: string;
-  status:
-    | "INITIAL"
-    | "CLOSED"
-    | "OPEN"
-    | "RECORDING"
-    | "STOPPED"
-    | "ERROR"
-    | "PAUSED";
 };
 
 export type VideoRecorderProps = {
-  onSave: (recording: VideoRecording) => void;
+  onAddToForm: (recording: File) => void;
 };
 
-export default function VideoRecorder({ onSave }: VideoRecorderProps) {
-  const [recording, setRecording] = useState<VideoRecording | undefined>();
+export default function VideoRecorder({ onAddToForm }: VideoRecorderProps) {
+  const [recordingID, setRecordingID] = useState<string | undefined>();
   const [videoUrl, setVideoUrl] = useState<string | undefined>();
-  const [viewRecording, setViewRecording] = useState<boolean>(false);
 
   const {
     createRecording,
@@ -45,45 +47,58 @@ export default function VideoRecorder({ onSave }: VideoRecorderProps) {
     openCamera,
     startRecording,
     stopRecording,
+    resumeRecording,
     errorMessage,
     pauseRecording,
   } = useRecordWebcam({
     options: {
-      fileName: `cv-video-${generateId(15)}`,
-      fileType: "webm",
+      fileType: "video/webm",
       timeSlice: 1000,
     },
     mediaRecorderOptions: { mimeType: "video/webm; codecs=vp8" },
   });
 
   useEffect(() => {
-    async function start() {
-      const recording = await createRecording();
-      if (recording) {
-        await openCamera(recording.id);
-        setRecording(recording);
-      }
-    }
+    const startNewRecording = async () => await newRecording();
 
-    start();
+    startNewRecording();
   }, []);
 
-  async function start() {
-    if (recording) {
-      if (videoUrl) URL.revokeObjectURL(videoUrl);
-      await startRecording(recording.id);
+  useEffect(() => {
+    const startCamera = async () => {
+      if (recordingID) {
+        await openCamera(recordingID);
+      }
+    };
+
+    startCamera();
+  }, [recordingID]);
+
+  async function handleOnAddToForm() {
+    if (recordingID && videoUrl) {
+      const recording = activeRecordings.find((r) => r.id === recordingID);
+
+      if (recording) {
+        const fileName = `cv-video-${generateId(15)}.webm`;
+        const file = new File([recording.blob!], fileName, {
+          type: "video/webm",
+          lastModified: Date.now(),
+        });
+
+        onAddToForm(file);
+      }
     }
   }
 
   async function pause() {
-    if (recording) {
-      await pauseRecording(recording.id);
+    if (recordingID) {
+      await pauseRecording(recordingID);
     }
   }
 
   async function stop() {
-    if (recording) {
-      const recorded = await stopRecording(recording.id);
+    if (recordingID) {
+      const recorded = await stopRecording(recordingID);
       if (recorded && recorded.blob) {
         const url = URL.createObjectURL(recorded.blob);
         setVideoUrl(url);
@@ -91,24 +106,83 @@ export default function VideoRecorder({ onSave }: VideoRecorderProps) {
     }
   }
 
-  if (viewRecording) {
+  async function resume() {
+    if (recordingID) {
+      await resumeRecording(recordingID);
+    }
+  }
+
+  async function newRecording() {
+    if (videoUrl) {
+      URL.revokeObjectURL(videoUrl);
+      setVideoUrl(undefined);
+    }
+
+    const recording = await createRecording();
+    if (recording) {
+      setRecordingID(recording.id);
+    }
+  }
+
+  async function start() {
+    if (recordingID) {
+      await startRecording(recordingID);
+    }
+  }
+
+  if (errorMessage) {
+    return <VideoContainer>ERROR</VideoContainer>;
+  }
+
+  if (videoUrl) {
     return (
       <VideoContainer>
         <div>
           <AspectRatio className="relative" ratio={16 / 9}>
             <video className="w-full rounded-md" src={videoUrl} controls />
-          </AspectRatio>
-        </div>
 
-        <div className="max-w-fit mx-auto space-x-2">
-          <Button
-            size="sm"
-            variant="outline"
-            className="border-green-500"
-            onClick={() => setViewRecording(false)}
-          >
-            Cerrar
-          </Button>
+            <div className="absolute bottom-14 bg-transparent transform left-1/2 -translate-x-1/2 space-x-2 ">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      type="button"
+                      className="rounded-full border-none bg-gray-800 group"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        await handleOnAddToForm();
+                      }}
+                    >
+                      <Download className="w-3.5 h-3.5 text-gray-200 group-hover:text-gray-600" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Añadir al formulario</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      type="button"
+                      className="rounded-full border-none bg-gray-800 group"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        await newRecording();
+                      }}
+                    >
+                      <Plus className="w-3.5 h-3.5 text-gray-200 group-hover:text-gray-600" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Nueva grabación</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </AspectRatio>
         </div>
       </VideoContainer>
     );
@@ -125,75 +199,132 @@ export default function VideoRecorder({ onSave }: VideoRecorderProps) {
           >
             <video className="w-full rounded-md" ref={r.webcamRef} />
 
+            {/* Status feedback */}
             {r.status === "RECORDING" && (
-              <div className="absolute top-1 right-1 flex items-center bg-background text-foreground border border-red-500 p-1 rounded-md">
-                <span className="text-xs">Grabando</span>
-                <Circle className="ml-2 w-3.5 h-3.5 text-red-500" />
+              <Circle className="ml-2 w-3.5 h-3.5 text-red-600 absolute top-1 right-3" />
+            )}
+
+            {r.status === "PAUSED" && (
+              <Pause className="ml-2 w-3.5 h-3.5 text-blue-600 absolute top-1 right-3" />
+            )}
+
+            {r.status === "STOPPED" && (
+              <Square className="ml-2 w-3.5 h-3.5 text-red-600 absolute top-1 right-3" />
+            )}
+            {/* Controls */}
+            {r.status === "INITIAL" ||
+              (r.status === "OPEN" && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        type="button"
+                        className="border-none bg-gray-800 rounded-full group absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await start();
+                        }}
+                      >
+                        <Video className="w-3.5 h-3.5 text-gray-200 group-hover:text-gray-600" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Comenzar grabación</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ))}
+
+            {r.status === "RECORDING" && (
+              <div className="absolute bottom-2 bg-transparent transform left-1/2 -translate-x-1/2 space-x-2 ">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        type="button"
+                        className="rounded-full border-none bg-gray-800 group"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await pause();
+                        }}
+                      >
+                        <Pause className="w-3.5 h-3.5 text-gray-200 group-hover:text-gray-600" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Pausar grabación</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        type="button"
+                        className="rounded-full border-none bg-gray-800 group"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await stop();
+                        }}
+                      >
+                        <Square className="w-3.5 h-3.5 text-gray-200 group-hover:text-gray-600" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Finalizar grabación</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            )}
+
+            {r.status === "PAUSED" && (
+              <div className="absolute bottom-2 bg-transparent transform left-1/2 -translate-x-1/2 space-x-2 ">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        type="button"
+                        className="border-none bg-gray-800 rounded-full group"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await resume();
+                        }}
+                      >
+                        <SwitchCamera className="w-3.5 h-3.5 text-gray-200 group-hover:text-gray-600" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Reanudar grabación</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        type="button"
+                        className="rounded-full border-none bg-gray-800 group"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await stop();
+                        }}
+                      >
+                        <Square className="w-3.5 h-3.5 text-gray-200 group-hover:text-gray-600" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Finalizar grabación</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             )}
           </AspectRatio>
         ))}
       </div>
-
-      {activeRecordings.map((r, i) => (
-        <div
-          className="max-w-fit mx-auto"
-          key={`active-recording-controls-${i}`}
-        >
-          {r.status !== "RECORDING" && (
-            <Button
-              size="icon"
-              variant="outline"
-              className="border-emerald-500"
-              onClick={async () => await start()}
-            >
-              <Play className="w-3.5 h-3.5 text-emerald-500" />
-            </Button>
-          )}
-
-          {r.status !== "PAUSED" && (
-            <Button
-              size="icon"
-              variant="outline"
-              className="border-yellow-500 ml-2"
-              onClick={async () => await pause()}
-            >
-              <Pause className="w-3.5 h-3.5 text-yellow-500" />
-            </Button>
-          )}
-
-          {r.status !== "STOPPED" && (
-            <Button
-              size="icon"
-              variant="outline"
-              className="border-red-500 ml-2"
-              onClick={async () => await stop()}
-            >
-              <OctagonX className="w-3.5 h-3.5 text-red-500" />
-            </Button>
-          )}
-
-          {r.status === "STOPPED" && videoUrl && (
-            <div>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setViewRecording(true)}
-              >
-                <Eye className="w-3.5 h-3.5" />
-              </Button>
-
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setViewRecording(true)}
-              >
-                <Save className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          )}
-        </div>
-      ))}
     </VideoContainer>
   );
 }

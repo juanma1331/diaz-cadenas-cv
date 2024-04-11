@@ -4,7 +4,7 @@ import { faker } from "@faker-js/faker";
 
 // https://astro.build/db/seed
 export default async function seed() {
-  await generateCVS(40);
+  await generateCVS(5);
 }
 
 async function generateCVS(qty: number) {
