@@ -26,7 +26,7 @@ import {
   positionSchema,
 } from "@/server/routes/insert-cv.route";
 import { places, positions } from "@/constants";
-import { Video } from "lucide-react";
+import { Video as VideoIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -34,7 +34,7 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import { useState } from "react";
-import VideoRecorder from "./video-recorder/video-recorder";
+import Video from "./video/video";
 
 const pdfSchema = z.any();
 
@@ -168,57 +168,65 @@ export default function CVFormFields(props: CVFormFieldsProps) {
           )}
         />
 
-        <div className="flex items-end gap-2 justify-between">
-          <FormField
-            control={form.control}
-            name="video"
-            render={() => (
-              <FormItem className="w-full">
-                <FormLabel>Video</FormLabel>
-                <FormControl>
-                  <Input type="file" {...videoRef} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setVideoRecording((prev) => !prev);
+        <FormField
+          control={form.control}
+          name="video"
+          render={() => (
+            <FormItem className="w-full">
+              <FormLabel asChild>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="link"
+                    type="button"
+                    className="p-0"
+                    onClick={() => {
+                      if (videoRecording) {
+                        setVideoRecording(false);
+                      }
+                    }}
+                  >
+                    Video
+                  </Button>
+                  <span>/</span>
+                  <Button
+                    variant="link"
+                    className="p-0 flex items-center gap-2"
+                    type="button"
+                    onClick={() => {
+                      if (!videoRecording) {
+                        setVideoRecording(true);
+                      }
+                    }}
+                  >
+                    Grabacion
+                    <div className="h-3 w-3 rounded-full bg-red-400"></div>
+                  </Button>
+                </div>
+              </FormLabel>
+              {videoRecording ? (
+                <Video
+                  onAddToForm={(recording) => {
+                    const fileList = new DataTransfer();
+                    fileList.items.add(recording);
+
+                    form.setValue("video", fileList.files, {
+                      shouldDirty: true,
+                      shouldTouch: true,
+                    });
+                    setVideoRecording(false);
                   }}
-                >
-                  <Video className="w-3.5 h-3.5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Grabación de vídeo</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-
-        {videoRecording && (
-          <div>
-            <VideoRecorder
-              onAddToForm={(recording) => {
-                const fileList = new DataTransfer();
-                fileList.items.add(recording);
-
-                form.setValue("video", fileList.files, {
-                  shouldDirty: true,
-                  shouldTouch: true,
-                });
-                setVideoRecording(false);
-              }}
-            />
-          </div>
-        )}
+                />
+              ) : (
+                <>
+                  <FormControl>
+                    <Input type="file" {...videoRef} />
+                  </FormControl>
+                  <FormMessage />
+                </>
+              )}
+            </FormItem>
+          )}
+        />
 
         <Button type="submit">Enviar</Button>
       </form>
