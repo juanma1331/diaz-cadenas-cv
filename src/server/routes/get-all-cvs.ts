@@ -79,7 +79,7 @@ export const outputSchema = z.object({
   pages: z.array(z.number()),
 });
 
-export const getAllCVSServerProcedure = publicProcedure
+export const getAllCVSProcedure = publicProcedure
   .input(inputSchema)
   .output(outputSchema)
   .query(async ({ input }) => {

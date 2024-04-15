@@ -26,13 +26,7 @@ import {
   positionSchema,
 } from "@/server/routes/insert-cv.route";
 import { places, positions } from "@/constants";
-import { Video as VideoIcon } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
+
 import { useState } from "react";
 import Video from "./video/video";
 

@@ -1,4 +1,3 @@
-import { type Table as TableType } from "@tanstack/react-table";
 import {
   Select,
   SelectContent,

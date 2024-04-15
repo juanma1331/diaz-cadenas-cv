@@ -1,5 +1,5 @@
 import { useUploadThing } from "../../utils/uploadthing";
-import CVFormFields, { type FormValues } from "./cv-form-fields";
+import CVFormFields, { type FormValues } from "./fields";
 import { trpcReact } from "../../client";
 import type { UploadedFile } from "@/server/routes/insert-cv.route";
 import { useEffect, useState } from "react";

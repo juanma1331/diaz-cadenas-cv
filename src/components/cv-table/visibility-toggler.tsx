@@ -1,6 +1,5 @@
 import {
   DropdownMenu,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import type { Column } from "@tanstack/react-table";

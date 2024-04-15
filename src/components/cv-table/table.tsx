@@ -2,33 +2,27 @@ import { useState } from "react";
 import {
   generateColumns,
   type Filtering,
+  type GenerateColumnsParams,
+  type DateFiltering,
   type Sorting,
   type Actions,
-  type DateFiltering,
-} from "./columns/cv-table-columns";
-import CVTableRows from "./cv-table-rows";
+  type DateFilteringState,
+} from "./columns";
+import CVTableRows from "./rows";
 import { trpcReact } from "@/client";
-import dayJS from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import utc from "dayjs/plugin/utc";
-import "dayjs/locale/es";
 import {
   useReactTable,
   type ColumnFiltersState,
   type SortingState,
   getCoreRowModel,
 } from "@tanstack/react-table";
-import CVTableSearch, { type OnSearch, type Search } from "./cv-table-search";
-import CVTableFilters from "./cv-table-filters";
-import CVTableStorageUsed from "./cv-table-storage";
-import CVTablePagination from "./cv-table-pagination";
+import CVTableSearch, { type OnSearch, type Search } from "./search";
+import CVTableFilters from "./filters";
+import CVTableStorageUsed from "./storage";
+import CVTablePagination from "./pagination";
 import { CVSStatus } from "@/constants";
 import { toast } from "sonner";
 import type { DateRange } from "react-day-picker";
-
-dayJS.extend(utc);
-dayJS.extend(relativeTime);
-dayJS.locale("es");
 
 type FilterType = {
   id: "place" | "position" | "status";
@@ -38,18 +32,6 @@ type SortingType = {
   id: "createdAt" | "name" | "email";
   desc: boolean;
 };
-
-export type DateFilteringState =
-  | {
-      type: "single";
-      date: string;
-    }
-  | {
-      type: "range";
-      from: string;
-      to: string;
-    }
-  | undefined;
 
 export default function CVTable() {
   const [limit, setLimit] = useState<number>(10);
@@ -79,7 +61,7 @@ export default function CVTable() {
   } = trpcReact.getAllCVS.useQuery(queryInput);
 
   const { data: storageInUseData, isError: getStorageInUseError } =
-    trpcReact.storageInUse.useQuery();
+    trpcReact.getStorageInUse.useQuery();
 
   const {
     mutate: changeStatus,

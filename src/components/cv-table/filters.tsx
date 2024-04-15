@@ -1,9 +1,4 @@
-import type {
-  ColumnFilter,
-  ColumnFiltersState,
-  ColumnSort,
-  SortingState,
-} from "@tanstack/react-table";
+import type { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowDownIcon,
@@ -11,12 +6,11 @@ import {
   Calendar,
   Filter,
   WandSparkles,
-  X,
 } from "lucide-react";
-import type { DateFilteringState } from "./cv-table";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CVSStatus } from "@/constants";
+import type { DateFilteringState } from "./columns";
 
 export type CVTableFiltersProps = {
   filteringState: ColumnFiltersState;
