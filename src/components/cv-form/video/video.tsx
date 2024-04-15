@@ -1,6 +1,6 @@
 import { useRecordWebcam, ERROR_MESSAGES, STATUS } from "react-record-webcam";
 import { generateId } from "lucia";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 import {
   Circle,
@@ -16,14 +16,14 @@ import {
   SwitchCamera,
   Video as VideoIcon,
 } from "lucide-react";
-import { AspectRatio } from "../ui/aspect-ratio";
+import { AspectRatio } from "../../ui/aspect-ratio";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../ui/tooltip";
-import { RedProgress } from "../ui/progress";
+} from "../../ui/tooltip";
+import { RedProgress } from "../../ui/progress";
 
 export type VideoProps = {
   onAddToForm: (recording: File) => void;

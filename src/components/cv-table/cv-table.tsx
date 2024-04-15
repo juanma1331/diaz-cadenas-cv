@@ -5,7 +5,7 @@ import {
   type Sorting,
   type Actions,
   type DateFiltering,
-} from "./cv-table-columns";
+} from "./columns/cv-table-columns";
 import CVTableRows from "./cv-table-rows";
 import { trpcReact } from "@/client";
 import dayJS from "dayjs";
@@ -22,7 +22,7 @@ import CVTableSearch, { type OnSearch, type Search } from "./cv-table-search";
 import CVTableFilters from "./cv-table-filters";
 import CVTableStorageUsed from "./cv-table-storage";
 import CVTablePagination from "./cv-table-pagination";
-import { CVSStatus } from "@/types";
+import { CVSStatus } from "@/constants";
 import { toast } from "sonner";
 import type { DateRange } from "react-day-picker";
 

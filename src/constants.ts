@@ -1,3 +1,10 @@
+export const CVSStatus = {
+  PENDING: 1,
+  REVIEWED: 2,
+  REJECTED: 3,
+  SELECTED: 4,
+} as const;
+
 export const places = [
   "Andújar",
   "Brenes",
@@ -14,7 +21,7 @@ export const places = [
   "Sanlúcar de Barrameda",
   "Sevilla",
   "Utrera",
-];
+] as const;
 
 export const positions = [
   "Carnicería",
@@ -26,4 +33,4 @@ export const positions = [
   "Cajero",
   "Reponedor",
   "Limpieza",
-];
+] as const;

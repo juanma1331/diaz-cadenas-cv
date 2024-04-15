@@ -1,10 +1,10 @@
-import { useUploadThing } from "../utils/uploadthing";
+import { useUploadThing } from "../../utils/uploadthing";
 import CVFormFields, { type FormValues } from "./cv-form-fields";
-import { trpcReact } from "../client";
+import { trpcReact } from "../../client";
 import type { UploadedFile } from "@/server/routes/insert-cv.route";
 import { useEffect, useState } from "react";
 import type { RouterInputs } from "@/server/utils";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { ReloadIcon } from "@radix-ui/react-icons";
 
 const MAX_FILES = 2;

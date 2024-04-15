@@ -44,7 +44,7 @@ import { CVSStatus } from "@/types";
 
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import CreatedAtCell from "./cv-table-cells";
+import CreatedAtCell from "../cv-table-cells";
 
 export type RowAttachment = {
   url: string;

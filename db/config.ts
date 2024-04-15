@@ -1,4 +1,4 @@
-import { CVSStatus } from "@/types";
+import { CVSStatus } from "@/constants";
 import { NOW, column, defineDb, defineTable } from "astro:db";
 
 const CVS = defineTable({

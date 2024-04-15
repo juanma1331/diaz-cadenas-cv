@@ -16,7 +16,7 @@ import {
 import type { DateFilteringState } from "./cv-table";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CVSStatus } from "@/types";
+import { CVSStatus } from "@/constants";
 
 export type CVTableFiltersProps = {
   filteringState: ColumnFiltersState;
