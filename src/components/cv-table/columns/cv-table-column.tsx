@@ -27,7 +27,7 @@ import {
   WandSparkles,
 } from "lucide-react";
 import { places, positions } from "@/constants";
-import { CVSStatus } from "@/types";
+import { CVSStatus } from "@/constants";
 
 import { useState } from "react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";

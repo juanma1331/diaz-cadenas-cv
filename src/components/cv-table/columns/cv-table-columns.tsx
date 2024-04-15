@@ -40,7 +40,7 @@ import {
   DateFilteringColumnHeader,
   type OnDateFilter,
 } from "./cv-table-column";
-import { CVSStatus } from "@/types";
+import { CVSStatus } from "@/constants";
 
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
