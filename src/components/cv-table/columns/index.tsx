@@ -15,6 +15,7 @@ import type {
   Filtering,
   Sorting,
 } from "./columns-def/types";
+import { selectionRowColumnDef } from "./columns-def/selection";
 
 export * from "./columns-def/types";
 
@@ -32,6 +33,7 @@ export function generateColumns({
   actions,
 }: GenerateColumnsParams): ColumnDef<CVRow>[] {
   const columns: ColumnDef<CVRow>[] = [
+    selectionRowColumnDef(),
     nameColumnDef({ sorting }),
     createdAtColumnDef({ dateFiltering }),
     placeColumnDef({ filtering }),

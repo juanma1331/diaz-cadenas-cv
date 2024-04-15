@@ -15,6 +15,7 @@ import {
   type ColumnFiltersState,
   type SortingState,
   getCoreRowModel,
+  type RowSelectionState,
 } from "@tanstack/react-table";
 import CVTableSearch, { type OnSearch, type Search } from "./search";
 import CVTableFilters from "./filters";
@@ -36,6 +37,7 @@ type SortingType = {
 export default function CVTable() {
   const [limit, setLimit] = useState<number>(10);
   const [page, setPage] = useState<number>(1);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [search, setSearch] = useState<Search | undefined>();
   const [sortingState, setSortingState] = useState<SortingState>([]);
   const [filteringState, setFilteringState] = useState<ColumnFiltersState>([]);
@@ -320,6 +322,13 @@ export default function CVTable() {
     columns,
     data: cvsData?.cvs ?? [],
     getCoreRowModel: getCoreRowModel(),
+    onRowSelectionChange: setRowSelection,
+    enableRowSelection: true,
+    enableMultiRowSelection: true,
+    getRowId: (row) => row.id,
+    state: {
+      rowSelection,
+    },
   });
 
   if (getAllCVSError || changeStatusError || getStorageInUseError) {

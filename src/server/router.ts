@@ -1,7 +1,7 @@
 import { changeStatusProcedure } from "./routes/change-status";
 import { deleteCVProcedure } from "./routes/delete-cv";
 import { getAllCVSProcedure } from "./routes/get-all-cvs";
-import { getStorageInUseProcedure } from "./routes/get-storate-in-use";
+import { getStorageInUseProcedure } from "./routes/get-storage-in-use";
 import { insertCVProdedure } from "./routes/insert-cv.route";
 import { t } from "./utils";
 

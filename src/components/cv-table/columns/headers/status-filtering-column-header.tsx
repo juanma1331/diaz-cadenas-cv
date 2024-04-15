@@ -30,8 +30,8 @@ export function StatusFilteringColumnHeader({
           size="sm"
           className={`-ml-3 h-8 data-[state=open]:bg-accent`}
         >
-          <span>Estado</span>
-          <ListFilter className={`h-3.5 w-3.5 ml-2`} />
+          <span className="text-slate-800">Estado</span>
+          <ListFilter className={`h-3.5 w-3.5 ml-2 text-slate-800`} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">

@@ -9,10 +9,7 @@ import {
 import { places } from "@/constants";
 import type { ColumnFiltersState } from "@tanstack/react-table";
 import { ListFilter, Dot, WandSparkles } from "lucide-react";
-import type {
-  OnFilter,
-  OnClearFilter,
-} from "./position-filtering-column-header";
+import type { OnClearFilter, OnFilter } from "../columns-def/types";
 
 export type PlaceFilteringColumnHeaderProps = {
   filteringState: ColumnFiltersState;
@@ -34,8 +31,8 @@ export function PlaceFilteringColumnHeader({
           size="sm"
           className={`-ml-3 h-8 data-[state=open]:bg-accent`}
         >
-          <span>Ubicación</span>
-          <ListFilter className={`h-3.5 w-3.5 ml-2`} />
+          <span className="text-slate-800">Ubicación</span>
+          <ListFilter className={`h-3.5 w-3.5 ml-2 text-slate-800`} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">

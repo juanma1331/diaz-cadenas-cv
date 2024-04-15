@@ -21,11 +21,10 @@ export const getStorageInUseProcedure = publicProcedure
 
       if (!sumString) throw new TRPCError({ code: "BAD_REQUEST" });
 
-      const currentSum = Number(sumString);
+      const storageInKB = Number(sumString);
 
       return {
-        // Return in GB, file sizes are being stored in KB
-        storageInUse: Math.round(currentSum / 1024 / 1024),
+        storageInUse: storageInKB,
       };
     } catch (e) {
       throw new TRPCError({ code: "BAD_REQUEST" });

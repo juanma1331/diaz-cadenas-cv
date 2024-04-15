@@ -13,11 +13,11 @@ import {
 export function attachmentsColumnDef(): ColumnDef<CVRow> {
   return {
     accessorKey: "attachments",
-    header: "Adjuntos",
+    header: () => <span className="text-slate-800">Adjuntos</span>,
     cell: ({ row }) => {
       const attachments = row.getValue("attachments") as RowAttachment[];
       return (
-        <div className="flex justify-center gap-2" key={"random key"}>
+        <div className="flex items-center gap-2" key={"random key"}>
           {attachments.map((att, i) => {
             const isPdf = att.type.includes("application/pdf");
             const isVideo = att.type.includes("video/");

@@ -34,15 +34,15 @@ export default function SortingColumnHeader({
           size="sm"
           className="-ml-3 h-8 data-[state=open]:bg-accent"
         >
-          <span>{title}</span>
+          <span className="text-slate-800">{title}</span>
           {isSorting ? (
             isDesc ? (
-              <ArrowDownIcon className="ml-2 h-3.5 w-3.5" />
+              <ArrowDownIcon className="ml-2 h-3.5 w-3.5 text-slate-800" />
             ) : (
-              <ArrowUpIcon className="ml-2 h-3.5 w-3.5" />
+              <ArrowUpIcon className="ml-2 h-3.5 w-3.5 text-slate-800" />
             )
           ) : (
-            <CaretSortIcon className="ml-2 h-3.5 w-3.5" />
+            <CaretSortIcon className="ml-2 h-3.5 w-3.5 text-slate-800" />
           )}
         </Button>
       </DropdownMenuTrigger>
