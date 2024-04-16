@@ -11,6 +11,7 @@ import {
 
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { RefreshCcw } from "lucide-react";
 
 export interface CVTableProps<TData, TValue> {
   table: TableType<TData>;
@@ -22,7 +23,7 @@ export default function CVTableRows<TData, TValue>({
   isLoading,
 }: CVTableProps<TData, TValue>) {
   return (
-    <ScrollArea className="h-[740px] overflow-auto">
+    <ScrollArea className="h-[800px] overflow-auto">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -55,7 +56,7 @@ function LoadingTableBody() {
       <TableRow>
         <TableCell colSpan={8} className="h-44">
           <div className="flex items-center flex-col gap-2">
-            <ReloadIcon className="h-4 w-4 animate-spin mx-auto" />
+            <RefreshCcw className="h-4 w-4 animate-spin mx-auto" />
             <p>Cargando...</p>
           </div>
         </TableCell>

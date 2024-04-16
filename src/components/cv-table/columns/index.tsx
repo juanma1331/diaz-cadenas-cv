@@ -10,6 +10,7 @@ import { actionsColumnDef } from "./columns-def/actions";
 
 import type {
   Actions,
+  BatchActions,
   CVRow,
   DateFiltering,
   Filtering,
@@ -24,6 +25,8 @@ export type GenerateColumnsParams = {
   dateFiltering: DateFiltering;
   sorting: Sorting;
   actions: Actions;
+  batchActions: BatchActions;
+  isActionColumnLoading: boolean;
 };
 
 export function generateColumns({
@@ -31,6 +34,8 @@ export function generateColumns({
   dateFiltering,
   sorting,
   actions,
+  batchActions,
+  isActionColumnLoading,
 }: GenerateColumnsParams): ColumnDef<CVRow>[] {
   const columns: ColumnDef<CVRow>[] = [
     selectionRowColumnDef(),
@@ -40,7 +45,7 @@ export function generateColumns({
     positionColumnDef({ filtering }),
     statusColumnDef({ filtering }),
     attachmentsColumnDef(),
-    actionsColumnDef({ actions }),
+    actionsColumnDef({ actions, batchActions, isActionColumnLoading }),
   ];
 
   return columns;

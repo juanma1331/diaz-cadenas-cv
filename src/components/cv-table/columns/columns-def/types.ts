@@ -63,9 +63,21 @@ export type DateFiltering = {
   onSort: OnSort;
 };
 
+export type SingleAction = (cv: CVRow) => void;
+export type BatchAction = (cvs: CVRow[]) => void;
+
 export type Actions = {
-  onMarkAsReviewed: (cv: CVRow) => void;
-  onMarkAsRejected: (cv: CVRow) => void;
-  onMarkAsSelected: (cv: CVRow) => void;
-  onDelete: (cv: CVRow) => void;
+  onMarkAsReviewed: SingleAction;
+  onMarkAsRejected: SingleAction;
+  onMarkAsSelected: SingleAction;
+  onMarkAsPending: SingleAction;
+  onDelete: SingleAction;
+};
+
+export type BatchActions = {
+  onMarkAsReviewed: BatchAction;
+  onMarkAsRejected: BatchAction;
+  onMarkAsSelected: BatchAction;
+  onMarkAsPending: BatchAction;
+  onDelete: BatchAction;
 };

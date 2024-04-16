@@ -7,6 +7,7 @@ import {
   type Sorting,
   type Actions,
   type DateFilteringState,
+  type BatchActions,
 } from "./columns";
 import CVTableRows from "./rows";
 import { trpcReact } from "@/client";
@@ -70,8 +71,22 @@ export default function CVTable() {
     isLoading: changeStatusLoading,
     isError: changeStatusError,
   } = trpcReact.changeStatus.useMutation({
-    onMutate: async () => {
-      await utils.getAllCVS.cancel(queryInput);
+    onSuccess: (input) => {
+      utils.getAllCVS.invalidate(queryInput);
+
+      if (Array.isArray(input)) {
+        const status = statusMap(input[0].newStatus);
+        const affectedRows = input.length;
+        const message = `Has marcado ${affectedRows} ${
+          affectedRows > 1 ? "CVs" : "CV"
+        } como '${status}'`;
+        toast.success(message);
+      } else {
+        const { name, newStatus } = input;
+        const status = statusMap(newStatus);
+        const message = `Has marcado el CV de '${name}' como '${status}'`;
+        toast.success(message);
+      }
     },
   });
 
@@ -80,8 +95,20 @@ export default function CVTable() {
     isLoading: deleteCVLoading,
     isError: deleteCVError,
   } = trpcReact.delete.useMutation({
-    onMutate: async () => {
-      await utils.getAllCVS.cancel(queryInput);
+    onSuccess: (input) => {
+      utils.getAllCVS.invalidate(queryInput);
+
+      if (Array.isArray(input)) {
+        const affectedRows = input.length;
+        const message = `Has eliminado ${affectedRows} ${
+          affectedRows > 1 ? "CVs" : "CV"
+        } y todos sus adjuntos`;
+        toast.success(message);
+      } else {
+        const { name } = input;
+        const message = `Has eliminado el CV de '${name}' y todos sus adjuntos`;
+        toast.success(message);
+      }
     },
   });
 
@@ -133,175 +160,66 @@ export default function CVTable() {
   };
 
   const actions: Actions = {
-    onMarkAsRejected: async (cv) => {
-      const query = utils.getAllCVS;
-
-      const prevData = query.getData(queryInput);
-
-      if (!prevData) {
-        throw new Error("No prev data");
-      }
-
-      const prevCVSIndex = prevData?.cvs.findIndex((c) => c.id === cv.id);
-
-      if (prevCVSIndex === -1) {
-        throw new Error("No prev CVS Index");
-      }
-
-      const prevCV = prevData?.cvs[prevCVSIndex];
-
-      if (!prevCV) {
-        throw new Error("No prev CVS");
-      }
-
-      const newCVS = [...prevData?.cvs!];
-      const newCV = { ...prevCV, status: CVSStatus.REJECTED };
-      newCVS.splice(prevCVSIndex, 1, newCV);
-
-      query.setData(queryInput, { ...prevData!, cvs: newCVS });
-
-      const message = `Has marcado el CV de ${cv.name} como 'Rechazado'`;
-      let undone = false;
-      toast.success(message, {
-        action: {
-          label: "Deshacer",
-          onClick: () => {
-            query.setData(queryInput, { ...prevData });
-            undone = true;
-          },
-        },
-        onAutoClose: () => {
-          if (undone) return;
-          changeStatus({ id: cv.id, newStatus: CVSStatus.REJECTED });
-        },
-      });
+    onMarkAsPending: (cv) => {
+      changeStatus({ id: cv.id, name: cv.name, newStatus: CVSStatus.PENDING });
+    },
+    onMarkAsRejected: (cv) => {
+      changeStatus({ id: cv.id, name: cv.name, newStatus: CVSStatus.REJECTED });
     },
     onMarkAsReviewed: (cv) => {
-      const query = utils.getAllCVS;
-
-      const prevData = query.getData(queryInput);
-
-      if (!prevData) {
-        throw new Error("No prev data");
-      }
-
-      const prevCVSIndex = prevData?.cvs.findIndex((c) => c.id === cv.id);
-
-      if (prevCVSIndex === -1) {
-        throw new Error("No prev CVS Index");
-      }
-
-      const prevCV = prevData?.cvs[prevCVSIndex];
-
-      if (!prevCV) {
-        throw new Error("No prev CVS");
-      }
-
-      const newCVS = [...prevData?.cvs!];
-      const newCV = { ...prevCV, status: CVSStatus.REVIEWED };
-      newCVS.splice(prevCVSIndex, 1, newCV);
-
-      query.setData(queryInput, { ...prevData!, cvs: newCVS });
-
-      const message = `Has marcado el CV de ${cv.name} como 'Revisado'`;
-      let undone = false;
-      toast.success(message, {
-        action: {
-          label: "Deshacer",
-          onClick: () => {
-            query.setData(queryInput, { ...prevData });
-            undone = true;
-          },
-        },
-        onAutoClose: () => {
-          if (undone) return;
-          changeStatus({ id: cv.id, newStatus: CVSStatus.REVIEWED });
-        },
-      });
+      changeStatus({ id: cv.id, name: cv.name, newStatus: CVSStatus.REVIEWED });
     },
     onMarkAsSelected: (cv) => {
-      const query = utils.getAllCVS;
-
-      const prevData = query.getData(queryInput);
-
-      if (!prevData) {
-        throw new Error("No prev data");
-      }
-
-      const prevCVSIndex = prevData?.cvs.findIndex((c) => c.id === cv.id);
-
-      if (prevCVSIndex === -1) {
-        throw new Error("No prev CVS Index");
-      }
-
-      const prevCV = prevData?.cvs[prevCVSIndex];
-
-      if (!prevCV) {
-        throw new Error("No prev CVS");
-      }
-
-      const newCVS = [...prevData?.cvs!];
-      const newCV = { ...prevCV, status: CVSStatus.SELECTED };
-      newCVS.splice(prevCVSIndex, 1, newCV);
-
-      query.setData(queryInput, { ...prevData!, cvs: newCVS });
-
-      const message = `Has marcado el CV de ${cv.name} como 'Seleccionado'`;
-      let undone = false;
-      toast.success(message, {
-        action: {
-          label: "Deshacer",
-          onClick: () => {
-            query.setData(queryInput, { ...prevData });
-            undone = true;
-          },
-        },
-        onAutoClose: () => {
-          if (undone) return;
-          changeStatus({ id: cv.id, newStatus: CVSStatus.SELECTED });
-        },
-      });
+      changeStatus({ id: cv.id, name: cv.name, newStatus: CVSStatus.SELECTED });
     },
     onDelete: (cv) => {
-      const query = utils.getAllCVS;
-
-      const prevData = query.getData(queryInput);
-
-      if (!prevData) {
-        throw new Error("No prev data");
-      }
-
-      const newCVS = prevData?.cvs.filter((c) => c.id !== cv.id);
-
-      if (!newCVS) {
-        throw new Error("No new CVS");
-      }
-
-      query.setData(queryInput, { ...prevData!, cvs: newCVS });
-
-      const message = `Has eliminado el CV de ${cv.name}`;
-      let undone = false;
-      toast.success(message, {
-        action: {
-          label: "Deshacer",
-          onClick: () => {
-            query.setData(queryInput, { ...prevData });
-            undone = true;
-          },
-        },
-        onAutoClose: () => {
-          if (undone) return;
-          deleteCV({ id: cv.id });
-        },
-      });
+      deleteCV({ id: cv.id, name: cv.name });
     },
+  };
+
+  const batchActions: BatchActions = {
+    onMarkAsPending: (cvs) =>
+      changeStatus(
+        cvs.map((c) => ({
+          id: c.id,
+          name: c.name,
+          newStatus: CVSStatus.PENDING,
+        }))
+      ),
+    onMarkAsRejected: (cvs) =>
+      changeStatus(
+        cvs.map((c) => ({
+          id: c.id,
+          name: c.name,
+          newStatus: CVSStatus.REJECTED,
+        }))
+      ),
+    onMarkAsReviewed: (cvs) =>
+      changeStatus(
+        cvs.map((c) => ({
+          id: c.id,
+          name: c.name,
+          newStatus: CVSStatus.REVIEWED,
+        }))
+      ),
+    onMarkAsSelected: (cvs) =>
+      changeStatus(
+        cvs.map((c) => ({
+          id: c.id,
+          name: c.name,
+          newStatus: CVSStatus.SELECTED,
+        }))
+      ),
+    onDelete: (cvs) => deleteCV(cvs.map((c) => ({ id: c.id, name: c.name }))),
   };
 
   const columns = generateColumns({
     sorting,
     filtering,
     actions,
+    batchActions,
     dateFiltering,
+    isActionColumnLoading: changeStatusLoading || deleteCVLoading,
   });
 
   const handleOnSearch: OnSearch = (params) => {
@@ -331,7 +249,12 @@ export default function CVTable() {
     },
   });
 
-  if (getAllCVSError || changeStatusError || getStorageInUseError) {
+  if (
+    getAllCVSError ||
+    changeStatusError ||
+    getStorageInUseError ||
+    deleteCVError
+  ) {
     return <div>Error</div>;
   }
 
@@ -373,4 +296,19 @@ export default function CVTable() {
       </div>
     </div>
   );
+}
+
+function statusMap(status: number): string {
+  switch (status) {
+    case CVSStatus.PENDING:
+      return "Pendiente";
+    case CVSStatus.REJECTED:
+      return "Reachazado";
+    case CVSStatus.REVIEWED:
+      return "Revisado";
+    case CVSStatus.SELECTED:
+      return "Seleccionado";
+    default:
+      throw new Error("Invalid status");
+  }
 }

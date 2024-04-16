@@ -1,5 +1,5 @@
-import type { ColumnDef } from "@tanstack/react-table";
-import type { Actions, CVRow } from "./types";
+import type { ColumnDef, Row, RowSelectionState } from "@tanstack/react-table";
+import type { Actions, BatchActions, CVRow } from "./types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,22 +21,41 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { CVSStatus } from "@/constants";
-import { Ellipsis, MoreHorizontal } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import {
+  Check,
+  CheckCheck,
+  Clock,
+  Ellipsis,
+  MoreHorizontal,
+  RefreshCcw,
+  Trash2,
+  X,
+} from "lucide-react";
 
 export type ActionsColumnDefProps = {
   actions: Actions;
+  batchActions: BatchActions;
+  isActionColumnLoading: boolean;
 };
 
 export function actionsColumnDef({
   actions,
+  batchActions,
+  isActionColumnLoading,
 }: ActionsColumnDefProps): ColumnDef<CVRow> {
   return {
     id: "actions",
     header: ({ table }) => {
-      const rowSelection = table.getState().rowSelection;
+      const rowSelectionState = table.getState().rowSelection;
+      const rows = table.getCoreRowModel().rows;
       const someSelected = table.getIsSomeRowsSelected();
       const pageSelected = table.getIsAllPageRowsSelected();
+
+      if (isActionColumnLoading) {
+        return (
+          <RefreshCcw className="ml-3 h-3.5 w-3.5 text-slate-800 animate-spin" />
+        );
+      }
 
       return (
         <AlertDialog>
@@ -53,7 +72,7 @@ export function actionsColumnDef({
                 {(someSelected || pageSelected) && (
                   <div className="w-4 h-4 flex items-center justify-center rounded-full bg-red-600 absolute top-0 right-0">
                     <span className="text-xs font-thin text-white">
-                      {Object.values(rowSelection).length}
+                      {Object.values(rowSelectionState).length}
                     </span>
                   </div>
                 )}
@@ -61,20 +80,171 @@ export function actionsColumnDef({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones en bloque</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => console.log("mark as reviewed")}>
-                Marcar como revisado
-              </DropdownMenuItem>
 
-              <DropdownMenuItem onClick={() => console.log("mark as reviewed")}>
-                Marcar como rechazado
-              </DropdownMenuItem>
+              {hasSameStatus({
+                status: CVSStatus.REVIEWED,
+                selectedRows: selectedRows({ rowSelectionState, rows }),
+              }) && (
+                <>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      batchActions.onMarkAsRejected(
+                        selectedRows({ rowSelectionState, rows })
+                      )
+                    }
+                  >
+                    <X className="w-3.5 h-3.5 mr-2" />
+                    Marcar como rechazado
+                  </DropdownMenuItem>
 
-              <DropdownMenuItem onClick={() => console.log("mark as reviewed")}>
-                Marcar como seleccionado
-              </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      batchActions.onMarkAsSelected(
+                        selectedRows({ rowSelectionState, rows })
+                      )
+                    }
+                  >
+                    <CheckCheck className="w-3.5 h-3.5 mr-2" />
+                    Marcar como seleccionado
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() =>
+                      batchActions.onMarkAsPending(
+                        selectedRows({ rowSelectionState, rows })
+                      )
+                    }
+                  >
+                    <Clock className="w-3.5 h-3.5 mr-2" />
+                    Marcar como pendiente
+                  </DropdownMenuItem>
+                </>
+              )}
+
+              {hasSameStatus({
+                status: CVSStatus.REJECTED,
+                selectedRows: selectedRows({ rowSelectionState, rows }),
+              }) && (
+                <>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      batchActions.onMarkAsReviewed(
+                        selectedRows({ rowSelectionState, rows })
+                      )
+                    }
+                  >
+                    <Check className="w-3.5 h-3.5 mr-2" />
+                    Marcar como revisado
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() =>
+                      batchActions.onMarkAsSelected(
+                        selectedRows({ rowSelectionState, rows })
+                      )
+                    }
+                  >
+                    <CheckCheck className="w-3.5 h-3.5 mr-2" />
+                    Marcar como seleccionado
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() =>
+                      batchActions.onMarkAsPending(
+                        selectedRows({ rowSelectionState, rows })
+                      )
+                    }
+                  >
+                    <Clock className="w-3.5 h-3.5 mr-2" />
+                    Marcar como pendiente
+                  </DropdownMenuItem>
+                </>
+              )}
+
+              {hasSameStatus({
+                status: CVSStatus.PENDING,
+                selectedRows: selectedRows({ rowSelectionState, rows }),
+              }) && (
+                <>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      batchActions.onMarkAsReviewed(
+                        selectedRows({ rowSelectionState, rows })
+                      )
+                    }
+                  >
+                    <Check className="w-3.5 h-3.5 mr-2" />
+                    Marcar como revisado
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() =>
+                      batchActions.onMarkAsSelected(
+                        selectedRows({ rowSelectionState, rows })
+                      )
+                    }
+                  >
+                    <CheckCheck className="w-3.5 h-3.5 mr-2" />
+                    Marcar como seleccionado
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() =>
+                      batchActions.onMarkAsRejected(
+                        selectedRows({ rowSelectionState, rows })
+                      )
+                    }
+                  >
+                    <X className="w-3.5 h-3.5 mr-2" />
+                    Marcar como rechazado
+                  </DropdownMenuItem>
+                </>
+              )}
+
+              {hasSameStatus({
+                status: CVSStatus.SELECTED,
+                selectedRows: selectedRows({ rowSelectionState, rows }),
+              }) && (
+                <>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      batchActions.onMarkAsReviewed(
+                        selectedRows({ rowSelectionState, rows })
+                      )
+                    }
+                  >
+                    <Check className="w-3.5 h-3.5 mr-2" />
+                    Marcar como revisado
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() =>
+                      batchActions.onMarkAsRejected(
+                        selectedRows({ rowSelectionState, rows })
+                      )
+                    }
+                  >
+                    <X className="w-3.5 h-3.5 mr-2" />
+                    Marcar como rechazado
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() =>
+                      batchActions.onMarkAsPending(
+                        selectedRows({ rowSelectionState, rows })
+                      )
+                    }
+                  >
+                    <Clock className="w-3.5 h-3.5 mr-2" />
+                    Marcar como pendiente
+                  </DropdownMenuItem>
+                </>
+              )}
+
               <DropdownMenuSeparator />
               <AlertDialogTrigger asChild>
                 <DropdownMenuItem className="text-red-500">
+                  <Trash2 className="w-3.5 h-3.5 mr-2" />
                   Eliminar
                 </DropdownMenuItem>
               </AlertDialogTrigger>
@@ -94,7 +264,11 @@ export function actionsColumnDef({
                 {/* TODO: Fix this */}
                 <Button
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  onClick={() => console.log("delete all selected")}
+                  onClick={() =>
+                    batchActions.onDelete(
+                      selectedRows({ rowSelectionState, rows })
+                    )
+                  }
                 >
                   Eliminar
                 </Button>
@@ -120,6 +294,7 @@ export function actionsColumnDef({
                 <DropdownMenuItem
                   onClick={() => actions.onMarkAsReviewed(row.original)}
                 >
+                  <Check className="w-3.5 h-3.5 mr-2" />
                   Marcar como revisado
                 </DropdownMenuItem>
               )}
@@ -128,6 +303,7 @@ export function actionsColumnDef({
                 <DropdownMenuItem
                   onClick={() => actions.onMarkAsRejected(row.original)}
                 >
+                  <X className="w-3.5 h-3.5 mr-2" />
                   Marcar como rechazado
                 </DropdownMenuItem>
               )}
@@ -136,13 +312,24 @@ export function actionsColumnDef({
                 <DropdownMenuItem
                   onClick={() => actions.onMarkAsSelected(row.original)}
                 >
+                  <CheckCheck className="w-3.5 h-3.5 mr-2" />
                   Marcar como seleccionado
+                </DropdownMenuItem>
+              )}
+
+              {row.original.status !== CVSStatus.PENDING && (
+                <DropdownMenuItem
+                  onClick={() => actions.onMarkAsPending(row.original)}
+                >
+                  <Clock className="w-3.5 h-3.5 mr-2" />
+                  Marcar como pendiente
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
 
               <AlertDialogTrigger asChild>
                 <DropdownMenuItem className="text-red-500">
+                  <Trash2 className="w-3.5 h-3.5 mr-2" />
                   Eliminar
                 </DropdownMenuItem>
               </AlertDialogTrigger>
@@ -173,4 +360,27 @@ export function actionsColumnDef({
       );
     },
   };
+}
+
+type HasSameStatusParams = {
+  status: number;
+  selectedRows: CVRow[];
+};
+function hasSameStatus({ status, selectedRows }: HasSameStatusParams): boolean {
+  return selectedRows.every((r) => r.status === status);
+}
+
+type SelectedRowsParams = {
+  rowSelectionState: RowSelectionState;
+  rows: Row<CVRow>[];
+};
+function selectedRows({
+  rowSelectionState,
+  rows,
+}: SelectedRowsParams): CVRow[] {
+  const selectedIDs = Object.keys(rowSelectionState);
+
+  const filteredRows = rows.filter((r) => selectedIDs.includes(r.original.id));
+
+  return filteredRows.map((r) => r.original);
 }
