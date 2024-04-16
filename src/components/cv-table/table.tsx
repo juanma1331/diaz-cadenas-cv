@@ -104,6 +104,7 @@ export default function CVTable() {
           affectedRows > 1 ? "CVs" : "CV"
         } y todos sus adjuntos`;
         toast.success(message);
+        setRowSelection({});
       } else {
         const { name } = input;
         const message = `Has eliminado el CV de '${name}' y todos sus adjuntos`;
