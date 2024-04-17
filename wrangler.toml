@@ -1,7 +1,5 @@
-main = "dist"
+name = "diaz-cadenas-workers"
 
 [vars]
 ENVIRONMENT = "production"
 
-[build]
-command = "npm run build"  # Asegúrate de que este comando corresponde al script que construye tu sitio
