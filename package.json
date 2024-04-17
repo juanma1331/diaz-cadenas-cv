@@ -3,16 +3,16 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "wrangler types && astro dev",
-    "start": "wrangler types && astro dev",
-    "build": "wrangler types && astro check && astro build --remote",
-    "preview": "wrangler pages dev ./dist",
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build --remote",
+    "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/check": "^0.5.9",
-    "@astrojs/cloudflare": "^10.1.0",
     "@astrojs/db": "^0.8.8",
+    "@astrojs/netlify": "^5.2.0",
     "@astrojs/react": "^3.1.0",
     "@astrojs/tailwind": "^5.1.0",
     "@hookform/resolvers": "^3.3.4",
@@ -62,7 +62,6 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240405.0",
-    "@faker-js/faker": "^8.4.1",
-    "wrangler": "^3.51.0"
+    "@faker-js/faker": "^8.4.1"
   }
 }
