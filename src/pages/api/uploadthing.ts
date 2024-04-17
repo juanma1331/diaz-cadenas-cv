@@ -3,6 +3,7 @@ import { createRouteHandler } from "uploadthing/server";
 import { uploadRouter } from "../../server/uploadthing";
 import type { APIContext } from "astro";
 
+// I needed this
 export async function GET({ request, locals }: APIContext) {
   const { env, ctx } = locals.runtime;
 
