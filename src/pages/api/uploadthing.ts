@@ -1,7 +1,7 @@
 import { createRouteHandler } from "uploadthing/server";
 
 import { uploadRouter } from "../../server/uploadthing";
-import type { APIContext, APIRoute } from "astro";
+import type { APIContext } from "astro";
 
 export async function GET({ request, locals }: APIContext) {
   const { env, ctx } = locals.runtime;
@@ -9,6 +9,7 @@ export async function GET({ request, locals }: APIContext) {
   const handlers = createRouteHandler({
     router: uploadRouter,
     config: {
+      callbackUrl: "diaz-cadenas-cv.pages.dev",
       /**
        * Since workers doesn't have envs on `process`. We need to pass
        * secret and isDev flag manually.
@@ -39,6 +40,7 @@ export async function POST({ request, locals }: APIContext) {
   const handlers = createRouteHandler({
     router: uploadRouter,
     config: {
+      callbackUrl: "diaz-cadenas-cv.pages.dev",
       /**
        * Since workers doesn't have envs on `process`. We need to pass
        * secret and isDev flag manually.
