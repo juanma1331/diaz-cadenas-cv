@@ -1,5 +1,4 @@
 name = "diaz-cadenas-workers"
 
-[vars]
-ENVIRONMENT = "production"
+
 
