@@ -9,7 +9,6 @@ export async function GET({ request, locals }: APIContext) {
   const handlers = createRouteHandler({
     router: uploadRouter,
     config: {
-      callbackUrl: "diaz-cadenas-cv.pages.dev",
       /**
        * Since workers doesn't have envs on `process`. We need to pass
        * secret and isDev flag manually.
@@ -40,7 +39,6 @@ export async function POST({ request, locals }: APIContext) {
   const handlers = createRouteHandler({
     router: uploadRouter,
     config: {
-      callbackUrl: "diaz-cadenas-cv.pages.dev",
       /**
        * Since workers doesn't have envs on `process`. We need to pass
        * secret and isDev flag manually.

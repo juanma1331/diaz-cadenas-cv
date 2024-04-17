@@ -1,2 +1,11 @@
 [vars]
 ENVIRONMENT = "development"
+
+[build]
+command = "npm run build"  # Asegúrate de que este comando corresponde al script que construye tu sitio
+upload.exclude = ["**/*.map"]
+upload.include = ["**/*"]
+upload.main = "dist"  # Directorio que contiene los archivos estáticos generados
+
+[pages]
+pages_build_output_dir = "dist"
