@@ -36,7 +36,6 @@ export default function Video({ onAddToForm }: VideoProps) {
       timeSlice: 1000,
     },
     mediaRecorderOptions: { mimeType: "video/webm; codecs=vp8" },
-    mediaTrackConstraints: {},
   });
 
   // Start new recording on component mount
