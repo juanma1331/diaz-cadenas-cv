@@ -10,7 +10,7 @@ export default function CVFormIsland() {
     trpcReact.createClient({
       links: [
         httpBatchLink({
-          url: "https://graceful-souffle-ef28e5.netlify.app/api/trpc",
+          url: "https://papaya-pastelito-dbc715.netlify.app/api/trpc",
         }),
       ],
     })

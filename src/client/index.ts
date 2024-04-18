@@ -7,7 +7,7 @@ const trpcReact = createTRPCReact<AppRouter>();
 const trpcAstro = createTRPCProxyClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: "https://graceful-souffle-ef28e5.netlify.app/api/trpc",
+      url: "https://papaya-pastelito-dbc715.netlify.app/api/trpc",
     }),
   ],
 });
