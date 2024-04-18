@@ -7,7 +7,7 @@ const trpcReact = createTRPCReact<AppRouter>();
 const trpcAstro = createTRPCProxyClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: "https://gleeful-bombolone-4b8379.netlify.app/api/trpc",
+      url: "https://aesthetic-dusk-395938.netlify.app/api/trpc",
     }),
   ],
 });
