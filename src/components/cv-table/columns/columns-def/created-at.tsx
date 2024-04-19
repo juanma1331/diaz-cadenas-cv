@@ -1,6 +1,5 @@
-import type { ColumnDef, SortingState } from "@tanstack/react-table";
-import SortingColumnHeader from "../headers/sorting-column-header";
-import type { CVRow, DateFiltering, Sorting } from "./types";
+import type { ColumnDef } from "@tanstack/react-table";
+import type { CVRow, DateFiltering } from "./types";
 import { DateFilteringColumnHeader } from "../headers/date-filtering-column-header";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";

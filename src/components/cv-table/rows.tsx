@@ -9,19 +9,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { ReloadIcon } from "@radix-ui/react-icons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { RefreshCcw } from "lucide-react";
 
-export interface CVTableProps<TData, TValue> {
+export interface CVTableProps<TData> {
   table: TableType<TData>;
   isLoading: boolean;
 }
 
-export default function CVTableRows<TData, TValue>({
+export default function CVTableRows<TData>({
   table,
   isLoading,
-}: CVTableProps<TData, TValue>) {
+}: CVTableProps<TData>) {
   return (
     <ScrollArea className="h-[800px] overflow-auto">
       <Table>
