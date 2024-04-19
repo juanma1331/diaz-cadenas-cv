@@ -6,7 +6,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { positions } from "@/constants";
+import { POSITIONS } from "@/constants";
 import type { ColumnFiltersState } from "@tanstack/react-table";
 import { ListFilter, Dot, WandSparkles } from "lucide-react";
 import type { OnClearFilter, OnFilter } from "../columns-def/types";
@@ -36,7 +36,7 @@ export function PositionFilteringColumnHeader({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
-        {positions.map((position, i) => (
+        {POSITIONS.map((position, i) => (
           <DropdownMenuItem
             key={`dropdown-filter-${position}-${i}`}
             className={

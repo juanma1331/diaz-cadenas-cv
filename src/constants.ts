@@ -1,11 +1,11 @@
-export const CVSStatus = {
+export const CVS_STATUS = {
   PENDING: 1,
   REVIEWED: 2,
   REJECTED: 3,
   SELECTED: 4,
 } as const;
 
-export const places = [
+export const PLACES = [
   "Andújar",
   "Brenes",
   "Bollullos Par del Condado",
@@ -23,7 +23,7 @@ export const places = [
   "Utrera",
 ] as const;
 
-export const positions = [
+export const POSITIONS = [
   "Carnicería",
   "Charcutería",
   "Pescadería",
@@ -34,3 +34,5 @@ export const positions = [
   "Reponedor",
   "Limpieza",
 ] as const;
+
+export const APP_URL = "http://localhost:4321";

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CVSStatus } from "@/constants";
+import { CVS_STATUS } from "@/constants";
 import type { DateFilteringState } from "./columns";
 
 export type CVTableFiltersProps = {
@@ -74,16 +74,16 @@ export default function CVTableFilters({
 
         if (isStatus) {
           switch (item.value) {
-            case CVSStatus.PENDING:
+            case CVS_STATUS.PENDING:
               text = "Pendiente";
               break;
-            case CVSStatus.REJECTED:
+            case CVS_STATUS.REJECTED:
               text = "Rechazado";
               break;
-            case CVSStatus.REVIEWED:
+            case CVS_STATUS.REVIEWED:
               text = "Revisado";
               break;
-            case CVSStatus.SELECTED:
+            case CVS_STATUS.SELECTED:
               text = "Seleccionado";
               break;
             default:

@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useState } from "react";
 import CVForm from "./form";
+import { APP_URL } from "@/constants";
 
 export default function CVFormIsland() {
   const [queryClient] = useState(() => new QueryClient());
@@ -10,7 +11,7 @@ export default function CVFormIsland() {
     trpcReact.createClient({
       links: [
         httpBatchLink({
-          url: "https://papaya-pastelito-dbc715.netlify.app/api/trpc",
+          url: `${APP_URL}/api/trpc`,
         }),
       ],
     })

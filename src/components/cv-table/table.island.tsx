@@ -4,6 +4,7 @@ import { httpBatchLink } from "@trpc/client";
 import { useState } from "react";
 import CVTable from "./table";
 import { Toaster } from "@/components/ui/sonner";
+import { APP_URL } from "@/constants";
 
 export default function CVTableIsland() {
   const [queryClient] = useState(() => new QueryClient());
@@ -11,7 +12,7 @@ export default function CVTableIsland() {
     trpcReact.createClient({
       links: [
         httpBatchLink({
-          url: "https://papaya-pastelito-dbc715.netlify.app/api/trpc",
+          url: `${APP_URL}/api/trpc`,
         }),
       ],
     })

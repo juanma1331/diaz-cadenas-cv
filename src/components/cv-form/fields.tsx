@@ -25,7 +25,7 @@ import {
   placeSchema,
   positionSchema,
 } from "@/server/routes/insert-cv.route";
-import { places, positions } from "@/constants";
+import { PLACES, POSITIONS } from "@/constants";
 
 import { useState } from "react";
 import Video from "./video/video";
@@ -111,7 +111,7 @@ export default function CVFormFields(props: CVFormFieldsProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {places.map((place) => (
+                  {PLACES.map((place) => (
                     <SelectItem key={place} value={place}>
                       {place}
                     </SelectItem>
@@ -136,7 +136,7 @@ export default function CVFormFields(props: CVFormFieldsProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {positions.map((position) => (
+                  {POSITIONS.map((position) => (
                     <SelectItem key={position} value={position}>
                       {position}
                     </SelectItem>

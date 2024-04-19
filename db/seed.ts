@@ -64,7 +64,7 @@ async function generateCVS(qty: number) {
       db.insert(ATTACHMENTS).values({
         name: `Attachment-2 ${i}`,
         url: `https://example.com/attachment-2-${i}`,
-        size: 61440,
+        size: 34000,
         type: "video/mp4",
         key: `key-2-${i}`,
         cvId: cvId,

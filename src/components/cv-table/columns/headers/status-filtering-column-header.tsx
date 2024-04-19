@@ -6,7 +6,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CVSStatus } from "@/constants";
+import { CVS_STATUS } from "@/constants";
 import type { ColumnFiltersState } from "@tanstack/react-table";
 import { ListFilter, Dot, WandSparkles } from "lucide-react";
 import type { OnFilter, OnClearFilter } from "../columns-def/types";
@@ -37,15 +37,15 @@ export function StatusFilteringColumnHeader({
       <DropdownMenuContent align="start">
         <DropdownMenuItem
           className={
-            currentFilter?.value === CVSStatus.PENDING
+            currentFilter?.value === CVS_STATUS.PENDING
               ? "bg-primary text-primary-foreground"
               : ""
           }
-          onClick={() => onFilter({ id: "status", value: CVSStatus.PENDING })}
+          onClick={() => onFilter({ id: "status", value: CVS_STATUS.PENDING })}
         >
           <Dot
             className={`mr-2 h-3.5 w-3.5 ${
-              currentFilter?.value === CVSStatus.PENDING
+              currentFilter?.value === CVS_STATUS.PENDING
                 ? "text-primary-foreground"
                 : "text-muted-foreground/70"
             }`}
@@ -54,15 +54,15 @@ export function StatusFilteringColumnHeader({
         </DropdownMenuItem>
         <DropdownMenuItem
           className={
-            currentFilter?.value === CVSStatus.REVIEWED
+            currentFilter?.value === CVS_STATUS.REVIEWED
               ? "bg-primary text-primary-foreground"
               : ""
           }
-          onClick={() => onFilter({ id: "status", value: CVSStatus.REVIEWED })}
+          onClick={() => onFilter({ id: "status", value: CVS_STATUS.REVIEWED })}
         >
           <Dot
             className={`mr-2 h-3.5 w-3.5 ${
-              currentFilter?.value === CVSStatus.REVIEWED
+              currentFilter?.value === CVS_STATUS.REVIEWED
                 ? "text-primary-foreground"
                 : "text-muted-foreground/70"
             }`}
@@ -71,15 +71,15 @@ export function StatusFilteringColumnHeader({
         </DropdownMenuItem>
         <DropdownMenuItem
           className={
-            currentFilter?.value === CVSStatus.REJECTED
+            currentFilter?.value === CVS_STATUS.REJECTED
               ? "bg-primary text-primary-foreground"
               : ""
           }
-          onClick={() => onFilter({ id: "status", value: CVSStatus.REJECTED })}
+          onClick={() => onFilter({ id: "status", value: CVS_STATUS.REJECTED })}
         >
           <Dot
             className={`mr-2 h-3.5 w-3.5 ${
-              currentFilter?.value === CVSStatus.REJECTED
+              currentFilter?.value === CVS_STATUS.REJECTED
                 ? "text-primary-foreground"
                 : "text-muted-foreground/70"
             }`}
@@ -88,15 +88,15 @@ export function StatusFilteringColumnHeader({
         </DropdownMenuItem>
         <DropdownMenuItem
           className={
-            currentFilter?.value === CVSStatus.SELECTED
+            currentFilter?.value === CVS_STATUS.SELECTED
               ? "bg-primary text-primary-foreground"
               : ""
           }
-          onClick={() => onFilter({ id: "status", value: CVSStatus.SELECTED })}
+          onClick={() => onFilter({ id: "status", value: CVS_STATUS.SELECTED })}
         >
           <Dot
             className={`mr-2 h-3.5 w-3.5 ${
-              currentFilter?.value === CVSStatus.SELECTED
+              currentFilter?.value === CVS_STATUS.SELECTED
                 ? "text-primary-foreground"
                 : "text-muted-foreground/70"
             }`}

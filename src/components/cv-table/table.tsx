@@ -22,7 +22,7 @@ import CVTableSearch, { type OnSearch, type Search } from "./search";
 import CVTableFilters from "./filters";
 import CVTableStorageUsed from "./storage";
 import CVTablePagination from "./pagination";
-import { CVSStatus } from "@/constants";
+import { CVS_STATUS } from "@/constants";
 import { toast } from "sonner";
 import type { DateRange } from "react-day-picker";
 
@@ -162,16 +162,28 @@ export default function CVTable() {
 
   const actions: Actions = {
     onMarkAsPending: (cv) => {
-      changeStatus({ id: cv.id, name: cv.name, newStatus: CVSStatus.PENDING });
+      changeStatus({ id: cv.id, name: cv.name, newStatus: CVS_STATUS.PENDING });
     },
     onMarkAsRejected: (cv) => {
-      changeStatus({ id: cv.id, name: cv.name, newStatus: CVSStatus.REJECTED });
+      changeStatus({
+        id: cv.id,
+        name: cv.name,
+        newStatus: CVS_STATUS.REJECTED,
+      });
     },
     onMarkAsReviewed: (cv) => {
-      changeStatus({ id: cv.id, name: cv.name, newStatus: CVSStatus.REVIEWED });
+      changeStatus({
+        id: cv.id,
+        name: cv.name,
+        newStatus: CVS_STATUS.REVIEWED,
+      });
     },
     onMarkAsSelected: (cv) => {
-      changeStatus({ id: cv.id, name: cv.name, newStatus: CVSStatus.SELECTED });
+      changeStatus({
+        id: cv.id,
+        name: cv.name,
+        newStatus: CVS_STATUS.SELECTED,
+      });
     },
     onDelete: (cv) => {
       deleteCV({ id: cv.id, name: cv.name });
@@ -184,7 +196,7 @@ export default function CVTable() {
         cvs.map((c) => ({
           id: c.id,
           name: c.name,
-          newStatus: CVSStatus.PENDING,
+          newStatus: CVS_STATUS.PENDING,
         }))
       ),
     onMarkAsRejected: (cvs) =>
@@ -192,7 +204,7 @@ export default function CVTable() {
         cvs.map((c) => ({
           id: c.id,
           name: c.name,
-          newStatus: CVSStatus.REJECTED,
+          newStatus: CVS_STATUS.REJECTED,
         }))
       ),
     onMarkAsReviewed: (cvs) =>
@@ -200,7 +212,7 @@ export default function CVTable() {
         cvs.map((c) => ({
           id: c.id,
           name: c.name,
-          newStatus: CVSStatus.REVIEWED,
+          newStatus: CVS_STATUS.REVIEWED,
         }))
       ),
     onMarkAsSelected: (cvs) =>
@@ -208,7 +220,7 @@ export default function CVTable() {
         cvs.map((c) => ({
           id: c.id,
           name: c.name,
-          newStatus: CVSStatus.SELECTED,
+          newStatus: CVS_STATUS.SELECTED,
         }))
       ),
     onDelete: (cvs) => deleteCV(cvs.map((c) => ({ id: c.id, name: c.name }))),
@@ -301,13 +313,13 @@ export default function CVTable() {
 
 function statusMap(status: number): string {
   switch (status) {
-    case CVSStatus.PENDING:
+    case CVS_STATUS.PENDING:
       return "Pendiente";
-    case CVSStatus.REJECTED:
+    case CVS_STATUS.REJECTED:
       return "Reachazado";
-    case CVSStatus.REVIEWED:
+    case CVS_STATUS.REVIEWED:
       return "Revisado";
-    case CVSStatus.SELECTED:
+    case CVS_STATUS.SELECTED:
       return "Seleccionado";
     default:
       throw new Error("Invalid status");

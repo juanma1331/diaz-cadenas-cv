@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { CVSStatus } from "@/constants";
+import { CVS_STATUS } from "@/constants";
 import {
   Check,
   CheckCheck,
@@ -82,7 +82,7 @@ export function actionsColumnDef({
               <DropdownMenuLabel>Acciones en bloque</DropdownMenuLabel>
 
               {hasSameStatus({
-                status: CVSStatus.REVIEWED,
+                status: CVS_STATUS.REVIEWED,
                 selectedRows: selectedRows({ rowSelectionState, rows }),
               }) && (
                 <>
@@ -122,7 +122,7 @@ export function actionsColumnDef({
               )}
 
               {hasSameStatus({
-                status: CVSStatus.REJECTED,
+                status: CVS_STATUS.REJECTED,
                 selectedRows: selectedRows({ rowSelectionState, rows }),
               }) && (
                 <>
@@ -162,7 +162,7 @@ export function actionsColumnDef({
               )}
 
               {hasSameStatus({
-                status: CVSStatus.PENDING,
+                status: CVS_STATUS.PENDING,
                 selectedRows: selectedRows({ rowSelectionState, rows }),
               }) && (
                 <>
@@ -202,7 +202,7 @@ export function actionsColumnDef({
               )}
 
               {hasSameStatus({
-                status: CVSStatus.SELECTED,
+                status: CVS_STATUS.SELECTED,
                 selectedRows: selectedRows({ rowSelectionState, rows }),
               }) && (
                 <>
@@ -290,7 +290,7 @@ export function actionsColumnDef({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              {row.original.status !== CVSStatus.REVIEWED && (
+              {row.original.status !== CVS_STATUS.REVIEWED && (
                 <DropdownMenuItem
                   onClick={() => actions.onMarkAsReviewed(row.original)}
                 >
@@ -299,7 +299,7 @@ export function actionsColumnDef({
                 </DropdownMenuItem>
               )}
 
-              {row.original.status !== CVSStatus.REJECTED && (
+              {row.original.status !== CVS_STATUS.REJECTED && (
                 <DropdownMenuItem
                   onClick={() => actions.onMarkAsRejected(row.original)}
                 >
@@ -308,7 +308,7 @@ export function actionsColumnDef({
                 </DropdownMenuItem>
               )}
 
-              {row.original.status !== CVSStatus.SELECTED && (
+              {row.original.status !== CVS_STATUS.SELECTED && (
                 <DropdownMenuItem
                   onClick={() => actions.onMarkAsSelected(row.original)}
                 >
@@ -317,7 +317,7 @@ export function actionsColumnDef({
                 </DropdownMenuItem>
               )}
 
-              {row.original.status !== CVSStatus.PENDING && (
+              {row.original.status !== CVS_STATUS.PENDING && (
                 <DropdownMenuItem
                   onClick={() => actions.onMarkAsPending(row.original)}
                 >

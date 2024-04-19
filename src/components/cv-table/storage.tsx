@@ -1,7 +1,7 @@
 import { HardDrive } from "lucide-react";
 
 export type CVTableStorageUsedProps = {
-  storageUsed: number; // in KB
+  storageUsed: number; // in Bytes
 };
 
 export default function CVTableStorageUsed({
@@ -20,6 +20,6 @@ export default function CVTableStorageUsed({
   );
 }
 
-function inGB(storageInKB: number) {
-  return Math.round(storageInKB / 1024 / 1024);
+function inGB(storageInBytes: number) {
+  return Math.round(storageInBytes / 1024 / 1024 / 1024);
 }
