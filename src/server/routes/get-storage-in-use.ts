@@ -12,19 +12,18 @@ export const getStorageInUseProcedure = publicProcedure
   .output(outputSchema)
   .query(async () => {
     try {
-      // Get CVS attachments
       const sizeSum = await db
         .select({ value: sum(ATTACHMENTS.size) })
         .from(ATTACHMENTS);
 
       const sumString = sizeSum[0].value;
 
-      if (!sumString) throw new TRPCError({ code: "BAD_REQUEST" });
+      if (!sumString) throw new Error("sumString is null");
 
-      const storageInKB = Number(sumString);
+      const storageInBytes = Number(sumString);
 
       return {
-        storageInUse: storageInKB,
+        storageInUse: storageInBytes,
       };
     } catch (e) {
       throw new TRPCError({ code: "BAD_REQUEST" });
