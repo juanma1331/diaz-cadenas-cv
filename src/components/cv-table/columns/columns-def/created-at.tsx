@@ -4,16 +4,11 @@ import { DateFilteringColumnHeader } from "../headers/date-filtering-column-head
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
-export type CreatedAtColumnDefProps = {
-  dateFiltering: DateFiltering;
-};
-
-export default function createdAtColumnDef({
-  dateFiltering,
-}: CreatedAtColumnDefProps): ColumnDef<CVRow> {
+export default function createdAtColumnDef(): ColumnDef<CVRow> {
   return {
     accessorKey: "createdAt",
-    header: () => {
+    header: ({ table }) => {
+      const { dateFiltering } = table.options.meta!;
       return (
         <DateFilteringColumnHeader
           onDateFilter={dateFiltering.onDateFilter}

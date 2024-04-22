@@ -4,15 +4,11 @@ import { StatusFilteringColumnHeader } from "../headers/status-filtering-column-
 import { CVS_STATUS } from "@/constants";
 import { Badge } from "@/components/ui/badge";
 
-export type StatusColumnDefProps = {
-  filtering: Filtering;
-};
-export function statusColumnDef({
-  filtering,
-}: StatusColumnDefProps): ColumnDef<CVRow> {
+export function statusColumnDef(): ColumnDef<CVRow> {
   return {
     accessorKey: "status",
-    header: () => {
+    header: ({ table }) => {
+      const { filtering } = table.options.meta!;
       return (
         <StatusFilteringColumnHeader
           filteringState={filtering.filteringState}

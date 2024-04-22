@@ -1,14 +1,5 @@
 import { useState } from "react";
-import {
-  generateColumns,
-  type Filtering,
-  type GenerateColumnsParams,
-  type DateFiltering,
-  type Sorting,
-  type Actions,
-  type DateFilteringState,
-  type BatchActions,
-} from "./columns";
+import { generateColumns } from "./columns";
 import CVTableRows from "./rows";
 import { trpcReact } from "@/client";
 import {
@@ -25,6 +16,14 @@ import CVTablePagination from "./pagination";
 import { CVS_STATUS } from "@/constants";
 import { toast } from "sonner";
 import type { DateRange } from "react-day-picker";
+import type {
+  Actions,
+  BatchActions,
+  DateFiltering,
+  DateFilteringState,
+  Filtering,
+  Sorting,
+} from "./columns/columns-def/types";
 
 type FilterType = {
   id: "place" | "position" | "status";
@@ -34,6 +33,8 @@ type SortingType = {
   id: "createdAt" | "name" | "email";
   desc: boolean;
 };
+
+const columns = generateColumns();
 
 export default function CVTable() {
   const [limit, setLimit] = useState<number>(10);
@@ -226,15 +227,6 @@ export default function CVTable() {
     onDelete: (cvs) => deleteCV(cvs.map((c) => ({ id: c.id, name: c.name }))),
   };
 
-  const columns = generateColumns({
-    sorting,
-    filtering,
-    actions,
-    batchActions,
-    dateFiltering,
-    isActionColumnLoading: changeStatusLoading || deleteCVLoading,
-  });
-
   const handleOnSearch: OnSearch = (params) => {
     if (params.value === "") {
       setSearch(undefined);
@@ -259,6 +251,14 @@ export default function CVTable() {
     getRowId: (row) => row.id,
     state: {
       rowSelection,
+    },
+    meta: {
+      filtering: filtering,
+      sorting: sorting,
+      actions: actions,
+      batchActions: batchActions,
+      isActionColumnLoading: changeStatusLoading || deleteCVLoading,
+      dateFiltering: dateFiltering,
     },
   });
 

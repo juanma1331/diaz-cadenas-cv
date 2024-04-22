@@ -2,15 +2,11 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { CVRow, Filtering } from "./types";
 import { PlaceFilteringColumnHeader } from "../headers/place-filtering-column-header";
 
-export type PlaceColumnDefProps = {
-  filtering: Filtering;
-};
-export function placeColumnDef({
-  filtering,
-}: PlaceColumnDefProps): ColumnDef<CVRow> {
+export function placeColumnDef(): ColumnDef<CVRow> {
   return {
     accessorKey: "place",
-    header: () => {
+    header: ({ table }) => {
+      const { filtering } = table.options.meta!;
       return (
         <PlaceFilteringColumnHeader
           filteringState={filtering.filteringState}

@@ -2,16 +2,12 @@ import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import SortingColumnHeader from "../headers/sorting-column-header";
 import type { CVRow, Sorting } from "./types";
 
-export type NameColumnDefProps = {
-  sorting: Sorting;
-};
-
-export default function nameColumnDef({
-  sorting,
-}: NameColumnDefProps): ColumnDef<CVRow> {
+export default function nameColumnDef(): ColumnDef<CVRow> {
   return {
     accessorKey: "name",
-    header: () => {
+    header: ({ table }) => {
+      const { sorting } = table.options.meta!;
+
       return (
         <SortingColumnHeader
           id="name"
