@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { generateColumns } from "./columns";
 import CVTableRows from "./rows";
 import { trpcReact } from "@/client";
 import {
@@ -8,6 +7,7 @@ import {
   type SortingState,
   getCoreRowModel,
   type RowSelectionState,
+  type ColumnDef,
 } from "@tanstack/react-table";
 import CVTableSearch, { type OnSearch, type Search } from "./search";
 import CVTableFilters from "./filters";
@@ -19,11 +19,20 @@ import type { DateRange } from "react-day-picker";
 import type {
   Actions,
   BatchActions,
+  CVRow,
   DateFiltering,
   DateFilteringState,
   Filtering,
   Sorting,
 } from "./columns/columns-def/types";
+import nameColumnDef from "./columns/columns-def/name";
+import createdAtColumnDef from "./columns/columns-def/created-at";
+import { placeColumnDef } from "./columns/columns-def/place";
+import { positionColumnDef } from "./columns/columns-def/position";
+import { statusColumnDef } from "./columns/columns-def/status";
+import { attachmentsColumnDef } from "./columns/columns-def/attachments";
+import { selectionRowColumnDef } from "./columns/columns-def/selection";
+import { actionsColumnDef } from "./columns/columns-def/actions";
 
 type FilterType = {
   id: "place" | "position" | "status";
@@ -34,7 +43,16 @@ type SortingType = {
   desc: boolean;
 };
 
-const columns = generateColumns();
+const columns: ColumnDef<CVRow>[] = [
+  selectionRowColumnDef(),
+  nameColumnDef(),
+  createdAtColumnDef(),
+  placeColumnDef(),
+  positionColumnDef(),
+  statusColumnDef(),
+  attachmentsColumnDef(),
+  actionsColumnDef(),
+];
 
 export default function CVTable() {
   const [limit, setLimit] = useState<number>(10);
@@ -259,6 +277,7 @@ export default function CVTable() {
       batchActions: batchActions,
       isActionColumnLoading: changeStatusLoading || deleteCVLoading,
       dateFiltering: dateFiltering,
+      tableData: cvsData?.cvs ?? [],
     },
   });
 

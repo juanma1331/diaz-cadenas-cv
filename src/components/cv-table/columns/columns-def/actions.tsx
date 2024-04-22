@@ -31,25 +31,17 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import type { RouterOuputs } from "@/server/utils";
 
-export type ActionsColumnDefProps = {
-  actions: Actions;
-  batchActions: BatchActions;
-  isActionColumnLoading: boolean;
-};
-
-export function actionsColumnDef({
-  actions,
-  batchActions,
-  isActionColumnLoading,
-}: ActionsColumnDefProps): ColumnDef<CVRow> {
+export function actionsColumnDef(): ColumnDef<CVRow> {
   return {
     id: "actions",
     header: ({ table }) => {
+      const { isActionColumnLoading, batchActions } = table.options.meta!;
       const rowSelectionState = table.getState().rowSelection;
-      const rows = table.getCoreRowModel().rows;
-      const someSelected = table.getIsSomeRowsSelected();
-      const pageSelected = table.getIsAllPageRowsSelected();
+      const rows = table.options.meta!.tableData;
+      const someSelected = Object.keys(rowSelectionState).length > 0;
+      const pageSelected = Object.values(rowSelectionState).some((v) => v);
 
       if (isActionColumnLoading) {
         return (
@@ -278,7 +270,8 @@ export function actionsColumnDef({
         </AlertDialog>
       );
     },
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
+      const { actions } = table.options.meta!;
       return (
         <AlertDialog>
           <DropdownMenu>
@@ -364,7 +357,7 @@ export function actionsColumnDef({
 
 type HasSameStatusParams = {
   status: number;
-  selectedRows: CVRow[];
+  selectedRows: RouterOuputs["getAllCVS"]["cvs"];
 };
 function hasSameStatus({ status, selectedRows }: HasSameStatusParams): boolean {
   return selectedRows.every((r) => r.status === status);
@@ -372,15 +365,15 @@ function hasSameStatus({ status, selectedRows }: HasSameStatusParams): boolean {
 
 type SelectedRowsParams = {
   rowSelectionState: RowSelectionState;
-  rows: Row<CVRow>[];
+  rows: RouterOuputs["getAllCVS"]["cvs"];
 };
 function selectedRows({
   rowSelectionState,
   rows,
-}: SelectedRowsParams): CVRow[] {
+}: SelectedRowsParams): RouterOuputs["getAllCVS"]["cvs"] {
   const selectedIDs = Object.keys(rowSelectionState);
 
-  const filteredRows = rows.filter((r) => selectedIDs.includes(r.original.id));
+  const filteredRows = rows.filter((r) => selectedIDs.includes(r.id));
 
-  return filteredRows.map((r) => r.original);
+  return filteredRows.map((r) => r);
 }

@@ -1,4 +1,5 @@
 // src/tanstack-table-augmentations.d.ts
+import type { RouterOuputs } from "@/server/utils";
 import { RowData } from "@tanstack/table-core";
 
 declare module "@tanstack/table-core" {
@@ -9,5 +10,6 @@ declare module "@tanstack/table-core" {
     actions: Actions;
     batchActions: BatchActions;
     isActionColumnLoading: boolean;
+    tableData: RouterOuputs["getAllCVS"]["cvs"];
   }
 }
