@@ -290,7 +290,7 @@ export default function CVTable({ search }: CVTableProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center space-x-2">
-        <h2 className="text-slate-800 text-xl py-4">Currículums</h2>
+        <h1 className="text-slate-800 text-xl py-4">Currículums</h1>
         <CVTableFilters
           filteringState={filteringState}
           dateFilteringState={dateFilteringState}

@@ -1,11 +1,14 @@
 import CVDashboardHeader from "./cv-dashboard-header";
+import CVDashboard from "./cv-dashboard/dashboard";
 
 export default function CVDashboardPage() {
   return (
     <>
       <CVDashboardHeader />
 
-      <main>Dashboard page</main>
+      <main className="px-6">
+        <CVDashboard />
+      </main>
     </>
   );
 }
