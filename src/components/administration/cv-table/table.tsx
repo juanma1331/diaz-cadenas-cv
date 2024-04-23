@@ -34,11 +34,12 @@ import { attachmentsColumnDef } from "./columns/columns-def/attachments";
 import { selectionRowColumnDef } from "./columns/columns-def/selection";
 import { actionsColumnDef } from "./columns/columns-def/actions";
 
-type FilterType = {
+export type FilterType = {
   id: "place" | "position" | "status";
   value: string | number;
 };
-type SortingType = {
+
+export type SortingType = {
   id: "createdAt" | "name" | "email";
   desc: boolean;
 };
@@ -54,11 +55,14 @@ const columns: ColumnDef<CVRow>[] = [
   actionsColumnDef(),
 ];
 
-export default function CVTable() {
+export type CVTableProps = {
+  search: Search | undefined;
+};
+
+export default function CVTable({ search }: CVTableProps) {
   const [limit, setLimit] = useState<number>(10);
   const [page, setPage] = useState<number>(1);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [search, setSearch] = useState<Search | undefined>();
   const [sortingState, setSortingState] = useState<SortingState>([]);
   const [filteringState, setFilteringState] = useState<ColumnFiltersState>([]);
   const [dateFilteringState, setDateFilteringState] =
@@ -245,14 +249,6 @@ export default function CVTable() {
     onDelete: (cvs) => deleteCV(cvs.map((c) => ({ id: c.id, name: c.name }))),
   };
 
-  const handleOnSearch: OnSearch = (params) => {
-    if (params.value === "") {
-      setSearch(undefined);
-    } else {
-      setSearch(params);
-    }
-  };
-
   const handleOnLimitChange = (newLimit: number) => setLimit(newLimit);
   const handleOnNextPage = () => setPage((currentPage) => currentPage + 1);
   const handleOnPrevPage = () => setPage((currentPage) => currentPage - 1);
@@ -275,7 +271,8 @@ export default function CVTable() {
       sorting: sorting,
       actions: actions,
       batchActions: batchActions,
-      isActionColumnLoading: changeStatusLoading || deleteCVLoading,
+      isActionColumnLoading:
+        changeStatusLoading || deleteCVLoading || isLoading,
       dateFiltering: dateFiltering,
       tableData: cvsData?.cvs ?? [],
     },
@@ -291,23 +288,17 @@ export default function CVTable() {
   }
 
   return (
-    <div className="space-y-2 mt-4">
-      <div className="flex items-center justify-between">
-        <CVTableSearch onSearchChange={handleOnSearch} />
-
-        <div className="flex items-center space-x-2">
-          <CVTableFilters
-            filteringState={filteringState}
-            dateFilteringState={dateFilteringState}
-            sortingState={sortingState}
-            setFilters={setFilteringState}
-            setDateFilters={setDateFilteringState}
-            setSorting={setSortingState}
-          />
-          <CVTableStorageUsed
-            storageUsed={storageInUseData?.storageInUse ?? 0}
-          />
-        </div>
+    <div className="space-y-2">
+      <div className="flex items-center space-x-2">
+        <h2 className="text-slate-800 text-xl py-4">Currículums</h2>
+        <CVTableFilters
+          filteringState={filteringState}
+          dateFilteringState={dateFilteringState}
+          sortingState={sortingState}
+          setFilters={setFilteringState}
+          setDateFilters={setDateFilteringState}
+          setSorting={setSortingState}
+        />
       </div>
 
       <CVTableRows table={table} isLoading={isLoading} />

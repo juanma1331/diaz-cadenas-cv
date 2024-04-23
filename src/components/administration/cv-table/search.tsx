@@ -37,7 +37,7 @@ export default function CVTableSearch({ onSearchChange }: CVTableSearchProps) {
   };
 
   return (
-    <div className="min-w-[400px] relative">
+    <div className="max-w-[400px] relative">
       {searchBy === "nombre" ? (
         <NameInput onSearchChange={handleOnSearch} />
       ) : (
