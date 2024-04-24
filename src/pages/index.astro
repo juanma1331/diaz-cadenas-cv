@@ -1,11 +1,41 @@
 ---
 import BaseLayout from "@/layouts/base.astro";
 import CVFormIsland from "@/components/cv-form/form.island";
+import { Image } from "astro:assets";
+import logo from "../assets/logo.diazcadenas.png";
 ---
 
 <BaseLayout
-  title="Diaz Cadenas - Trabaja con nosotros"
-  classNames="min-h-screen grid place-items-center"
+  title="Trabaja con nosotros - Díaz Cadenas"
+  classNames="min-h-screen grid grid-cols-6"
 >
-  <CVFormIsland client:load />
+  <div class="col-span-3" style="background-color: #C2393F">
+    <div class="max-w-96 mt-32 mx-auto">
+      <Image src={logo} alt="logo díaz cadenas" />
+    </div>
+    <div class="text-center mt-24 px-12 space-y-2">
+      <h2 class="text-4xl text-foreground text-slate-100">
+        Trabaja con nosotros
+      </h2>
+      <p class="text-sm text-white">
+        Nuestro equipo humano es la clave de nuestro éxito. En Díaz Cadenas
+        ofrecemos oportunidades de desarrollo y empleo para que crezcas
+        profesionalmente junto al mejor equipo. Nuestra política de selección
+        respeta la diversidad y la igualdad de oportunidades y la no
+        discriminación por razones de género, edad o cualquier otra
+        circunstancia, manteniendo nuestro compromiso con la transparencia y la
+        objetividad de los procesos de selección. Si tienes ganas de crecer y
+        desarrollarte en un ambiente profesional que apuesta por la integración
+        Díaz Cadenas es tu sitio.
+      </p>
+    </div>
+  </div>
+  <div class="col-span-3 grid place-items-center">
+    <div>
+      <h2 class="text-xl text-foreground py-2">
+        ¿Te gustaría formar parte de nuestro equipo? Déjanos tu currículum.
+      </h2>
+      <CVFormIsland client:load />
+    </div>
+  </div>
 </BaseLayout>

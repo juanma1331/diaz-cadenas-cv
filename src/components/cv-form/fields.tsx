@@ -68,7 +68,7 @@ export default function CVFormFields(props: CVFormFieldsProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(props.onSubmit)}
-        className="space-y-4 max-w-lg mx-auto w-full"
+        className="space-y-4 max-w-lg w-full"
       >
         <FormField
           control={form.control}
