@@ -6,8 +6,8 @@ export default function CVDashboardPage() {
     <>
       <CVDashboardHeader />
 
-      <main className="px-6">
-        <CVDashboard />
+      <main className="px-6 overflow-hidden">
+        <CVDashboard date={new Date().toISOString()} />
       </main>
     </>
   );

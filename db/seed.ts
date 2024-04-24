@@ -4,7 +4,7 @@ import { faker } from "@faker-js/faker";
 
 // https://astro.build/db/seed
 export default async function seed() {
-  await generateCVS(10);
+  await generateCVS(5000);
 }
 
 async function generateCVS(qty: number) {
@@ -53,7 +53,7 @@ async function generateCVS(qty: number) {
       db.insert(ATTACHMENTS).values({
         name: `Attachment ${i}`,
         url: `https://example.com/attachment-${i}`,
-        size: 3072,
+        size: 4194304,
         type: "application/pdf",
         key: `key-${i}`,
         cvId: cvId,
@@ -64,7 +64,7 @@ async function generateCVS(qty: number) {
       db.insert(ATTACHMENTS).values({
         name: `Attachment-2 ${i}`,
         url: `https://example.com/attachment-2-${i}`,
-        size: 34000,
+        size: 35651584,
         type: "video/mp4",
         key: `key-2-${i}`,
         cvId: cvId,

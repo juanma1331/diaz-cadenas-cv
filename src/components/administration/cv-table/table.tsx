@@ -9,9 +9,8 @@ import {
   type RowSelectionState,
   type ColumnDef,
 } from "@tanstack/react-table";
-import CVTableSearch, { type OnSearch, type Search } from "./search";
+import { type Search } from "./search";
 import CVTableFilters from "./filters";
-import CVTableStorageUsed from "./storage";
 import CVTablePagination from "./pagination";
 import { CVS_STATUS } from "@/constants";
 import { toast } from "sonner";
@@ -33,6 +32,7 @@ import { statusColumnDef } from "./columns/columns-def/status";
 import { attachmentsColumnDef } from "./columns/columns-def/attachments";
 import { selectionRowColumnDef } from "./columns/columns-def/selection";
 import { actionsColumnDef } from "./columns/columns-def/actions";
+import { statusMap } from "@/utils/shared";
 
 export type FilterType = {
   id: "place" | "position" | "status";
@@ -85,9 +85,6 @@ export default function CVTable({ search }: CVTableProps) {
     isLoading,
     isError: getAllCVSError,
   } = trpcReact.getAllCVS.useQuery(queryInput);
-
-  const { data: storageInUseData, isError: getStorageInUseError } =
-    trpcReact.getStorageInUse.useQuery();
 
   const {
     mutate: changeStatus,
@@ -278,12 +275,7 @@ export default function CVTable({ search }: CVTableProps) {
     },
   });
 
-  if (
-    getAllCVSError ||
-    changeStatusError ||
-    getStorageInUseError ||
-    deleteCVError
-  ) {
+  if (getAllCVSError || changeStatusError || deleteCVError) {
     return <div>Error</div>;
   }
 
@@ -319,19 +311,4 @@ export default function CVTable({ search }: CVTableProps) {
       </div>
     </div>
   );
-}
-
-function statusMap(status: number): string {
-  switch (status) {
-    case CVS_STATUS.PENDING:
-      return "Pendiente";
-    case CVS_STATUS.REJECTED:
-      return "Reachazado";
-    case CVS_STATUS.REVIEWED:
-      return "Revisado";
-    case CVS_STATUS.SELECTED:
-      return "Seleccionado";
-    default:
-      throw new Error("Invalid status");
-  }
 }

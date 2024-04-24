@@ -1,8 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, FileText, LayoutDashboard, Package2 } from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { FileText, LayoutDashboard, Package2 } from "lucide-react";
 
 export type AdministrationLayoutProps = {
   children: React.ReactNode;
@@ -30,9 +27,6 @@ export function AdministrationLayout({ children }: AdministrationLayoutProps) {
               >
                 <FileText className="h-4 w-4" />
                 Currículums
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  6
-                </Badge>
               </Link>
               <Link
                 to="/dashboard"
@@ -46,7 +40,6 @@ export function AdministrationLayout({ children }: AdministrationLayoutProps) {
               </Link>
             </nav>
           </div>
-          <div className="mt-auto p-4">Bottom</div>
         </div>
       </div>
       <div className="flex flex-col">{children}</div>

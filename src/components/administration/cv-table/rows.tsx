@@ -11,6 +11,7 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { RefreshCcw } from "lucide-react";
+import Spinner from "@/components/ui/spinner";
 
 export interface CVTableProps<TData> {
   table: TableType<TData>;
@@ -54,10 +55,7 @@ function LoadingTableBody() {
     <TableBody>
       <TableRow>
         <TableCell colSpan={8} className="h-44">
-          <div className="flex items-center flex-col gap-2">
-            <RefreshCcw className="h-4 w-4 animate-spin mx-auto" />
-            <p>Cargando...</p>
-          </div>
+          <Spinner />
         </TableCell>
       </TableRow>
     </TableBody>
