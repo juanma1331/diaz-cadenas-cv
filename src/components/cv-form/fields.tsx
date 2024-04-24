@@ -172,7 +172,8 @@ export default function CVFormFields(props: CVFormFieldsProps) {
                   <Button
                     variant="link"
                     type="button"
-                    className="p-0"
+                    className="p-0 text-sm font-medium leading-none"
+                    style={{ color: "rgb(2, 8, 23)" }}
                     onClick={() => {
                       if (videoRecording) {
                         setVideoRecording(false);
@@ -184,7 +185,8 @@ export default function CVFormFields(props: CVFormFieldsProps) {
                   <span>/</span>
                   <Button
                     variant="link"
-                    className="p-0 flex items-center gap-2"
+                    className="p-0 flex items-center gap-2 text-sm font-medium leading-none"
+                    style={{ color: "rgb(2, 8, 23)" }}
                     type="button"
                     onClick={() => {
                       if (!videoRecording) {
