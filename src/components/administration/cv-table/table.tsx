@@ -86,6 +86,8 @@ export default function CVTable({ search }: CVTableProps) {
     isError: getAllCVSError,
   } = trpcReact.getAllCVS.useQuery(queryInput);
 
+  console.log(cvsData?.cvs);
+
   const {
     mutate: changeStatus,
     isLoading: changeStatusLoading,
@@ -297,7 +299,7 @@ export default function CVTable({ search }: CVTableProps) {
 
       <CVTableRows table={table} isLoading={isLoading} />
 
-      <div className="flex items-center justify-end px-2">
+      <div className="flex items-center justify-end px-2 pb-2">
         {!isLoading && (
           <CVTablePagination
             limit={limit}

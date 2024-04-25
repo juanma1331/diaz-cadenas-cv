@@ -6,9 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import Spinner from "@/components/ui/spinner";
 import { statusMap } from "@/utils/shared";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 import {
   Chart as ChartJS,
@@ -119,7 +119,7 @@ export default function CVDashboard({ date }: { date: string }) {
   }
 
   return (
-    <ScrollArea className="h-[900px] overflow-auto">
+    <ScrollArea className="h-[800px] overflow-auto">
       <div className="space-y-6">
         <h1 className="text-foreground text-xl pt-4">Dashboard</h1>
 

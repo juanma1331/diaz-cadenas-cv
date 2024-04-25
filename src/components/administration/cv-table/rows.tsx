@@ -22,7 +22,7 @@ export default function CVTableRows<TData>({
   isLoading,
 }: CVTableProps<TData>) {
   return (
-    <ScrollArea className="h-[800px] overflow-auto">
+    <ScrollArea className="h-[680px] overflow-auto">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -71,7 +71,7 @@ function DataTableBody<TData>({ table }: { table: TableType<TData> }) {
             data-state={row.getIsSelected() ? "selected" : undefined}
           >
             {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id} className="text-left">
+              <TableCell key={cell.id} className="text-left py-2.5">
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </TableCell>
             ))}
