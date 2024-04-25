@@ -26,7 +26,6 @@ export const deleteCVProcedure = publicProcedure
       const results = [];
       const utapi = new UTApi({ apiKey: import.meta.env.UPLOADTHING_SECRET });
 
-      // Handle both single item and array of items
       const inputs = Array.isArray(input) ? input : [input];
 
       for (const item of inputs) {
@@ -37,10 +36,7 @@ export const deleteCVProcedure = publicProcedure
           .from(ATTACHMENTS)
           .where(eq(ATTACHMENTS.cvId, id));
 
-        // delete attachments from storage
         await utapi.deleteFiles(attachments.map((a) => a.key));
-
-        // Collect all database operations
 
         for (let a of attachments) {
           queries.push(db.delete(ATTACHMENTS).where(eq(ATTACHMENTS.id, a.id)));
@@ -48,15 +44,12 @@ export const deleteCVProcedure = publicProcedure
 
         queries.push(db.delete(CVS).where(eq(CVS.id, id)));
 
-        // Collect result for each processed item
         results.push({ name });
       }
 
-      // Execute all db queries in batch
       // @ts-ignore
       await db.batch(queries);
 
-      // Return single item or array of results based on input type
       return Array.isArray(input) ? results : results[0];
     } catch (e) {
       console.log(e);
