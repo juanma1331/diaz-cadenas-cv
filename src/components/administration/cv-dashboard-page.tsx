@@ -1,4 +1,4 @@
-import CVDashboardHeader from "./cv-dashboard-header";
+import CVDashboardHeader from "./cv-dashboard-page-header";
 import CVDashboard from "./cv-dashboard/dashboard";
 
 export default function CVDashboardPage() {

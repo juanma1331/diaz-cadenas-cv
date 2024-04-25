@@ -152,6 +152,8 @@ export default function CVTable({ search }: CVTableProps) {
   };
 
   const dateFiltering: DateFiltering = {
+    onCleanDateFiltering: () => setDateFilteringState(undefined),
+    dateFilteringState: dateFilteringState,
     onDateFilter: (dateFilter) => {
       if (dateFilter.type === "single") {
         setDateFilteringState({

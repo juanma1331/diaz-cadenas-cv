@@ -10,7 +10,7 @@ import {
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CVS_STATUS } from "@/constants";
-import type { DateFilteringState } from "./columns";
+import type { DateFilteringState } from "./columns/columns-def/types";
 
 export type CVTableFiltersProps = {
   filteringState: ColumnFiltersState;

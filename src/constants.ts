@@ -35,4 +35,4 @@ export const POSITIONS = [
   "Limpieza",
 ] as const;
 
-export const APP_URL = import.meta.env.APP_URL;
+export const APP_URL = "http://localhost:4321";

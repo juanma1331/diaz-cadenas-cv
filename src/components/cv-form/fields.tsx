@@ -1,4 +1,8 @@
-import { useForm } from "react-hook-form";
+import {
+  useForm,
+  type UseFormRegisterReturn,
+  type UseFormReturn,
+} from "react-hook-form";
 import { Button } from "../ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,6 +33,8 @@ import { PLACES, POSITIONS } from "@/constants";
 
 import { useState } from "react";
 import Video from "./video/video";
+import { X } from "lucide-react";
+import VideoFormField from "./video-field";
 
 const pdfSchema = z.any();
 
@@ -50,7 +56,6 @@ export type CVFormFieldsProps = {
 };
 
 export default function CVFormFields(props: CVFormFieldsProps) {
-  const [videoRecording, setVideoRecording] = useState<boolean>(false);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -155,74 +160,18 @@ export default function CVFormFields(props: CVFormFieldsProps) {
             <FormItem>
               <FormLabel>CV</FormLabel>
               <FormControl>
-                <Input type="file" {...pdfRef} />
+                <Input
+                  type="file"
+                  {...pdfRef}
+                  onChange={(e) => console.log(e)}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="video"
-          render={() => (
-            <FormItem className="w-full">
-              <FormLabel asChild>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="link"
-                    type="button"
-                    className="p-0 text-sm font-medium leading-none"
-                    style={{ color: "rgb(2, 8, 23)" }}
-                    onClick={() => {
-                      if (videoRecording) {
-                        setVideoRecording(false);
-                      }
-                    }}
-                  >
-                    Video
-                  </Button>
-                  <span>/</span>
-                  <Button
-                    variant="link"
-                    className="p-0 flex items-center gap-2 text-sm font-medium leading-none"
-                    style={{ color: "rgb(2, 8, 23)" }}
-                    type="button"
-                    onClick={() => {
-                      if (!videoRecording) {
-                        setVideoRecording(true);
-                      }
-                    }}
-                  >
-                    Grabacion
-                    <div className="h-3 w-3 rounded-full bg-red-400"></div>
-                  </Button>
-                </div>
-              </FormLabel>
-              {videoRecording ? (
-                <Video
-                  onAddToForm={(recording) => {
-                    const fileList = new DataTransfer();
-                    fileList.items.add(recording);
-
-                    form.setValue("video", fileList.files, {
-                      shouldDirty: true,
-                      shouldTouch: true,
-                    });
-                    setVideoRecording(false);
-                  }}
-                />
-              ) : (
-                <>
-                  <FormControl>
-                    <Input type="file" {...videoRef} />
-                  </FormControl>
-                  <FormMessage />
-                </>
-              )}
-            </FormItem>
-          )}
-        />
+        <VideoFormField videoRef={videoRef} form={form} />
 
         <Button type="submit">Enviar</Button>
       </form>

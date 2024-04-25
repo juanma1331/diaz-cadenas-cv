@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/table";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { RefreshCcw } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
 
 export interface CVTableProps<TData> {

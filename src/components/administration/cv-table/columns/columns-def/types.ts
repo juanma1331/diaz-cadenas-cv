@@ -61,6 +61,8 @@ export type OnDateFilter = (filter: {
 export type DateFiltering = {
   onDateFilter: OnDateFilter;
   onSort: OnSort;
+  onCleanDateFiltering: () => void;
+  dateFilteringState: DateFilteringState;
 };
 
 export type SingleAction = (cv: CVRow) => void;

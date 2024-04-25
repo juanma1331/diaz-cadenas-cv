@@ -9,12 +9,7 @@ export default function createdAtColumnDef(): ColumnDef<CVRow> {
     accessorKey: "createdAt",
     header: ({ table }) => {
       const { dateFiltering } = table.options.meta!;
-      return (
-        <DateFilteringColumnHeader
-          onDateFilter={dateFiltering.onDateFilter}
-          onSort={dateFiltering.onSort}
-        />
-      );
+      return <DateFilteringColumnHeader dateFiltering={dateFiltering} />;
     },
     cell: ({ row }) => {
       const createdAt = row.getValue("createdAt") as string;

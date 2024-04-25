@@ -4,6 +4,7 @@ import { httpBatchLink } from "@trpc/client";
 import { useState } from "react";
 import CVForm from "./form";
 import { APP_URL } from "@/constants";
+import { Toaster } from "sonner";
 
 export default function CVFormIsland() {
   const [queryClient] = useState(() => new QueryClient());
@@ -21,6 +22,7 @@ export default function CVFormIsland() {
     <trpcReact.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <CVForm />
+        <Toaster position="top-right" richColors />
       </QueryClientProvider>
     </trpcReact.Provider>
   );

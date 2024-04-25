@@ -41,9 +41,11 @@ export const deleteCVProcedure = publicProcedure
         await utapi.deleteFiles(attachments.map((a) => a.key));
 
         // Collect all database operations
+
         for (let a of attachments) {
           queries.push(db.delete(ATTACHMENTS).where(eq(ATTACHMENTS.id, a.id)));
         }
+
         queries.push(db.delete(CVS).where(eq(CVS.id, id)));
 
         // Collect result for each processed item
