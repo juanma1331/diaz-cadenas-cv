@@ -10,9 +10,9 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import Video from "./video/video";
-import { Camera, X } from "lucide-react";
+import { Camera, Trash, Trash2, X, Video as VideoIcon } from "lucide-react";
 import { toast } from "sonner";
+import Video from "./video/video";
 
 type VideoFormFieldProps = {
   form: UseFormReturn<FormValues>;
@@ -115,7 +115,7 @@ function RecordedVideo({ onDelete, name }: RecordedVideoProps) {
   return (
     <div className="flex items-center justify-between border border-border pl-3 rounded-md">
       <div className="flex items-center gap-2 overflow-hidden">
-        <Camera className="w-4 h-4" />
+        <VideoIcon className="w-4 h-4" />
         <p className=" text-sm truncate text-muted-foreground">{name}</p>
       </div>
       <Button
@@ -124,7 +124,7 @@ function RecordedVideo({ onDelete, name }: RecordedVideoProps) {
         variant="ghost"
         type="button"
       >
-        <X className="w-4 h-4 text-red-400" />
+        <Trash2 className="w-4 h-4 text-red-400" />
       </Button>
     </div>
   );
