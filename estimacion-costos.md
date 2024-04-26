@@ -7,19 +7,6 @@
   - La página del formulario de envío del currículum se visita 2000 veces al mes.
   - La página de la tabla interactiva donde se muestran los currículums se visita unas 120 veces al mes por el personal de recursos humanos.
 
-- **Tamaño de las páginas**:
-
-  - Página del formulario: 582 KB
-  - Página de currículums: 600 KB
-
-- **Tamaño de las tablas en la DB**:
-
-  - Tabla CV: 228 bytes
-  - Tabla Añadido: 254 bytes
-
-- **Archivos subidos por los candidatos**:
-  - Cada candidato sube un vídeo de 35 MB y un documento PDF de 3 MB.
-
 #### **2. Costos de los Servicios**
 
 - **Netlify** (Despliegue):
@@ -34,7 +21,7 @@
 
 - **UploadThing** (Almacenamiento de archivos):
 
-  - Costo: €10/100GB de almacenamiento (el costo tras superar el límite de 100GB aún está por determinar).
+  - Costo: €10/100GB, luego 0.05€/GB.
   - Más información: [Precios de UploadThing](https://uploadthing.com/pricing)
 
 - **Astro DB** (Base de Datos):
@@ -45,13 +32,20 @@
 
 - **Costos básicos**:
 
-  | **Servicio**                    | **Precio del Cliente** | **Límite** | **Costo por Exceder el Límite**               |
-  | ------------------------------- | ---------------------- | ---------- | --------------------------------------------- |
-  | **Despliegue (Ancho de Banda)** | 19€                    | 1 TB/mes   | 55€ por cada 100 GB adicional sobre 1 TB      |
-  | **Base de Datos**               | 10€                    | 1 GB       | 1€ por cada GB adicional                      |
-  | **Almacenamiento de Archivos**  | 10€                    | 100 GB     | 10€ por cada 100 GB adicional (por confirmar) |
-  | **Métricas**                    | 9€                     | -          | -                                             |
-  | **Total**                       | 48€                    | -          | -                                             |
+  | **Servicio**                    | **Precio del Cliente** | **Límite** | **Costo por Exceder el Límite**          |
+  | ------------------------------- | ---------------------- | ---------- | ---------------------------------------- |
+  | **Despliegue (Ancho de Banda)** | 19€                    | 1 TB/mes   | 55€ por cada 100 GB adicional sobre 1 TB |
+  | **Base de Datos**               | 0€                     | 1 GB       | 1€ por cada GB adicional                 |
+  | **Almacenamiento de Archivos**  | 10€                    | 100 GB     | 0.05€ por cada GB adicional              |
+  | **Métricas**                    | 9€                     | -          | -                                        |
+  | **Monitorización de Errores**   | 0€                     | -          | -                                        |
+  | **Total**                       | 38€                    | -          | -                                        |
 
-- **Almacenamiento de archivos adicionales**:
-  - Consumo mensual aproximado de 74 GB para vídeos y documentos subidos (35 MB y 3 MB respectivamente), lo que generaría un costo adicional de aproximadamente €10 cada mes (asumiendo que los datos nunca se eliminan).
+#### **4. Estimaciones futuras**
+
+- **Relación almacenamiento/costo**:
+  | Años transcurridos | Número de CVs totales | Almacenamiento en uso (GB) | Costo del almacenamiento (€) |
+  |--------------------|-----------------------|----------------------------|------------------------------|
+  | 1 | 24,000 | 891 | 49.5 |
+  | 3 | 72,000 | 2,672 | 138.6 |
+  | 5 | 120,000 | 4,453 | 227.7 |
