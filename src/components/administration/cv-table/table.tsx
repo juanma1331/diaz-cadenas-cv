@@ -263,7 +263,7 @@ export default function CVTable({ search }: CVTableProps) {
   const handleOnNextPage = () => setPage((currentPage) => currentPage + 1);
   const handleOnPrevPage = () => setPage((prev) => Math.max(1, prev - 1));
   const handleOnFirstPage = () => setPage(1);
-  const handleOnLastPage = () => setPage(cvsData?.pages.length!);
+  const handleOnLastPage = () => setPage(cvsData?.lastPage ?? 0);
 
   const table = useReactTable({
     columns,
@@ -312,12 +312,12 @@ export default function CVTable({ search }: CVTableProps) {
           <CVTablePagination
             limit={limit}
             currentPage={page}
+            lastPage={cvsData.lastPage}
             onLimitChange={handleOnLimitChange}
             onPrevPage={handleOnPrevPage}
             onNextPage={handleOnNextPage}
             onFirstPage={handleOnFirstPage}
             onLastPage={handleOnLastPage}
-            pages={cvsData.pages}
           />
         )}
       </div>

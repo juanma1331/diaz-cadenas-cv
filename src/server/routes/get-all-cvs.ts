@@ -77,7 +77,7 @@ export const cvSchema = z.object({
 
 export const outputSchema = z.object({
   cvs: z.array(cvSchema),
-  pages: z.array(z.number()),
+  lastPage: z.number(),
 });
 
 export const getAllCVSProcedure = publicProcedure
@@ -247,13 +247,12 @@ export const getAllCVSProcedure = publicProcedure
     });
 
     const rowsCount = (await totalPagesQuery.all())[0].count;
-    const totalPages = Math.ceil(rowsCount / pagination.limit);
-    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+    const lastPage = Math.ceil(rowsCount / pagination.limit);
 
     console.log(cvs);
 
     return {
-      pages,
+      lastPage,
       cvs,
     };
   });

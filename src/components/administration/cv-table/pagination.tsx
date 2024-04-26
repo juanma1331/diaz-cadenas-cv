@@ -14,8 +14,8 @@ import {
 import { Button } from "../../ui/button";
 
 type CVTablePaginationProps = {
-  pages: Array<number>;
   currentPage: number;
+  lastPage: number;
   limit: number;
   onLimitChange: (page: number) => void;
   onPrevPage: () => void;
@@ -25,8 +25,8 @@ type CVTablePaginationProps = {
 };
 
 export default function CVTablePagination({
-  pages,
   currentPage,
+  lastPage,
   limit,
   onLimitChange,
   onPrevPage,
@@ -78,13 +78,13 @@ export default function CVTablePagination({
             <ChevronLeftIcon className="h-4 w-4" />
           </Button>
           <div className="flex w-fit items-center justify-center text-sm font-medium">
-            Página {currentPage} de {pages.length}
+            Página {lastPage > 0 ? currentPage : lastPage} de {lastPage}
           </div>
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
             onClick={() => onNextPage()}
-            disabled={currentPage === pages.length}
+            disabled={currentPage === lastPage}
           >
             <span className="sr-only">Ir a la siguiente página</span>
             <ChevronRightIcon className="h-4 w-4" />
@@ -93,7 +93,7 @@ export default function CVTablePagination({
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
             onClick={() => onLastPage()}
-            disabled={currentPage === pages.length}
+            disabled={currentPage === lastPage}
           >
             <span className="sr-only">Go to last page</span>
             <DoubleArrowRightIcon className="h-4 w-4" />
