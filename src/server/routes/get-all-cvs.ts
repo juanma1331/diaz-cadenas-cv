@@ -201,7 +201,6 @@ export const getAllCVSProcedure = publicProcedure
 
     // Select cvs attachments
     const cvsStartTime = Date.now();
-    console.log(cvsQuery.toString());
     const cvsResults = await cvsQuery.all();
     const cvsEndTime = Date.now();
     console.log(`CVs query took ${cvsEndTime - cvsStartTime} ms`);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CVTableRows from "./rows";
 import { trpcReact } from "@/client";
 import {
@@ -69,24 +69,33 @@ export default function CVTable({ search }: CVTableProps) {
     useState<DateFilteringState>();
 
   const utils = trpcReact.useUtils();
-  const queryInput = {
-    pagination: {
-      page: page,
-      limit: limit,
-    },
-    filters: filteringState as FilterType[],
-    dateFilters: dateFilteringState,
-    sorting: sortingState as [SortingType, ...SortingType[]],
-    search: search,
-  };
+
+  const queryInput = useMemo(
+    () => ({
+      pagination: {
+        page: page,
+        limit: limit,
+      },
+      filters: filteringState as FilterType[],
+      dateFilters: dateFilteringState,
+      sorting: sortingState as [SortingType, ...SortingType[]],
+      search: search,
+    }),
+    [page, limit, filteringState, dateFilteringState, sortingState, search]
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await utils.getAllCVS.invalidate(queryInput);
+    };
+    fetchData();
+  }, [queryInput, utils]);
 
   const {
     data: cvsData,
     isLoading,
     isError: getAllCVSError,
-  } = trpcReact.getAllCVS.useQuery(queryInput);
-
-  console.log(cvsData?.cvs);
+  } = trpcReact.getAllCVS.useQuery(queryInput, { refetchOnWindowFocus: false });
 
   const {
     mutate: changeStatus,
@@ -252,7 +261,7 @@ export default function CVTable({ search }: CVTableProps) {
 
   const handleOnLimitChange = (newLimit: number) => setLimit(newLimit);
   const handleOnNextPage = () => setPage((currentPage) => currentPage + 1);
-  const handleOnPrevPage = () => setPage((currentPage) => currentPage - 1);
+  const handleOnPrevPage = () => setPage((prev) => Math.max(1, prev - 1));
   const handleOnFirstPage = () => setPage(1);
   const handleOnLastPage = () => setPage(cvsData?.pages.length!);
 
