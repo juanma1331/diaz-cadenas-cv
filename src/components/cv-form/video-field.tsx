@@ -10,8 +10,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Camera, Trash, Trash2, X, Video as VideoIcon } from "lucide-react";
-import { toast } from "sonner";
+import { Trash2, Video as VideoIcon } from "lucide-react";
 import Video from "./video/video";
 
 type VideoFormFieldProps = {
