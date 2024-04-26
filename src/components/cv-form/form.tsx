@@ -97,5 +97,12 @@ export default function CVForm() {
     );
   }
 
-  return <CVFormFields onSubmit={onSubmit} />;
+  return (
+    <>
+      <h2 className="text-xl text-foreground py-2 mb-4">
+        ¿Te gustaría formar parte de nuestro equipo? Déjanos tu currículum.
+      </h2>
+      <CVFormFields onSubmit={onSubmit} />
+    </>
+  );
 }
