@@ -11,6 +11,7 @@ import {
   and,
   gte,
   lt,
+  eq,
 } from "astro:db";
 import { count, type SQLWrapper } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
@@ -89,30 +90,49 @@ export const getAllCVSProcedure = publicProcedure
     let totalPagesQuery = db.select({ count: count() }).from(CVS).$dynamic();
 
     // Filtering
-    if (filters) {
-      const filterConditions: (SQLWrapper | undefined)[] = [];
+    const filterConditions: (SQLWrapper | undefined)[] = [];
 
+    if (filters) {
       filters.forEach((filter) => {
         const { id, value } = filter;
         switch (id) {
           case "place":
-            filterConditions.push(like(CVS.place, `%${value}%`));
+            if (typeof value === "string") {
+              filterConditions.push(eq(CVS.place, value));
+            }
             break;
           case "position":
-            filterConditions.push(like(CVS.position, `%${value}%`));
+            if (typeof value === "string") {
+              filterConditions.push(eq(CVS.position, value));
+            }
             break;
           case "status":
-            filterConditions.push(like(CVS.status, `${value}`));
+            if (typeof value === "number") {
+              filterConditions.push(eq(CVS.status, value));
+            }
             break;
           default:
             throw new TRPCError({ code: "BAD_REQUEST" });
         }
       });
+    }
 
-      if (filterConditions.length > 0) {
-        const filterCondition = and(...filterConditions);
-        cvsQuery = cvsQuery.where(filterCondition);
-        totalPagesQuery = totalPagesQuery.where(filterCondition);
+    // Search
+    if (search) {
+      const { id, value } = search;
+      switch (id) {
+        case "name":
+          const nameFilter = like(CVS.name, `${value}%`);
+          filterConditions.push(nameFilter);
+          break;
+        case "email":
+          cvsQuery = cvsQuery.where(like(CVS.email, `${value}%`));
+          totalPagesQuery = totalPagesQuery.where(
+            like(CVS.email, `%${value}%`)
+          );
+          break;
+        default:
+          throw new TRPCError({ code: "BAD_REQUEST" });
       }
     }
 
@@ -124,48 +144,32 @@ export const getAllCVSProcedure = publicProcedure
         case "single":
           const { date } = dateFilters;
           const singleDate = new Date(date);
-          const nextDay = new Date(singleDate.getTime() + 86400000); // Add a day in miliseconds
-          cvsQuery = cvsQuery.where(
-            and(gte(CVS.createdAt, singleDate), lt(CVS.createdAt, nextDay))
+          const dayInMilis = 86400000;
+          const nextDay = new Date(singleDate.getTime() + dayInMilis); // Add a day in miliseconds
+          const dateFilter = and(
+            gte(CVS.createdAt, singleDate),
+            lt(CVS.createdAt, nextDay)
           );
-          totalPagesQuery = totalPagesQuery.where(
-            and(gte(CVS.createdAt, singleDate), lt(CVS.createdAt, nextDay))
-          );
+          filterConditions.push(dateFilter);
           break;
         case "range": {
           const { from, to } = dateFilters;
           const fromDate = new Date(from);
           const toDate = new Date(to);
-          cvsQuery = cvsQuery.where(
-            and(gte(CVS.createdAt, fromDate), lt(CVS.createdAt, toDate))
+          const dateFilter = and(
+            gte(CVS.createdAt, fromDate),
+            lt(CVS.createdAt, toDate)
           );
-          totalPagesQuery = totalPagesQuery.where(
-            and(gte(CVS.createdAt, fromDate), lt(CVS.createdAt, toDate))
-          );
+          filterConditions.push(dateFilter);
           break;
         }
-        default:
-          throw new TRPCError({ code: "BAD_REQUEST" });
       }
     }
 
-    // Search
-    if (search) {
-      const { id, value } = search;
-      switch (id) {
-        case "name":
-          cvsQuery = cvsQuery.where(like(CVS.name, `%${value}%`));
-          totalPagesQuery = totalPagesQuery.where(like(CVS.name, `%${value}%`));
-          break;
-        case "email":
-          cvsQuery = cvsQuery.where(like(CVS.email, `%${value}%`));
-          totalPagesQuery = totalPagesQuery.where(
-            like(CVS.email, `%${value}%`)
-          );
-          break;
-        default:
-          throw new TRPCError({ code: "BAD_REQUEST" });
-      }
+    if (filterConditions.length > 0) {
+      const filterCondition = and(...filterConditions);
+      cvsQuery = cvsQuery.where(filterCondition);
+      totalPagesQuery = totalPagesQuery.where(filterCondition);
     }
 
     // Sorting
@@ -245,6 +249,8 @@ export const getAllCVSProcedure = publicProcedure
     const rowsCount = (await totalPagesQuery.all())[0].count;
     const totalPages = Math.ceil(rowsCount / pagination.limit);
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    console.log(cvs);
 
     return {
       pages,
