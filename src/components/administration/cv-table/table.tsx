@@ -272,8 +272,7 @@ export default function CVTable({ search }: CVTableProps) {
       sorting: sorting,
       actions: actions,
       batchActions: batchActions,
-      isActionColumnLoading:
-        changeStatusLoading || deleteCVLoading || isLoading,
+      isActionColumnLoading: changeStatusLoading || deleteCVLoading,
       dateFiltering: dateFiltering,
       tableData: cvsData?.cvs ?? [],
     },

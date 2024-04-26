@@ -15,7 +15,7 @@
 
     /* primary has been changed but not its foreground */
     --primary: 113.3, 33.1%, 40.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;

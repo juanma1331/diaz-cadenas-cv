@@ -1,5 +1,5 @@
 import { type DateRange } from "react-day-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,19 +29,27 @@ export function DateFilteringColumnHeader({
     dateFiltering;
 
   const [open, setOpen] = useState<boolean>(false);
-  const [single, setSingle] = useState<Date | undefined>(
-    dateFilteringState?.type === "single"
-      ? new Date(dateFilteringState.date)
-      : undefined
-  );
-  const [range, setRange] = useState<DateRange | undefined>(
-    dateFilteringState?.type === "range"
-      ? {
+  const [single, setSingle] = useState<Date | undefined>();
+  const [range, setRange] = useState<DateRange | undefined>();
+
+  useEffect(() => {
+    switch (dateFilteringState?.type) {
+      case "single":
+        setRange(undefined);
+        setSingle(new Date(dateFilteringState.date));
+        break;
+      case "range":
+        setSingle(undefined);
+        setRange({
           from: new Date(dateFilteringState.from),
-          to: addDays(dateFilteringState.to, 20),
-        }
-      : undefined
-  );
+          to: addDays(new Date(dateFilteringState.to), 20),
+        });
+        break;
+      default:
+        setSingle(undefined);
+        setRange(undefined);
+    }
+  }, [dateFilteringState]);
 
   function handleOnDateFilter(type: "single" | "range") {
     if (type === "single") {
@@ -60,8 +68,6 @@ export function DateFilteringColumnHeader({
   function handleOnClean() {
     onCleanDateFiltering();
     setOpen(false);
-    setSingle(undefined);
-    setRange(undefined);
   }
 
   return (
@@ -122,7 +128,7 @@ export function DateFilteringColumnHeader({
 
               {single && dateFilteringState?.type === "single" && (
                 <Button variant="outline" size="sm" onClick={handleOnClean}>
-                  <WandSparkles className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+                  <WandSparkles className="mr-2 h-4 w-4" />
                   Limpiar
                 </Button>
               )}
@@ -156,7 +162,7 @@ export function DateFilteringColumnHeader({
                 range.from &&
                 dateFilteringState?.type === "range" && (
                   <Button variant="outline" size="sm" onClick={handleOnClean}>
-                    <WandSparkles className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+                    <WandSparkles className="mr-2 h-4 w-4" />
                     Limpiar
                   </Button>
                 )}
