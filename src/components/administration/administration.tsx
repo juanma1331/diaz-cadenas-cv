@@ -14,7 +14,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useState } from "react";
 import { APP_URL } from "@/constants";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -58,7 +57,6 @@ export default function AdministrationSPA() {
     <trpcReact.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </trpcReact.Provider>
   );

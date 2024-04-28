@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,14 +32,34 @@ import {
 } from "@/server/routes/insert-cv.route";
 import { PLACES, POSITIONS } from "@/constants";
 
-import { useState } from "react";
-import Video from "./video/video";
-import { X } from "lucide-react";
 import VideoFormField from "./video-field";
 
-const pdfSchema = z.any();
+const MAX_PDF_SIZE = 4194304; // 4mb
 
-const videoSchema = z.any().optional();
+const MAX_VIDEO_SIZE = 33554432; // 32mb
+
+const pdfSchema = z
+  .any()
+  .refine((fileList) => fileList.length === 1, "Se requiere un pdf")
+  .refine((fileList) => {
+    if (fileList.length === 1) {
+      return fileList[0].type === "application/pdf";
+    }
+
+    return false;
+  }, "Únicamente se permite formato pdf")
+  .refine((fileList) => {
+    if (fileList.length === 1) {
+      return fileList[0].size < MAX_PDF_SIZE;
+    }
+
+    return false;
+  }, "El peso máximo es 4mb");
+
+const videoSchema = z
+  .any()
+
+  .optional();
 
 const formSchema = z.object({
   name: nameSchema,
@@ -73,7 +94,7 @@ export default function CVFormFields(props: CVFormFieldsProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(props.onSubmit)}
-        className="space-y-4 max-w-lg w-full"
+        className="space-y-2 max-w-lg w-full"
       >
         <FormField
           control={form.control}
@@ -160,12 +181,11 @@ export default function CVFormFields(props: CVFormFieldsProps) {
             <FormItem>
               <FormLabel>CV</FormLabel>
               <FormControl>
-                <Input
-                  type="file"
-                  {...pdfRef}
-                  onChange={(e) => console.log(e)}
-                />
+                <Input type="file" {...pdfRef} />
               </FormControl>
+              <FormDescription>
+                Se admite formato PDF con un peso máximo de 4mb
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

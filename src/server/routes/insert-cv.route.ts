@@ -1,43 +1,18 @@
 import { z } from "zod";
 import { generateId } from "lucia";
 import { publicProcedure } from "../utils";
+import { PLACES, POSITIONS } from "@/constants";
 
 export const nameSchema = z.string().min(2, {
-  message: "Nombre debe tener al menos 2 caracteres.",
+  message: "Al menos 2 caracteres",
 });
 export const emailSchema = z.string().email({
-  message: "Email no es válido.",
+  message: "Introduce un email válido",
 });
 
-export const placeSchema = z.enum([
-  "Andújar",
-  "Brenes",
-  "Bollullos Par del Condado",
-  "Cádiz",
-  "Coria del Rio",
-  "Estepa",
-  "Gilena",
-  "Hytasa",
-  "La Carolina",
-  "Lantejuela",
-  "Moguer",
-  "Osuna",
-  "Sanlúcar de Barrameda",
-  "Sevilla",
-  "Utrera",
-]);
+export const placeSchema = z.enum(PLACES);
 
-export const positionSchema = z.enum([
-  "Carnicería",
-  "Charcutería",
-  "Pescadería",
-  "Frutería",
-  "Panadería",
-  "Pastelería",
-  "Cajero",
-  "Reponedor",
-  "Limpieza",
-]);
+export const positionSchema = z.enum(POSITIONS);
 
 const uploadedFileSchema = z.object({
   name: z.string(),

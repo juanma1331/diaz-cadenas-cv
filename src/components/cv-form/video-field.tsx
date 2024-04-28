@@ -3,6 +3,7 @@ import type { FormValues } from "./fields";
 import { useState } from "react";
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -97,6 +98,9 @@ export default function VideoFormField({
                 <Input type="file" {...videoRef} />
               </FormControl>
               <FormMessage />
+              <FormDescription>
+                Se admite formato MP4 con un peso máximo de 32mb
+              </FormDescription>
             </>
           )}
         </FormItem>

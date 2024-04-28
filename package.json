@@ -67,7 +67,6 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240405.0",
-    "@faker-js/faker": "^8.4.1",
-    "@tanstack/router-devtools": "^1.29.2"
+    "@faker-js/faker": "^8.4.1"
   }
 }

@@ -7,7 +7,7 @@ import type { RouterInputs } from "@/server/utils";
 import { Button } from "../ui/button";
 import { ReloadIcon } from "@radix-ui/react-icons";
 
-const MAX_FILES = 2;
+const REQUIRED_FILES = 1;
 
 type InsertParams = RouterInputs["insertCV"];
 
@@ -27,9 +27,9 @@ export default function CVForm() {
   });
 
   const { startUpload } = useUploadThing("pdfAndVideo", {
-    onUploadError: (error) => {
+    onUploadError: () => {
       setMode("error");
-      setError(error.message || "Upload failed");
+      setError("Upload failed");
     },
   });
 
@@ -39,7 +39,7 @@ export default function CVForm() {
       [values.pdf[0], values.video[0]].filter(Boolean)
     );
 
-    if (!uploadedFiles || uploadedFiles.length < MAX_FILES) {
+    if (!uploadedFiles || uploadedFiles.length < REQUIRED_FILES) {
       setMode("error");
       setError("Upload failed");
       return;
