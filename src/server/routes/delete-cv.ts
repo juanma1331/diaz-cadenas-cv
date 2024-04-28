@@ -52,7 +52,6 @@ export const deleteCVProcedure = publicProcedure
 
       return Array.isArray(input) ? results : results[0];
     } catch (e) {
-      console.log(e);
       throw new TRPCError({ code: "BAD_REQUEST" });
     }
   });

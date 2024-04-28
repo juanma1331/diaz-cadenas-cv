@@ -85,7 +85,6 @@ export const getAllCVSProcedure = publicProcedure
   .output(outputSchema)
   .query(async ({ input }) => {
     const { pagination, sorting, filters, dateFilters, search } = input;
-    console.log(input);
     let cvsQuery = db.select().from(CVS).$dynamic();
     let totalPagesQuery = db.select({ count: count() }).from(CVS).$dynamic();
 
@@ -248,8 +247,6 @@ export const getAllCVSProcedure = publicProcedure
 
     const rowsCount = (await totalPagesQuery.all())[0].count;
     const lastPage = Math.ceil(rowsCount / pagination.limit);
-
-    console.log(cvs);
 
     return {
       lastPage,

@@ -35,4 +35,4 @@ export const POSITIONS = [
   "Limpieza",
 ] as const;
 
-export const APP_URL = "https://quimera-405.netlify.app/";
+export const APP_URL = "https://quimera-405.netlify.app";
