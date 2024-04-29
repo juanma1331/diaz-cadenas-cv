@@ -13,6 +13,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Trash2, Video as VideoIcon } from "lucide-react";
 import Video from "./video/video";
+import { toast } from "sonner";
 
 type VideoFormFieldProps = {
   form: UseFormReturn<FormValues>;
@@ -53,10 +54,26 @@ export default function VideoFormField({
                 className="p-0 flex items-center gap-2 text-sm font-medium leading-none"
                 style={{ color: "rgb(2, 8, 23)" }}
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   if (!videoRecording) {
+                    const canRecord = browserCanRecordVideo();
+
+                    if (!canRecord) {
+                      toast.error(
+                        "Lamentablemente tú navegador no soporta la grabación de vídeo"
+                      );
+                      return;
+                    }
+
+                    const isPermitted = await gotPermission();
+                    if (!isPermitted) {
+                      toast.error(
+                        "Es necesario conceder los permisos para poder grabar"
+                      );
+                      return;
+                    }
+
                     setVideoRecording(true);
-                    // TODO: Here we will check if device can record and show a
                   }
                 }}
               >
@@ -133,9 +150,20 @@ function RecordedVideo({ onDelete, name }: RecordedVideoProps) {
   );
 }
 
-function deviceCanRecord(form: UseFormReturn<FormValues>) {
-  // TODO: implement me
-  return "to implement";
+function browserCanRecordVideo(): boolean {
+  return (
+    "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices
+  );
+}
+
+async function gotPermission(): Promise<boolean> {
+  try {
+    await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    return true; // Permiso concedido
+  } catch (error) {
+    console.error("Permission denied or error: ", error);
+    return false; // Permiso denegado o error
+  }
 }
 
 function getVideoName(form: UseFormReturn<FormValues>) {
