@@ -86,7 +86,7 @@ export default function CVTable({ search }: CVTableProps) {
 
   const {
     data: cvsData,
-    isLoading,
+    isLoading: isCVSDataLoading,
     isError: getAllCVSError,
   } = trpcReact.getAllCVS.useQuery(queryInput, {
     refetchOnWindowFocus: false,
@@ -248,10 +248,10 @@ export default function CVTable({ search }: CVTableProps) {
         />
       </div>
 
-      <CVTableRows table={table} isLoading={isLoading} />
+      <CVTableRows table={table} isLoading={isCVSDataLoading} />
 
       <div className="flex items-center justify-end px-2 pb-2">
-        {!isLoading && (
+        {!isCVSDataLoading && (
           <CVTablePagination
             limit={limit}
             currentPage={page}
