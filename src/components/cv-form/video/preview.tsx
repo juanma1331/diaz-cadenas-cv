@@ -15,7 +15,7 @@ export const VideoPreview = forwardRef(
     return (
       <div className="space-y-1">
         <AspectRatio ratio={16 / 9}>
-          <video className="w-full rounded-md" ref={ref} controls />
+          <video className="w-full rounded-md h-full" ref={ref} controls />
         </AspectRatio>
         <div className="flex justify-center items-center gap-2">
           <Button

@@ -36,7 +36,7 @@ import VideoFormField from "./video-field";
 
 const MAX_PDF_SIZE = 4194304; // 4mb
 
-const ACCEPTED_VIDEO_FORMATS = ["video/mp4"];
+const ACCEPTED_VIDEO_FORMATS = ["video/mp4", "video/webm"];
 
 const MAX_VIDEO_SIZE = 33554432; // 32mb
 
