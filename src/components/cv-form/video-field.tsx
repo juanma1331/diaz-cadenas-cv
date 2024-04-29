@@ -56,19 +56,11 @@ export default function VideoFormField({
                 type="button"
                 onClick={async () => {
                   if (!videoRecording) {
-                    const canRecord = browserCanRecordVideo();
+                    const canRecord = await browserCanRecordVideo();
 
                     if (!canRecord) {
                       toast.error(
-                        "Lamentablemente tú navegador no soporta la grabación de vídeo"
-                      );
-                      return;
-                    }
-
-                    const isPermitted = await gotPermission();
-                    if (!isPermitted) {
-                      toast.error(
-                        "Es necesario conceder los permisos para poder grabar"
+                        "Lamentablemente tú navegador no soporta la grabación de vídeo."
                       );
                       return;
                     }
@@ -150,19 +142,18 @@ function RecordedVideo({ onDelete, name }: RecordedVideoProps) {
   );
 }
 
-function browserCanRecordVideo(): boolean {
-  return (
-    "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices
-  );
-}
-
-async function gotPermission(): Promise<boolean> {
+async function browserCanRecordVideo() {
   try {
-    await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    return true; // Permiso concedido
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const hasVideoDevice = devices.some(
+      (device) => device.kind === "videoinput"
+    );
+    stream.getTracks().forEach((track) => track.stop());
+    return hasVideoDevice;
   } catch (error) {
-    console.error("Permission denied or error: ", error);
-    return false; // Permiso denegado o error
+    console.error("Error checking devices:", error);
+    return false;
   }
 }
 
