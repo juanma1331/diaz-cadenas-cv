@@ -22,7 +22,8 @@ export function AdministrationLayout({ children }: AdministrationLayoutProps) {
                 to="/cvs"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 activeProps={{
-                  className: "bg-primary text-primary-foreground",
+                  className:
+                    "bg-primary text-primary-foreground hover:text-primary-foreground",
                 }}
               >
                 <FileText className="h-4 w-4" />
@@ -32,7 +33,8 @@ export function AdministrationLayout({ children }: AdministrationLayoutProps) {
                 to="/dashboard"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 activeProps={{
-                  className: "bg-primary text-primary-foreground",
+                  className:
+                    "bg-primary text-primary-foreground hover:text-primary-foreground",
                 }}
               >
                 <LayoutDashboard className="w-4 h-4" />
