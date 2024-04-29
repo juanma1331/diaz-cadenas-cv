@@ -1,6 +1,13 @@
 // src/tanstack-table-augmentations.d.ts
 import type { RouterOuputs } from "@/server/utils";
 import { RowData } from "@tanstack/table-core";
+import type {
+  Actions,
+  Filtering,
+  DateFiltering,
+  Sorting,
+  BatchActions,
+} from "@/components/administration/cv-table/columns/columns-def/types";
 
 declare module "@tanstack/table-core" {
   interface TableMeta<TData extends RowData> {

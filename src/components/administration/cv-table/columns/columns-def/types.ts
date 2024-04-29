@@ -1,3 +1,4 @@
+import type { CVSStatusType } from "@/constants";
 import type {
   ColumnFilter,
   ColumnFiltersState,
@@ -65,21 +66,18 @@ export type DateFiltering = {
   dateFilteringState: DateFilteringState;
 };
 
-export type SingleAction = (cv: CVRow) => void;
-export type BatchAction = (cvs: CVRow[]) => void;
+export type SingleActionParams = {
+  id: string;
+  name: string;
+  newStatus: CVSStatusType;
+};
 
 export type Actions = {
-  onMarkAsReviewed: SingleAction;
-  onMarkAsRejected: SingleAction;
-  onMarkAsSelected: SingleAction;
-  onMarkAsPending: SingleAction;
-  onDelete: SingleAction;
+  onMarkAs: (params: SingleActionParams) => void;
+  onDelete: (params: { id: string; name: string }) => void;
 };
 
 export type BatchActions = {
-  onMarkAsReviewed: BatchAction;
-  onMarkAsRejected: BatchAction;
-  onMarkAsSelected: BatchAction;
-  onMarkAsPending: BatchAction;
-  onDelete: BatchAction;
+  onMarkAs: (params: SingleActionParams[]) => void;
+  onDelete: (params: { id: string; name: string }[]) => void;
 };

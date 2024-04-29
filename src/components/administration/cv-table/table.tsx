@@ -95,7 +95,9 @@ export default function CVTable({ search }: CVTableProps) {
     data: cvsData,
     isLoading,
     isError: getAllCVSError,
-  } = trpcReact.getAllCVS.useQuery(queryInput, { refetchOnWindowFocus: false });
+  } = trpcReact.getAllCVS.useQuery(queryInput, {
+    refetchOnWindowFocus: false,
+  });
 
   const {
     mutate: changeStatus,
@@ -163,8 +165,8 @@ export default function CVTable({ search }: CVTableProps) {
   };
 
   const dateFiltering: DateFiltering = {
-    onCleanDateFiltering: () => setDateFilteringState(undefined),
     dateFilteringState: dateFilteringState,
+    onCleanDateFiltering: () => setDateFilteringState(undefined),
     onDateFilter: (dateFilter) => {
       if (dateFilter.type === "single") {
         setDateFilteringState({
@@ -194,69 +196,16 @@ export default function CVTable({ search }: CVTableProps) {
   };
 
   const actions: Actions = {
-    onMarkAsPending: (cv) => {
-      changeStatus({ id: cv.id, name: cv.name, newStatus: CVS_STATUS.PENDING });
-    },
-    onMarkAsRejected: (cv) => {
-      changeStatus({
-        id: cv.id,
-        name: cv.name,
-        newStatus: CVS_STATUS.REJECTED,
-      });
-    },
-    onMarkAsReviewed: (cv) => {
-      changeStatus({
-        id: cv.id,
-        name: cv.name,
-        newStatus: CVS_STATUS.REVIEWED,
-      });
-    },
-    onMarkAsSelected: (cv) => {
-      changeStatus({
-        id: cv.id,
-        name: cv.name,
-        newStatus: CVS_STATUS.SELECTED,
-      });
-    },
+    onMarkAs: ({ id, name, newStatus }) =>
+      changeStatus({ id, name, newStatus }),
     onDelete: (cv) => {
       deleteCV({ id: cv.id, name: cv.name });
     },
   };
 
   const batchActions: BatchActions = {
-    onMarkAsPending: (cvs) =>
-      changeStatus(
-        cvs.map((c) => ({
-          id: c.id,
-          name: c.name,
-          newStatus: CVS_STATUS.PENDING,
-        }))
-      ),
-    onMarkAsRejected: (cvs) =>
-      changeStatus(
-        cvs.map((c) => ({
-          id: c.id,
-          name: c.name,
-          newStatus: CVS_STATUS.REJECTED,
-        }))
-      ),
-    onMarkAsReviewed: (cvs) =>
-      changeStatus(
-        cvs.map((c) => ({
-          id: c.id,
-          name: c.name,
-          newStatus: CVS_STATUS.REVIEWED,
-        }))
-      ),
-    onMarkAsSelected: (cvs) =>
-      changeStatus(
-        cvs.map((c) => ({
-          id: c.id,
-          name: c.name,
-          newStatus: CVS_STATUS.SELECTED,
-        }))
-      ),
-    onDelete: (cvs) => deleteCV(cvs.map((c) => ({ id: c.id, name: c.name }))),
+    onMarkAs: (params) => changeStatus([...params]),
+    onDelete: (params) => deleteCV([...params]),
   };
 
   const handleOnLimitChange = (newLimit: number) => setLimit(newLimit);

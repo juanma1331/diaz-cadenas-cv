@@ -88,6 +88,8 @@ export const getAllCVSProcedure = publicProcedure
     let cvsQuery = db.select().from(CVS).$dynamic();
     let totalPagesQuery = db.select({ count: count() }).from(CVS).$dynamic();
 
+    console.log(input);
+
     // Filtering
     const filterConditions: (SQLWrapper | undefined)[] = [];
 

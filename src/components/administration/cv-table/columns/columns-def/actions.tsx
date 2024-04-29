@@ -80,8 +80,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAsRejected(
-                        selectedRows({ rowSelectionState, rows })
+                      batchActions.onMarkAs(
+                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
+                          id: sr.id,
+                          name: sr.name,
+                          newStatus: CVS_STATUS.REJECTED,
+                        }))
                       )
                     }
                   >
@@ -91,8 +95,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAsSelected(
-                        selectedRows({ rowSelectionState, rows })
+                      batchActions.onMarkAs(
+                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
+                          id: sr.id,
+                          name: sr.name,
+                          newStatus: CVS_STATUS.SELECTED,
+                        }))
                       )
                     }
                   >
@@ -102,8 +110,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAsPending(
-                        selectedRows({ rowSelectionState, rows })
+                      batchActions.onMarkAs(
+                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
+                          id: sr.id,
+                          name: sr.name,
+                          newStatus: CVS_STATUS.PENDING,
+                        }))
                       )
                     }
                   >
@@ -120,8 +132,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAsReviewed(
-                        selectedRows({ rowSelectionState, rows })
+                      batchActions.onMarkAs(
+                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
+                          id: sr.id,
+                          name: sr.name,
+                          newStatus: CVS_STATUS.REVIEWED,
+                        }))
                       )
                     }
                   >
@@ -131,8 +147,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAsSelected(
-                        selectedRows({ rowSelectionState, rows })
+                      batchActions.onMarkAs(
+                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
+                          id: sr.id,
+                          name: sr.name,
+                          newStatus: CVS_STATUS.SELECTED,
+                        }))
                       )
                     }
                   >
@@ -142,8 +162,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAsPending(
-                        selectedRows({ rowSelectionState, rows })
+                      batchActions.onMarkAs(
+                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
+                          id: sr.id,
+                          name: sr.name,
+                          newStatus: CVS_STATUS.PENDING,
+                        }))
                       )
                     }
                   >
@@ -160,8 +184,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAsReviewed(
-                        selectedRows({ rowSelectionState, rows })
+                      batchActions.onMarkAs(
+                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
+                          id: sr.id,
+                          name: sr.name,
+                          newStatus: CVS_STATUS.REVIEWED,
+                        }))
                       )
                     }
                   >
@@ -171,8 +199,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAsSelected(
-                        selectedRows({ rowSelectionState, rows })
+                      batchActions.onMarkAs(
+                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
+                          id: sr.id,
+                          name: sr.name,
+                          newStatus: CVS_STATUS.SELECTED,
+                        }))
                       )
                     }
                   >
@@ -182,8 +214,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAsRejected(
-                        selectedRows({ rowSelectionState, rows })
+                      batchActions.onMarkAs(
+                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
+                          id: sr.id,
+                          name: sr.name,
+                          newStatus: CVS_STATUS.REJECTED,
+                        }))
                       )
                     }
                   >
@@ -200,8 +236,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAsReviewed(
-                        selectedRows({ rowSelectionState, rows })
+                      batchActions.onMarkAs(
+                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
+                          id: sr.id,
+                          name: sr.name,
+                          newStatus: CVS_STATUS.REVIEWED,
+                        }))
                       )
                     }
                   >
@@ -211,8 +251,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAsRejected(
-                        selectedRows({ rowSelectionState, rows })
+                      batchActions.onMarkAs(
+                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
+                          id: sr.id,
+                          name: sr.name,
+                          newStatus: CVS_STATUS.REJECTED,
+                        }))
                       )
                     }
                   >
@@ -222,8 +266,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAsPending(
-                        selectedRows({ rowSelectionState, rows })
+                      batchActions.onMarkAs(
+                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
+                          id: sr.id,
+                          name: sr.name,
+                          newStatus: CVS_STATUS.PENDING,
+                        }))
                       )
                     }
                   >
@@ -285,7 +333,13 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
               {row.original.status !== CVS_STATUS.REVIEWED && (
                 <DropdownMenuItem
-                  onClick={() => actions.onMarkAsReviewed(row.original)}
+                  onClick={() =>
+                    actions.onMarkAs({
+                      id: row.original.id,
+                      name: row.original.name,
+                      newStatus: CVS_STATUS.REVIEWED,
+                    })
+                  }
                 >
                   <Check className="w-3.5 h-3.5 mr-2" />
                   Marcar como revisado
@@ -294,7 +348,13 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
               {row.original.status !== CVS_STATUS.REJECTED && (
                 <DropdownMenuItem
-                  onClick={() => actions.onMarkAsRejected(row.original)}
+                  onClick={() =>
+                    actions.onMarkAs({
+                      id: row.original.id,
+                      name: row.original.name,
+                      newStatus: CVS_STATUS.REJECTED,
+                    })
+                  }
                 >
                   <X className="w-3.5 h-3.5 mr-2" />
                   Marcar como rechazado
@@ -303,7 +363,13 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
               {row.original.status !== CVS_STATUS.SELECTED && (
                 <DropdownMenuItem
-                  onClick={() => actions.onMarkAsSelected(row.original)}
+                  onClick={() =>
+                    actions.onMarkAs({
+                      id: row.original.id,
+                      name: row.original.name,
+                      newStatus: CVS_STATUS.SELECTED,
+                    })
+                  }
                 >
                   <CheckCheck className="w-3.5 h-3.5 mr-2" />
                   Marcar como seleccionado
@@ -312,7 +378,13 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
               {row.original.status !== CVS_STATUS.PENDING && (
                 <DropdownMenuItem
-                  onClick={() => actions.onMarkAsPending(row.original)}
+                  onClick={() =>
+                    actions.onMarkAs({
+                      id: row.original.id,
+                      name: row.original.name,
+                      newStatus: CVS_STATUS.PENDING,
+                    })
+                  }
                 >
                   <Clock className="w-3.5 h-3.5 mr-2" />
                   Marcar como pendiente

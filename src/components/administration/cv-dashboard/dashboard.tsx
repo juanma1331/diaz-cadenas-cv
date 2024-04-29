@@ -8,46 +8,20 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Spinner from "@/components/ui/spinner";
-import { statusMap } from "@/utils/shared";
 import {
   BarChart,
   Bar,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
-  LabelList,
   ResponsiveContainer,
 } from "recharts";
-
-const renderCustomizedLabel = (props: any) => {
-  const { x, y, width, height, value } = props;
-  const radius = 10;
-
-  return (
-    <g>
-      <circle cx={x + width / 2} cy={y - radius} r={radius} fill="#8884d8" />
-      <text
-        x={x + width / 2}
-        y={y - radius}
-        fill="#fff"
-        textAnchor="middle"
-        dominantBaseline="middle"
-      >
-        {value.split(" ")[1]}
-      </text>
-    </g>
-  );
-};
 
 export default function CVDashboard({ date }: { date: string }) {
   const { data, isLoading, isError } = trpcReact.getDashboard.useQuery({
     date,
   });
-
-  console.log(data);
 
   if (isError) {
     return <div>Error obteniendo los datos para el dashboard</div>;

@@ -5,6 +5,8 @@ export const CVS_STATUS = {
   SELECTED: 4,
 } as const;
 
+export type CVSStatusType = (typeof CVS_STATUS)[keyof typeof CVS_STATUS];
+
 export const PLACES = [
   "Andújar",
   "Brenes",
