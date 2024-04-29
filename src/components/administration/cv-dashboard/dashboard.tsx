@@ -9,39 +9,37 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Spinner from "@/components/ui/spinner";
 import { statusMap } from "@/utils/shared";
-
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
+  BarChart,
+  Bar,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
   Tooltip,
   Legend,
-  type ChartOptions,
-} from "chart.js";
-import { Bar } from "react-chartjs-2";
+  LabelList,
+  ResponsiveContainer,
+} from "recharts";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+const renderCustomizedLabel = (props: any) => {
+  const { x, y, width, height, value } = props;
+  const radius = 10;
 
-const options: ChartOptions<"bar"> = {
-  responsive: true,
-  maintainAspectRatio: true,
-  plugins: {
-    legend: {
-      position: "top" as const,
-      labels: {
-        color: "var(--primary-foreground)", // Usar la variable CSS para el color del texto
-      },
-    },
-  },
+  return (
+    <g>
+      <circle cx={x + width / 2} cy={y - radius} r={radius} fill="#8884d8" />
+      <text
+        x={x + width / 2}
+        y={y - radius}
+        fill="#fff"
+        textAnchor="middle"
+        dominantBaseline="middle"
+      >
+        {value.split(" ")[1]}
+      </text>
+    </g>
+  );
 };
 
 export default function CVDashboard({ date }: { date: string }) {
@@ -49,77 +47,14 @@ export default function CVDashboard({ date }: { date: string }) {
     date,
   });
 
-  const positionData = {
-    labels: data?.byPosition.keys || [],
-    datasets: [
-      {
-        label: "Número de Currículums Recibidos",
-        backgroundColor: "rgba(var(--primary-rgb), 0.5)",
-        borderColor: "rgba(var(--primary-rgb), 1)",
-        borderWidth: 1,
-        hoverBackgroundColor: "rgba(var(--primary-rgb), 0.75)",
-        hoverBorderColor: "rgba(var(--primary-rgb), 1)",
-        data: data?.byPosition.values || [],
-      },
-    ],
-  };
-
-  const placesData = {
-    labels: data?.byPlace.keys || [],
-    datasets: [
-      {
-        label: "Número de Currículums Recibidos",
-        backgroundColor: "rgba(var(--secondary-rgb), 0.5)",
-        borderColor: "rgba(var(--secondary-rgb), 1)",
-        borderWidth: 1,
-        hoverBackgroundColor: "rgba(var(--secondary-rgb), 0.75)",
-        hoverBorderColor: "rgba(var(--secondary-rgb), 1)",
-        data: data?.byPlace.values || [],
-      },
-    ],
-  };
-
-  const statusData = {
-    labels: data?.byStatus.keys.map((k) => statusMap(k)) || [],
-    datasets: [
-      {
-        label: "Estado de los Currículums",
-        backgroundColor: [
-          "rgba(var(--accent-rgb), 0.5)",
-          "rgba(var(--muted-rgb), 0.5)",
-          "rgba(var(--destructive-rgb), 0.5)",
-          "rgba(var(--primary-rgb), 0.5)",
-        ],
-        borderColor: [
-          "rgba(var(--accent-rgb), 1)",
-          "rgba(var(--muted-rgb), 1)",
-          "rgba(var(--destructive-rgb), 1)",
-          "rgba(var(--primary-rgb), 1)",
-        ],
-        borderWidth: 1,
-        hoverBackgroundColor: [
-          "rgba(var(--accent-rgb), 0.75)",
-          "rgba(var(--muted-rgb), 0.75)",
-          "rgba(var(--destructive-rgb), 0.75)",
-          "rgba(var(--primary-rgb), 0.75)",
-        ],
-        hoverBorderColor: [
-          "rgba(var(--accent-rgb), 1)",
-          "rgba(var(--muted-rgb), 1)",
-          "rgba(var(--destructive-rgb), 1)",
-          "rgba(var(--primary-rgb), 1)",
-        ],
-        data: data?.byStatus.values || [],
-      },
-    ],
-  };
+  console.log(data);
 
   if (isError) {
     return <div>Error obteniendo los datos para el dashboard</div>;
   }
 
   return (
-    <ScrollArea className="h-[800px] overflow-auto">
+    <ScrollArea className="h-[820px] overflow-auto">
       <div className="space-y-6">
         <h1 className="text-foreground text-xl pt-4">Dashboard</h1>
 
@@ -193,8 +128,34 @@ export default function CVDashboard({ date }: { date: string }) {
                       <CardDescription>Por Posición</CardDescription>
                     </CardHeader>
 
-                    <CardContent>
-                      <Bar options={options} data={positionData} />
+                    <CardContent className="h-96 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          width={500}
+                          height={300}
+                          data={data.byPosition}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis
+                            dataKey="position"
+                            angle={-45}
+                            textAnchor="end"
+                            height={80}
+                          />
+                          <YAxis />
+                          <Tooltip
+                            content={({ active, payload, label }) => (
+                              <CustomTooltip
+                                active={active}
+                                payload={payload}
+                                label={label}
+                              />
+                            )}
+                          />
+
+                          <Bar dataKey="count" fill="#020817" />
+                        </BarChart>
+                      </ResponsiveContainer>
                     </CardContent>
                   </Card>
 
@@ -203,8 +164,25 @@ export default function CVDashboard({ date }: { date: string }) {
                       <CardDescription>Por Estado</CardDescription>
                     </CardHeader>
 
-                    <CardContent>
-                      <Bar options={options} data={statusData} />
+                    <CardContent className="h-96 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart width={500} height={300} data={data.byStatus}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="status" />
+                          <YAxis />
+                          <Tooltip
+                            content={({ active, payload, label }) => (
+                              <CustomTooltip
+                                active={active}
+                                payload={payload}
+                                label={label}
+                              />
+                            )}
+                          />
+
+                          <Bar dataKey="count" fill="#020817" />
+                        </BarChart>
+                      </ResponsiveContainer>
                     </CardContent>
                   </Card>
                 </div>
@@ -214,8 +192,30 @@ export default function CVDashboard({ date }: { date: string }) {
                     <CardDescription>Por Ubicación</CardDescription>
                   </CardHeader>
 
-                  <CardContent>
-                    <Bar options={options} data={placesData} />
+                  <CardContent className="h-[46rem] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart width={500} height={300} data={data.byPlace}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                          dataKey="place"
+                          angle={-45}
+                          textAnchor="end"
+                          height={140}
+                        />
+                        <YAxis />
+                        <Tooltip
+                          content={({ active, payload, label }) => (
+                            <CustomTooltip
+                              active={active}
+                              payload={payload}
+                              label={label}
+                            />
+                          )}
+                        />
+
+                        <Bar dataKey="count" fill="#020817" />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </CardContent>
                 </Card>
               </div>
@@ -226,3 +226,24 @@ export default function CVDashboard({ date }: { date: string }) {
     </ScrollArea>
   );
 }
+
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: {
+  active: boolean | undefined;
+  payload: any;
+  label: string;
+}) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-slate-50 p-1 rounded-md flex flex-col items-center ">
+        <p className="text-center text-sm font-semibold">{label}</p>
+        <p className="text-xs">{payload[0].value}</p>
+      </div>
+    );
+  }
+
+  return null;
+};

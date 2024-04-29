@@ -11,6 +11,7 @@ import {
   endOfMonth,
 } from "date-fns";
 import { TRPCError } from "@trpc/server";
+import { statusMap } from "@/utils/shared";
 
 export const inputSchema = z.object({
   date: z.string(),
@@ -18,18 +19,24 @@ export const inputSchema = z.object({
 
 export const outputSchema = z.object({
   storageInUse: z.number(),
-  byPosition: z.object({
-    keys: z.array(z.string()),
-    values: z.array(z.number()),
-  }),
-  byPlace: z.object({
-    keys: z.array(z.string()),
-    values: z.array(z.number()),
-  }),
-  byStatus: z.object({
-    keys: z.array(z.number()),
-    values: z.array(z.number()),
-  }),
+  byPosition: z.array(
+    z.object({
+      position: z.string(),
+      count: z.number(),
+    })
+  ),
+  byPlace: z.array(
+    z.object({
+      place: z.string(),
+      count: z.number(),
+    })
+  ),
+  byStatus: z.array(
+    z.object({
+      status: z.string(),
+      count: z.number(),
+    })
+  ),
   totalToday: z.number(),
   totalThisWeek: z.number(),
   totalThisMonth: z.number(),
@@ -50,10 +57,10 @@ export const getDashboardDataProcedure = publicProcedure
         .from(CVS)
         .groupBy(CVS.position);
 
-      const byPosition = {
-        keys: positionCounts.map((row) => row.position),
-        values: positionCounts.map((row) => row.count),
-      };
+      const byPosition = positionCounts.map((r) => ({
+        position: r.position,
+        count: r.count,
+      }));
 
       // By Place
       const placeCounts = await db
@@ -64,10 +71,10 @@ export const getDashboardDataProcedure = publicProcedure
         .from(CVS)
         .groupBy(CVS.place);
 
-      const byPlace = {
-        keys: placeCounts.map((row) => row.place),
-        values: placeCounts.map((row) => row.count),
-      };
+      const byPlace = placeCounts.map((r) => ({
+        place: r.place,
+        count: r.count,
+      }));
 
       // By Status
       const statusCounts = await db
@@ -78,10 +85,10 @@ export const getDashboardDataProcedure = publicProcedure
         .from(CVS)
         .groupBy(CVS.status);
 
-      const byStatus = {
-        keys: statusCounts.map((row) => row.status),
-        values: statusCounts.map((row) => row.count),
-      };
+      const byStatus = statusCounts.map((r) => ({
+        status: statusMap(r.status),
+        count: r.count,
+      }));
 
       // Storage in use
       const sizeSum = await db
