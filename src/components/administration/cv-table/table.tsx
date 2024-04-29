@@ -84,19 +84,13 @@ export default function CVTable({ search }: CVTableProps) {
     [page, limit, filteringState, dateFilteringState, sortingState, search]
   );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await utils.getAllCVS.invalidate(queryInput);
-    };
-    fetchData();
-  }, [queryInput, utils]);
-
   const {
     data: cvsData,
     isLoading,
     isError: getAllCVSError,
   } = trpcReact.getAllCVS.useQuery(queryInput, {
     refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000,
   });
 
   const {
