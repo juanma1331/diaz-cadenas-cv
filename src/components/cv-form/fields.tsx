@@ -36,29 +36,57 @@ import VideoFormField from "./video-field";
 
 const MAX_PDF_SIZE = 4194304; // 4mb
 
+const ACCEPTED_VIDEO_FORMATS = ["video/mp4"];
+
 const MAX_VIDEO_SIZE = 33554432; // 32mb
 
-const pdfSchema = z
-  .any()
-  .refine((fileList) => fileList.length === 1, "Se requiere un pdf")
-  .refine((fileList) => {
-    if (fileList.length === 1) {
-      return fileList[0].type === "application/pdf";
-    }
+const pdfSchema = z.any().superRefine((fileList, ctx) => {
+  if (fileList.length !== 1) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Se requiere un pdf",
+    });
+    return;
+  }
 
-    return false;
-  }, "Únicamente se permite formato pdf")
-  .refine((fileList) => {
-    if (fileList.length === 1) {
-      return fileList[0].size < MAX_PDF_SIZE;
-    }
+  const file = fileList[0];
 
-    return false;
-  }, "El peso máximo es 4mb");
+  if (file.type !== "application/pdf") {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Únicamente se permite formato pdf",
+    });
+  }
+
+  if (file.size >= MAX_PDF_SIZE) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "El peso máximo es 4mb",
+    });
+  }
+});
 
 const videoSchema = z
   .any()
+  .superRefine((fileList, ctx) => {
+    if (fileList.length === 0) return;
 
+    const file = fileList[0];
+
+    if (!ACCEPTED_VIDEO_FORMATS.includes(file.type)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Formato no válido, únicamente mp4",
+      });
+    }
+
+    if (file.size > MAX_VIDEO_SIZE) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "El archivo excede el tamaño máximo permitido de 32MB",
+      });
+    }
+  })
   .optional();
 
 const formSchema = z.object({
