@@ -192,8 +192,17 @@ export default function CVTable({ search }: CVTableProps) {
   const actions: Actions = {
     onMarkAs: ({ id, name, newStatus }) =>
       changeStatus({ id, name, newStatus }),
-    onDelete: (cv) => {
-      deleteCV({ id: cv.id, name: cv.name });
+    onDelete: ({ id, name }) => {
+      deleteCV({ id, name });
+
+      const inSelection = rowSelection[id] !== undefined;
+
+      if (inSelection) {
+        const filtered = Object.entries(rowSelection).filter(
+          ([key]) => id !== key
+        );
+        setRowSelection(Object.fromEntries(filtered));
+      }
     },
   };
 
