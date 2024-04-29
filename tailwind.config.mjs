@@ -2,9 +2,9 @@
 export default {
   darkMode: ["class"],
   content: [
-    './src/pages/**/*.{ts,tsx,astro}',
-    './src/components/**/*.{ts,tsx,astro}',
-    './src/layouts/**/*.{ts,tsx,astro}',
+    "./src/pages/**/*.{ts,tsx,astro}",
+    "./src/components/**/*.{ts,tsx,astro}",
+    "./src/layouts/**/*.{ts,tsx,astro}",
   ],
   prefix: "",
   theme: {
@@ -51,6 +51,9 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      fontFamily: {
+        jost: ["Jost", "sans-serif"],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -73,4 +76,4 @@ export default {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

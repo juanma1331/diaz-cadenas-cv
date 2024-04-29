@@ -13,7 +13,7 @@ const { classNames } = Astro.props;
     <title>{title}</title>
   </head>
 
-  <body class={classNames}>
+  <body class={` font-jost ${classNames}`}>
     <slot />
   </body>
 </html>
