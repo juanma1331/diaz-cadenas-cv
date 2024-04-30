@@ -1,35 +1,19 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { CVRow } from "../../types";
 import { useEffect, useState } from "react";
+import type { RouterOuputs } from "@/server/utils";
 
 export function selectionRowColumnDef(): ColumnDef<CVRow> {
   return {
     id: "select-col",
     header: ({ table }) => {
-      const [checked, setChecked] = useState(false);
       const { states, tableData } = table.options.meta!;
-
-      useEffect(() => {
-        const isAllPageSelected = () => {
-          const selectedIDs = Object.entries(states.rowSelectionState);
-          const dataIds = tableData.map((c) => c.id);
-
-          return selectedIDs.every(([id, _]) => dataIds.includes(id));
-        };
-
-        if (isAllPageSelected()) {
-          setChecked(true);
-        } else {
-          setChecked(false);
-        }
-      }, [states.rowSelectionState]);
 
       return (
         <Checkbox
-          checked={checked}
+          checked={isPageSelected(states.rowSelectionState, tableData)}
           onCheckedChange={(e) => {
-            setChecked(e as boolean);
             const toggler = table.getToggleAllPageRowsSelectedHandler();
             toggler({ target: { checked: e } }); // Toggler expect {target: {checked: boolean}}
           }}
@@ -44,4 +28,13 @@ export function selectionRowColumnDef(): ColumnDef<CVRow> {
       />
     ),
   };
+}
+
+function isPageSelected(
+  rowSelectionState: RowSelectionState,
+  tableData: RouterOuputs["getAllCVS"]["cvs"]
+) {
+  const selectedIDs = Object.entries(rowSelectionState);
+
+  return tableData.length > 1 && tableData.length === selectedIDs.length;
 }
