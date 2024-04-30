@@ -4,39 +4,30 @@ import { db, CVS, eq, ATTACHMENTS } from "astro:db";
 import { TRPCError } from "@trpc/server";
 import { UTApi } from "uploadthing/server";
 
-export const inputItem = z.object({
-  id: z.string(),
-  name: z.string(),
+export const inputSchema = z.object({
+  ids: z.array(z.string()),
 });
 
-export const inputSchema = inputItem.or(z.array(inputItem));
-
-export const outputItem = z.object({
-  name: z.string(),
+export const outputSchema = z.object({
+  affectedRows: z.number(),
 });
-
-export const outputSchema = outputItem.or(z.array(outputItem));
 
 export const deleteCVProcedure = publicProcedure
   .input(inputSchema)
   .output(outputSchema)
   .mutation(async ({ input }) => {
     try {
+      const { ids } = input;
       const queries = [];
-      const results = [];
       const utapi = new UTApi({ apiKey: import.meta.env.UPLOADTHING_SECRET });
 
-      const inputs = Array.isArray(input) ? input : [input];
+      const attachmentsToDelete = [];
 
-      for (const item of inputs) {
-        const { id, name } = item;
-
+      for (const id of ids) {
         const attachments = await db
           .select()
           .from(ATTACHMENTS)
           .where(eq(ATTACHMENTS.cvId, id));
-
-        await utapi.deleteFiles(attachments.map((a) => a.key));
 
         for (let a of attachments) {
           queries.push(db.delete(ATTACHMENTS).where(eq(ATTACHMENTS.id, a.id)));
@@ -44,13 +35,16 @@ export const deleteCVProcedure = publicProcedure
 
         queries.push(db.delete(CVS).where(eq(CVS.id, id)));
 
-        results.push({ name });
+        attachmentsToDelete.push(...attachments.map((a) => a.key));
       }
 
       // @ts-ignore
       await db.batch(queries);
+      await utapi.deleteFiles(attachmentsToDelete);
 
-      return Array.isArray(input) ? results : results[0];
+      return {
+        affectedRows: ids.length,
+      };
     } catch (e) {
       throw new TRPCError({ code: "BAD_REQUEST" });
     }

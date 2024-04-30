@@ -72,12 +72,14 @@ export type SingleActionParams = {
   newStatus: CVSStatusType;
 };
 
+export type OnDelete = (ids: Array<string>) => void;
+
 export type Actions = {
   onMarkAs: (params: SingleActionParams) => void;
-  onDelete: (params: { id: string; name: string }) => void;
+  onDelete: OnDelete;
 };
 
 export type BatchActions = {
   onMarkAs: (params: SingleActionParams[]) => void;
-  onDelete: (params: { id: string; name: string }[]) => void;
+  onDelete: OnDelete;
 };

@@ -306,7 +306,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={() =>
                     batchActions.onDelete(
-                      selectedRows({ rowSelectionState, rows })
+                      selectedRows({ rowSelectionState, rows }).map((r) => r.id)
                     )
                   }
                 >
@@ -414,7 +414,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 {/* TODO: Fix this */}
                 <Button
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  onClick={() => actions.onDelete(row.original)}
+                  onClick={() => actions.onDelete([row.original.id])}
                 >
                   Eliminar
                 </Button>

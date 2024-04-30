@@ -125,16 +125,16 @@ export default function CVTable({ search }: CVTableProps) {
     onSuccess: (input) => {
       utils.getAllCVS.invalidate(queryInput);
 
-      if (Array.isArray(input)) {
-        const affectedRows = input.length;
+      const { affectedRows } = input;
+
+      if (input.affectedRows > 1) {
         const message = `Has eliminado ${affectedRows} ${
           affectedRows > 1 ? "CVs" : "CV"
         } y todos sus adjuntos`;
         toast.success(message);
         setRowSelection({});
       } else {
-        const { name } = input;
-        const message = `Has eliminado el CV de '${name}' y todos sus adjuntos`;
+        const message = `Has eliminado un CV de y todos sus adjuntos`;
         toast.success(message);
       }
     },
@@ -192,8 +192,10 @@ export default function CVTable({ search }: CVTableProps) {
   const actions: Actions = {
     onMarkAs: ({ id, name, newStatus }) =>
       changeStatus({ id, name, newStatus }),
-    onDelete: ({ id, name }) => {
-      deleteCV({ id, name });
+    onDelete: (ids) => {
+      deleteCV({ ids });
+
+      const id = ids[0]; // We only hace 1 item
 
       const inSelection = rowSelection[id] !== undefined;
 
@@ -208,7 +210,7 @@ export default function CVTable({ search }: CVTableProps) {
 
   const batchActions: BatchActions = {
     onMarkAs: (params) => changeStatus([...params]),
-    onDelete: (params) => deleteCV([...params]),
+    onDelete: (ids) => deleteCV({ ids }),
   };
 
   const handleOnLimitChange = (newLimit: number) => setLimit(newLimit);
