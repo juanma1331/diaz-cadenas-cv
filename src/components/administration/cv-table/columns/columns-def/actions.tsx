@@ -39,7 +39,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
     header: ({ table }) => {
       const { handlers, loading } = table.options.meta!;
       const rowSelectionState = table.getState().rowSelection;
-      const rows = table.options.meta!.tableData;
+      const tableData = table.options.meta!.tableData;
       const someSelected = Object.keys(rowSelectionState).length > 0;
       const pageSelected = Object.values(rowSelectionState).some((v) => v);
 
@@ -75,15 +75,19 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
               {hasSameStatus({
                 status: CVS_STATUS.REVIEWED,
-                selectedRows: selectedRows({ rowSelectionState, rows }),
+                rowsStatus: selectedRows({
+                  rowSelectionState,
+                  tableData,
+                }).map((r) => r.status),
               }) && (
                 <>
                   <DropdownMenuItem
                     onClick={() =>
                       handlers.onMarkAs({
-                        ids: selectedRows({ rowSelectionState, rows }).map(
-                          (r) => r.id
-                        ),
+                        ids: selectedRows({
+                          rowSelectionState,
+                          tableData,
+                        }).map((r) => r.id),
                         newStatus: CVS_STATUS.REJECTED,
                       })
                     }
@@ -95,9 +99,10 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                   <DropdownMenuItem
                     onClick={() =>
                       handlers.onMarkAs({
-                        ids: selectedRows({ rowSelectionState, rows }).map(
-                          (r) => r.id
-                        ),
+                        ids: selectedRows({
+                          rowSelectionState,
+                          tableData,
+                        }).map((r) => r.id),
                         newStatus: CVS_STATUS.SELECTED,
                       })
                     }
@@ -109,9 +114,10 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                   <DropdownMenuItem
                     onClick={() =>
                       handlers.onMarkAs({
-                        ids: selectedRows({ rowSelectionState, rows }).map(
-                          (r) => r.id
-                        ),
+                        ids: selectedRows({
+                          rowSelectionState,
+                          tableData,
+                        }).map((r) => r.id),
                         newStatus: CVS_STATUS.PENDING,
                       })
                     }
@@ -124,15 +130,19 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
               {hasSameStatus({
                 status: CVS_STATUS.REJECTED,
-                selectedRows: selectedRows({ rowSelectionState, rows }),
+                rowsStatus: selectedRows({
+                  rowSelectionState,
+                  tableData,
+                }).map((r) => r.status),
               }) && (
                 <>
                   <DropdownMenuItem
                     onClick={() =>
                       handlers.onMarkAs({
-                        ids: selectedRows({ rowSelectionState, rows }).map(
-                          (r) => r.id
-                        ),
+                        ids: selectedRows({
+                          rowSelectionState,
+                          tableData,
+                        }).map((r) => r.id),
                         newStatus: CVS_STATUS.REVIEWED,
                       })
                     }
@@ -144,9 +154,10 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                   <DropdownMenuItem
                     onClick={() =>
                       handlers.onMarkAs({
-                        ids: selectedRows({ rowSelectionState, rows }).map(
-                          (r) => r.id
-                        ),
+                        ids: selectedRows({
+                          rowSelectionState,
+                          tableData,
+                        }).map((r) => r.id),
                         newStatus: CVS_STATUS.SELECTED,
                       })
                     }
@@ -158,9 +169,10 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                   <DropdownMenuItem
                     onClick={() =>
                       handlers.onMarkAs({
-                        ids: selectedRows({ rowSelectionState, rows }).map(
-                          (r) => r.id
-                        ),
+                        ids: selectedRows({
+                          rowSelectionState,
+                          tableData,
+                        }).map((r) => r.id),
                         newStatus: CVS_STATUS.PENDING,
                       })
                     }
@@ -173,15 +185,19 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
               {hasSameStatus({
                 status: CVS_STATUS.PENDING,
-                selectedRows: selectedRows({ rowSelectionState, rows }),
+                rowsStatus: selectedRows({
+                  rowSelectionState,
+                  tableData,
+                }).map((r) => r.status),
               }) && (
                 <>
                   <DropdownMenuItem
                     onClick={() =>
                       handlers.onMarkAs({
-                        ids: selectedRows({ rowSelectionState, rows }).map(
-                          (r) => r.id
-                        ),
+                        ids: selectedRows({
+                          rowSelectionState,
+                          tableData,
+                        }).map((r) => r.id),
                         newStatus: CVS_STATUS.REVIEWED,
                       })
                     }
@@ -193,9 +209,10 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                   <DropdownMenuItem
                     onClick={() =>
                       handlers.onMarkAs({
-                        ids: selectedRows({ rowSelectionState, rows }).map(
-                          (r) => r.id
-                        ),
+                        ids: selectedRows({
+                          rowSelectionState,
+                          tableData,
+                        }).map((r) => r.id),
                         newStatus: CVS_STATUS.SELECTED,
                       })
                     }
@@ -207,9 +224,10 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                   <DropdownMenuItem
                     onClick={() =>
                       handlers.onMarkAs({
-                        ids: selectedRows({ rowSelectionState, rows }).map(
-                          (r) => r.id
-                        ),
+                        ids: selectedRows({
+                          rowSelectionState,
+                          tableData,
+                        }).map((r) => r.id),
                         newStatus: CVS_STATUS.REJECTED,
                       })
                     }
@@ -222,15 +240,19 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
               {hasSameStatus({
                 status: CVS_STATUS.SELECTED,
-                selectedRows: selectedRows({ rowSelectionState, rows }),
+                rowsStatus: selectedRows({
+                  rowSelectionState,
+                  tableData,
+                }).map((r) => r.status),
               }) && (
                 <>
                   <DropdownMenuItem
                     onClick={() =>
                       handlers.onMarkAs({
-                        ids: selectedRows({ rowSelectionState, rows }).map(
-                          (r) => r.id
-                        ),
+                        ids: selectedRows({
+                          rowSelectionState,
+                          tableData,
+                        }).map((r) => r.id),
                         newStatus: CVS_STATUS.REVIEWED,
                       })
                     }
@@ -242,9 +264,10 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                   <DropdownMenuItem
                     onClick={() =>
                       handlers.onMarkAs({
-                        ids: selectedRows({ rowSelectionState, rows }).map(
-                          (r) => r.id
-                        ),
+                        ids: selectedRows({
+                          rowSelectionState,
+                          tableData,
+                        }).map((r) => r.id),
                         newStatus: CVS_STATUS.REJECTED,
                       })
                     }
@@ -256,9 +279,10 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                   <DropdownMenuItem
                     onClick={() =>
                       handlers.onMarkAs({
-                        ids: selectedRows({ rowSelectionState, rows }).map(
-                          (r) => r.id
-                        ),
+                        ids: selectedRows({
+                          rowSelectionState,
+                          tableData,
+                        }).map((r) => r.id),
                         newStatus: CVS_STATUS.PENDING,
                       })
                     }
@@ -294,7 +318,9 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={() =>
                     handlers.onDelete(
-                      selectedRows({ rowSelectionState, rows }).map((r) => r.id)
+                      selectedRows({ rowSelectionState, tableData }).map(
+                        (r) => r.id
+                      )
                     )
                   }
                 >
@@ -413,23 +439,23 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
 type HasSameStatusParams = {
   status: number;
-  selectedRows: RouterOuputs["getAllCVS"]["cvs"];
+  rowsStatus: Array<number>;
 };
-function hasSameStatus({ status, selectedRows }: HasSameStatusParams): boolean {
-  return selectedRows.every((r) => r.status === status);
+function hasSameStatus({ status, rowsStatus }: HasSameStatusParams): boolean {
+  return rowsStatus.every((s) => s === status);
 }
 
 type SelectedRowsParams = {
   rowSelectionState: RowSelectionState;
-  rows: RouterOuputs["getAllCVS"]["cvs"];
+  tableData: RouterOuputs["getAllCVS"]["cvs"];
 };
 function selectedRows({
   rowSelectionState,
-  rows,
+  tableData,
 }: SelectedRowsParams): RouterOuputs["getAllCVS"]["cvs"] {
   const selectedIDs = Object.keys(rowSelectionState);
 
-  const filteredRows = rows.filter((r) => selectedIDs.includes(r.id));
+  const filteredRows = tableData.filter((r) => selectedIDs.includes(r.id));
 
   return filteredRows.map((r) => r);
 }
