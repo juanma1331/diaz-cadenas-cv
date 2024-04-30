@@ -22,15 +22,16 @@ import type {
   Loading,
   States,
 } from "./types";
-import nameColumnDef from "./columns/columns-def/name";
-import createdAtColumnDef from "./columns/columns-def/created-at";
-import { placeColumnDef } from "./columns/columns-def/place";
-import { positionColumnDef } from "./columns/columns-def/position";
-import { statusColumnDef } from "./columns/columns-def/status";
-import { attachmentsColumnDef } from "./columns/columns-def/attachments";
-import { selectionRowColumnDef } from "./columns/columns-def/selection";
-import { actionsColumnDef } from "./columns/columns-def/actions";
+import nameColumnDef from "./columns/definitions/name";
+import createdAtColumnDef from "./columns/definitions/created-at";
+import { placeColumnDef } from "./columns/definitions/place";
+import { positionColumnDef } from "./columns/definitions/position";
+import { statusColumnDef } from "./columns/definitions/status";
+import { attachmentsColumnDef } from "./columns/definitions/attachments";
+import { selectionRowColumnDef } from "./columns/definitions/selection";
+import { actionsColumnDef } from "./columns/definitions/actions";
 import { statusMap } from "@/utils/shared";
+import emailColumnDef from "./columns/definitions/email";
 
 export type FilterType = {
   id: "place" | "position" | "status";
@@ -45,6 +46,7 @@ export type SortingType = {
 const columns: ColumnDef<CVRow>[] = [
   selectionRowColumnDef(),
   nameColumnDef(),
+  emailColumnDef(),
   createdAtColumnDef(),
   placeColumnDef(),
   positionColumnDef(),
