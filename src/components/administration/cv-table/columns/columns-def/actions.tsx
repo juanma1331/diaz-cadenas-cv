@@ -62,9 +62,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
       }, [loading.isDeleteLoading]);
 
       if (isLoading) {
-        return (
-          <RefreshCcw className="ml-3 h-3.5 w-3.5 text-slate-800 animate-spin" />
-        );
+        return <RowSpinner />;
       }
 
       return (
@@ -347,9 +345,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                     )
                   }
                 >
-                  {loading.isDeleteLoading && (
-                    <RefreshCcw className="mr-2 h-3.5 w-3.5 text-primary-foreground animate-spin" />
-                  )}
+                  {loading.isDeleteLoading && <RowSpinner />}
                   Eliminar
                 </Button>
               </AlertDialogAction>
@@ -377,9 +373,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
       };
 
       if (isLoading) {
-        return (
-          <RefreshCcw className="ml-3 h-3.5 w-3.5 text-slate-800 animate-spin" />
-        );
+        return <RowSpinner />;
       }
 
       return (
@@ -476,9 +470,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={() => handlers.onDelete([row.original.id])}
                 >
-                  {loading.isDeleteLoading && (
-                    <RefreshCcw className="mr-2 h-3.5 w-3.5 text-primary-foreground animate-spin" />
-                  )}
+                  {loading.isDeleteLoading && <RowSpinner />}
                   Eliminar
                 </Button>
               </AlertDialogAction>
@@ -488,6 +480,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
       );
     },
   };
+}
+
+function RowSpinner() {
+  return (
+    <RefreshCcw className="mr-2 h-3.5 w-3.5 text-primary-foreground animate-spin" />
+  );
 }
 
 type HasSameStatusParams = {
