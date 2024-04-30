@@ -206,11 +206,26 @@ export default function CVTable({ search }: CVTableProps) {
     onDelete: (ids) => deleteCV({ ids }),
   };
 
-  const handleOnLimitChange = (newLimit: number) => setLimit(newLimit);
-  const handleOnNextPage = () => setPage((currentPage) => currentPage + 1);
-  const handleOnPrevPage = () => setPage((prev) => Math.max(1, prev - 1));
-  const handleOnFirstPage = () => setPage(1);
-  const handleOnLastPage = () => setPage(cvsData?.lastPage ?? 0);
+  const handleOnLimitChange = (newLimit: number) => {
+    setRowSelection({});
+    setLimit(newLimit);
+  };
+  const handleOnNextPage = () => {
+    setRowSelection({});
+    setPage((currentPage) => currentPage + 1);
+  };
+  const handleOnPrevPage = () => {
+    setRowSelection({});
+    setPage((prev) => Math.max(1, prev - 1));
+  };
+  const handleOnFirstPage = () => {
+    setRowSelection({});
+    setPage(1);
+  };
+  const handleOnLastPage = () => {
+    setRowSelection({});
+    setPage(cvsData?.lastPage ?? 0);
+  };
 
   const table = useReactTable({
     columns,
