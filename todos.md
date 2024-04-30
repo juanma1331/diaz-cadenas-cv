@@ -10,6 +10,7 @@ COMPLETAS
 [X] Refactorizar el endpoint changeStatus.
 [X] Al cambiar de una página a la siguiente o viceversa debemos resetear la selección de filas. De este modo, evitamos problemas de incosistencia en el estado.
 [X] Al cambiar el status en una fila debemos ver el spinner en la misma fila.
+[X] Al eliminar un CV se debe mostrar el spinner en el botón de confirmación del modal.
 
 PENDIENTES
 [ ] La altura de la tabla no es suficiente en dispositivos > 1080px.

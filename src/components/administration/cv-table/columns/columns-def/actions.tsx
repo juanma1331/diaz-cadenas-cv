@@ -39,6 +39,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
     id: "actions",
     header: ({ table }) => {
       const [isLoading, setIsLoading] = useState<boolean>(false);
+      const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
       const { handlers, loading } = table.options.meta!;
       const rowSelectionState = table.getState().rowSelection;
       const tableData = table.options.meta!.tableData;
@@ -52,14 +53,13 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
         handlers.onMarkAs(params);
       };
 
-      const handleOnDelete: OnDelete = (params) => {
-        setIsLoading(true);
-        handlers.onDelete(params);
-      };
-
       useEffect(() => {
         if (isLoading) setIsLoading(false);
-      }, [loading.isChangeStatusLoading, loading.isDeleteLoading]);
+      }, [loading.isChangeStatusLoading]);
+
+      useEffect(() => {
+        if (deleteDialogOpen) setDeleteDialogOpen(false);
+      }, [loading.isDeleteLoading]);
 
       if (isLoading) {
         return (
@@ -68,7 +68,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
       }
 
       return (
-        <AlertDialog>
+        <AlertDialog open={deleteDialogOpen}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -313,7 +313,10 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
               <DropdownMenuSeparator />
               <AlertDialogTrigger asChild>
-                <DropdownMenuItem className="text-red-500">
+                <DropdownMenuItem
+                  className="text-red-500"
+                  onClick={() => setDeleteDialogOpen(true)}
+                >
                   <Trash2 className="w-3.5 h-3.5 mr-2" />
                   Eliminar
                 </DropdownMenuItem>
@@ -329,19 +332,24 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel onClick={() => setDeleteDialogOpen(false)}>
+                Cancel
+              </AlertDialogCancel>
               <AlertDialogAction asChild>
                 {/* TODO: Fix this */}
                 <Button
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={() =>
-                    handleOnDelete(
+                    handlers.onDelete(
                       selectedRows({ rowSelectionState, tableData }).map(
                         (r) => r.id
                       )
                     )
                   }
                 >
+                  {loading.isDeleteLoading && (
+                    <RefreshCcw className="mr-2 h-3.5 w-3.5 text-primary-foreground animate-spin" />
+                  )}
                   Eliminar
                 </Button>
               </AlertDialogAction>
@@ -352,11 +360,16 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
     },
     cell: ({ row, table }) => {
       const [isLoading, setIsLoading] = useState<boolean>(false);
+      const [dialogOpen, setDialogOpen] = useState<boolean>(false);
       const { handlers, loading } = table.options.meta!;
 
       useEffect(() => {
         if (isLoading) setIsLoading(false);
-      }, [loading.isChangeStatusLoading, loading.isDeleteLoading]);
+      }, [loading.isChangeStatusLoading]);
+
+      useEffect(() => {
+        if (dialogOpen) setDialogOpen(false);
+      }, [loading.isDeleteLoading]);
 
       const handleOnMark: OnMark = (params) => {
         setIsLoading(true);
@@ -370,7 +383,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
       }
 
       return (
-        <AlertDialog>
+        <AlertDialog open={dialogOpen}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="p-0">
@@ -437,7 +450,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
               )}
               <DropdownMenuSeparator />
 
-              <AlertDialogTrigger asChild>
+              <AlertDialogTrigger asChild onClick={() => setDialogOpen(true)}>
                 <DropdownMenuItem className="text-red-500">
                   <Trash2 className="w-3.5 h-3.5 mr-2" />
                   Eliminar
@@ -454,13 +467,18 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel onClick={() => setDialogOpen(false)}>
+                Cancel
+              </AlertDialogCancel>
               <AlertDialogAction asChild>
                 {/* TODO: Fix this */}
                 <Button
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={() => handlers.onDelete([row.original.id])}
                 >
+                  {loading.isDeleteLoading && (
+                    <RefreshCcw className="mr-2 h-3.5 w-3.5 text-primary-foreground animate-spin" />
+                  )}
                   Eliminar
                 </Button>
               </AlertDialogAction>
