@@ -1,3 +1,4 @@
+import type { CVSStatusType } from "@/constants";
 import type {
   ColumnFilter,
   ColumnFiltersState,
@@ -38,7 +39,7 @@ export type OnMark = ({
   newStatus,
 }: {
   ids: Array<string>;
-  newStatus: number;
+  newStatus: CVSStatusType;
 }) => void;
 export type OnDelete = (ids: Array<string>) => void;
 

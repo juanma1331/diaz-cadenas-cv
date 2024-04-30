@@ -1,5 +1,5 @@
 import type { ColumnDef, Row, RowSelectionState } from "@tanstack/react-table";
-import type { CVRow } from "../../types";
+import type { CVRow, OnDelete, OnMark } from "../../types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,18 +32,36 @@ import {
   X,
 } from "lucide-react";
 import type { RouterOuputs } from "@/server/utils";
+import { useEffect, useState } from "react";
 
 export function actionsColumnDef(): ColumnDef<CVRow> {
   return {
     id: "actions",
     header: ({ table }) => {
+      const [isLoading, setIsLoading] = useState<boolean>(false);
       const { handlers, loading } = table.options.meta!;
       const rowSelectionState = table.getState().rowSelection;
       const tableData = table.options.meta!.tableData;
       const someSelected = Object.keys(rowSelectionState).length > 0;
-      const pageSelected = Object.values(rowSelectionState).some((v) => v);
+      const pageSelected =
+        tableData.length > 0 &&
+        Object.entries(rowSelectionState).length === tableData.length;
 
-      if (loading.isChangeStatusLoading || loading.isDeleteLoading) {
+      const handleOnMark: OnMark = (params) => {
+        setIsLoading(true);
+        handlers.onMarkAs(params);
+      };
+
+      const handleOnDelete: OnDelete = (params) => {
+        setIsLoading(true);
+        handlers.onDelete(params);
+      };
+
+      useEffect(() => {
+        if (isLoading) setIsLoading(false);
+      }, [loading.isChangeStatusLoading, loading.isDeleteLoading]);
+
+      if (isLoading) {
         return (
           <RefreshCcw className="ml-3 h-3.5 w-3.5 text-slate-800 animate-spin" />
         );
@@ -83,7 +101,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      handlers.onMarkAs({
+                      handleOnMark({
                         ids: selectedRows({
                           rowSelectionState,
                           tableData,
@@ -98,7 +116,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      handlers.onMarkAs({
+                      handleOnMark({
                         ids: selectedRows({
                           rowSelectionState,
                           tableData,
@@ -113,7 +131,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      handlers.onMarkAs({
+                      handleOnMark({
                         ids: selectedRows({
                           rowSelectionState,
                           tableData,
@@ -138,7 +156,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      handlers.onMarkAs({
+                      handleOnMark({
                         ids: selectedRows({
                           rowSelectionState,
                           tableData,
@@ -153,7 +171,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      handlers.onMarkAs({
+                      handleOnMark({
                         ids: selectedRows({
                           rowSelectionState,
                           tableData,
@@ -168,7 +186,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      handlers.onMarkAs({
+                      handleOnMark({
                         ids: selectedRows({
                           rowSelectionState,
                           tableData,
@@ -193,7 +211,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      handlers.onMarkAs({
+                      handleOnMark({
                         ids: selectedRows({
                           rowSelectionState,
                           tableData,
@@ -208,7 +226,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      handlers.onMarkAs({
+                      handleOnMark({
                         ids: selectedRows({
                           rowSelectionState,
                           tableData,
@@ -223,7 +241,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      handlers.onMarkAs({
+                      handleOnMark({
                         ids: selectedRows({
                           rowSelectionState,
                           tableData,
@@ -248,7 +266,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      handlers.onMarkAs({
+                      handleOnMark({
                         ids: selectedRows({
                           rowSelectionState,
                           tableData,
@@ -263,7 +281,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      handlers.onMarkAs({
+                      handleOnMark({
                         ids: selectedRows({
                           rowSelectionState,
                           tableData,
@@ -278,7 +296,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      handlers.onMarkAs({
+                      handleOnMark({
                         ids: selectedRows({
                           rowSelectionState,
                           tableData,
@@ -317,7 +335,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <Button
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={() =>
-                    handlers.onDelete(
+                    handleOnDelete(
                       selectedRows({ rowSelectionState, tableData }).map(
                         (r) => r.id
                       )
@@ -333,7 +351,24 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
       );
     },
     cell: ({ row, table }) => {
-      const { handlers } = table.options.meta!;
+      const [isLoading, setIsLoading] = useState<boolean>(false);
+      const { handlers, loading } = table.options.meta!;
+
+      useEffect(() => {
+        if (isLoading) setIsLoading(false);
+      }, [loading.isChangeStatusLoading, loading.isDeleteLoading]);
+
+      const handleOnMark: OnMark = (params) => {
+        setIsLoading(true);
+        handlers.onMarkAs(params);
+      };
+
+      if (isLoading) {
+        return (
+          <RefreshCcw className="ml-3 h-3.5 w-3.5 text-slate-800 animate-spin" />
+        );
+      }
+
       return (
         <AlertDialog>
           <DropdownMenu>
@@ -348,7 +383,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
               {row.original.status !== CVS_STATUS.REVIEWED && (
                 <DropdownMenuItem
                   onClick={() =>
-                    handlers.onMarkAs({
+                    handleOnMark({
                       ids: [row.original.id],
                       newStatus: CVS_STATUS.REVIEWED,
                     })
@@ -362,7 +397,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
               {row.original.status !== CVS_STATUS.REJECTED && (
                 <DropdownMenuItem
                   onClick={() =>
-                    handlers.onMarkAs({
+                    handleOnMark({
                       ids: [row.original.id],
                       newStatus: CVS_STATUS.REJECTED,
                     })
@@ -376,7 +411,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
               {row.original.status !== CVS_STATUS.SELECTED && (
                 <DropdownMenuItem
                   onClick={() =>
-                    handlers.onMarkAs({
+                    handleOnMark({
                       ids: [row.original.id],
                       newStatus: CVS_STATUS.SELECTED,
                     })
@@ -390,7 +425,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
               {row.original.status !== CVS_STATUS.PENDING && (
                 <DropdownMenuItem
                   onClick={() =>
-                    handlers.onMarkAs({
+                    handleOnMark({
                       ids: [row.original.id],
                       newStatus: CVS_STATUS.PENDING,
                     })
