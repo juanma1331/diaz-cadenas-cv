@@ -7,6 +7,7 @@ COMPLETAS
 [X] Antes de permitir grabar se comprueba los permisos y que el navegador permite la grabación.
 
 [X] El borrado en bloque parece tardar mucho.
+[X] Refactorizar el endpoint changeStatus.
 
 PENDIENTES
 [ ] El borrado en bloque de todas las filas resulta en un estado incorrecto.

@@ -80,13 +80,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs(
-                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
-                          id: sr.id,
-                          name: sr.name,
-                          newStatus: CVS_STATUS.REJECTED,
-                        }))
-                      )
+                      batchActions.onMarkAs({
+                        ids: selectedRows({ rowSelectionState, rows }).map(
+                          (r) => r.id
+                        ),
+                        newStatus: CVS_STATUS.REJECTED,
+                      })
                     }
                   >
                     <X className="w-3.5 h-3.5 mr-2" />
@@ -95,13 +94,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs(
-                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
-                          id: sr.id,
-                          name: sr.name,
-                          newStatus: CVS_STATUS.SELECTED,
-                        }))
-                      )
+                      batchActions.onMarkAs({
+                        ids: selectedRows({ rowSelectionState, rows }).map(
+                          (r) => r.id
+                        ),
+                        newStatus: CVS_STATUS.SELECTED,
+                      })
                     }
                   >
                     <CheckCheck className="w-3.5 h-3.5 mr-2" />
@@ -110,13 +108,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs(
-                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
-                          id: sr.id,
-                          name: sr.name,
-                          newStatus: CVS_STATUS.PENDING,
-                        }))
-                      )
+                      batchActions.onMarkAs({
+                        ids: selectedRows({ rowSelectionState, rows }).map(
+                          (r) => r.id
+                        ),
+                        newStatus: CVS_STATUS.PENDING,
+                      })
                     }
                   >
                     <Clock className="w-3.5 h-3.5 mr-2" />
@@ -132,13 +129,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs(
-                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
-                          id: sr.id,
-                          name: sr.name,
-                          newStatus: CVS_STATUS.REVIEWED,
-                        }))
-                      )
+                      batchActions.onMarkAs({
+                        ids: selectedRows({ rowSelectionState, rows }).map(
+                          (r) => r.id
+                        ),
+                        newStatus: CVS_STATUS.REVIEWED,
+                      })
                     }
                   >
                     <Check className="w-3.5 h-3.5 mr-2" />
@@ -147,13 +143,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs(
-                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
-                          id: sr.id,
-                          name: sr.name,
-                          newStatus: CVS_STATUS.SELECTED,
-                        }))
-                      )
+                      batchActions.onMarkAs({
+                        ids: selectedRows({ rowSelectionState, rows }).map(
+                          (r) => r.id
+                        ),
+                        newStatus: CVS_STATUS.SELECTED,
+                      })
                     }
                   >
                     <CheckCheck className="w-3.5 h-3.5 mr-2" />
@@ -162,13 +157,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs(
-                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
-                          id: sr.id,
-                          name: sr.name,
-                          newStatus: CVS_STATUS.PENDING,
-                        }))
-                      )
+                      batchActions.onMarkAs({
+                        ids: selectedRows({ rowSelectionState, rows }).map(
+                          (r) => r.id
+                        ),
+                        newStatus: CVS_STATUS.PENDING,
+                      })
                     }
                   >
                     <Clock className="w-3.5 h-3.5 mr-2" />
@@ -184,13 +178,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs(
-                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
-                          id: sr.id,
-                          name: sr.name,
-                          newStatus: CVS_STATUS.REVIEWED,
-                        }))
-                      )
+                      batchActions.onMarkAs({
+                        ids: selectedRows({ rowSelectionState, rows }).map(
+                          (r) => r.id
+                        ),
+                        newStatus: CVS_STATUS.REVIEWED,
+                      })
                     }
                   >
                     <Check className="w-3.5 h-3.5 mr-2" />
@@ -199,13 +192,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs(
-                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
-                          id: sr.id,
-                          name: sr.name,
-                          newStatus: CVS_STATUS.SELECTED,
-                        }))
-                      )
+                      batchActions.onMarkAs({
+                        ids: selectedRows({ rowSelectionState, rows }).map(
+                          (r) => r.id
+                        ),
+                        newStatus: CVS_STATUS.SELECTED,
+                      })
                     }
                   >
                     <CheckCheck className="w-3.5 h-3.5 mr-2" />
@@ -214,13 +206,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs(
-                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
-                          id: sr.id,
-                          name: sr.name,
-                          newStatus: CVS_STATUS.REJECTED,
-                        }))
-                      )
+                      batchActions.onMarkAs({
+                        ids: selectedRows({ rowSelectionState, rows }).map(
+                          (r) => r.id
+                        ),
+                        newStatus: CVS_STATUS.REJECTED,
+                      })
                     }
                   >
                     <X className="w-3.5 h-3.5 mr-2" />
@@ -236,13 +227,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs(
-                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
-                          id: sr.id,
-                          name: sr.name,
-                          newStatus: CVS_STATUS.REVIEWED,
-                        }))
-                      )
+                      batchActions.onMarkAs({
+                        ids: selectedRows({ rowSelectionState, rows }).map(
+                          (r) => r.id
+                        ),
+                        newStatus: CVS_STATUS.REVIEWED,
+                      })
                     }
                   >
                     <Check className="w-3.5 h-3.5 mr-2" />
@@ -251,13 +241,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs(
-                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
-                          id: sr.id,
-                          name: sr.name,
-                          newStatus: CVS_STATUS.REJECTED,
-                        }))
-                      )
+                      batchActions.onMarkAs({
+                        ids: selectedRows({ rowSelectionState, rows }).map(
+                          (r) => r.id
+                        ),
+                        newStatus: CVS_STATUS.REJECTED,
+                      })
                     }
                   >
                     <X className="w-3.5 h-3.5 mr-2" />
@@ -266,13 +255,12 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs(
-                        selectedRows({ rowSelectionState, rows }).map((sr) => ({
-                          id: sr.id,
-                          name: sr.name,
-                          newStatus: CVS_STATUS.PENDING,
-                        }))
-                      )
+                      batchActions.onMarkAs({
+                        ids: selectedRows({ rowSelectionState, rows }).map(
+                          (r) => r.id
+                        ),
+                        newStatus: CVS_STATUS.PENDING,
+                      })
                     }
                   >
                     <Clock className="w-3.5 h-3.5 mr-2" />
@@ -335,8 +323,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <DropdownMenuItem
                   onClick={() =>
                     actions.onMarkAs({
-                      id: row.original.id,
-                      name: row.original.name,
+                      ids: [row.original.id],
                       newStatus: CVS_STATUS.REVIEWED,
                     })
                   }
@@ -350,8 +337,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <DropdownMenuItem
                   onClick={() =>
                     actions.onMarkAs({
-                      id: row.original.id,
-                      name: row.original.name,
+                      ids: [row.original.id],
                       newStatus: CVS_STATUS.REJECTED,
                     })
                   }
@@ -365,8 +351,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <DropdownMenuItem
                   onClick={() =>
                     actions.onMarkAs({
-                      id: row.original.id,
-                      name: row.original.name,
+                      ids: [row.original.id],
                       newStatus: CVS_STATUS.SELECTED,
                     })
                   }
@@ -380,8 +365,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <DropdownMenuItem
                   onClick={() =>
                     actions.onMarkAs({
-                      id: row.original.id,
-                      name: row.original.name,
+                      ids: [row.original.id],
                       newStatus: CVS_STATUS.PENDING,
                     })
                   }

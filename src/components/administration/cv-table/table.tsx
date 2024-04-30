@@ -101,19 +101,13 @@ export default function CVTable({ search }: CVTableProps) {
     onSuccess: (input) => {
       utils.getAllCVS.invalidate(queryInput);
 
-      if (Array.isArray(input)) {
-        const status = statusMap(input[0].newStatus);
-        const affectedRows = input.length;
-        const message = `Has marcado ${affectedRows} ${
-          affectedRows > 1 ? "CVs" : "CV"
-        } como '${status}'`;
-        toast.success(message);
-      } else {
-        const { name, newStatus } = input;
-        const status = statusMap(newStatus);
-        const message = `Has marcado el CV de '${name}' como '${status}'`;
-        toast.success(message);
-      }
+      const { affectedRows, newStatus } = input;
+
+      const message =
+        affectedRows > 1
+          ? `Has marcado ${affectedRows} CVs como '${newStatus}'`
+          : `Has marcado el CV como '${newStatus}'`;
+      toast.success(message);
     },
   });
 
@@ -190,8 +184,7 @@ export default function CVTable({ search }: CVTableProps) {
   };
 
   const actions: Actions = {
-    onMarkAs: ({ id, name, newStatus }) =>
-      changeStatus({ id, name, newStatus }),
+    onMarkAs: (params) => changeStatus(params),
     onDelete: (ids) => {
       deleteCV({ ids });
 
@@ -209,7 +202,7 @@ export default function CVTable({ search }: CVTableProps) {
   };
 
   const batchActions: BatchActions = {
-    onMarkAs: (params) => changeStatus([...params]),
+    onMarkAs: (params) => changeStatus(params),
     onDelete: (ids) => deleteCV({ ids }),
   };
 
