@@ -30,7 +30,9 @@ import { statusColumnDef } from "./columns/definitions/status";
 import { attachmentsColumnDef } from "./columns/definitions/attachments";
 import { selectionRowColumnDef } from "./columns/definitions/selection";
 import { actionsColumnDef } from "./columns/definitions/actions";
+import { statusMap } from "@/utils/shared";
 import emailColumnDef from "./columns/definitions/email";
+import TableFilters from "./filtering/table-filters";
 
 export type FilterType = {
   id: "place" | "position" | "status";
@@ -239,33 +241,27 @@ export default function CVTable({ search }: CVTableProps) {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center space-x-2">
-        <h1 className="text-slate-800 text-xl py-4">Currículums</h1>
-        <CVTableFilters
-          filteringState={filteringState}
-          dateFilteringState={dateFilteringState}
-          sortingState={sortingState}
-          setFilters={setFilteringState}
-          setDateFilters={setDateFilteringState}
-          setSorting={setSortingState}
-        />
+      <h1 className="text-slate-800 text-xl pt-2">Currículums</h1>
+      <div className="flex items-center">
+        <TableFilters />
       </div>
+      <div className="space-y-2 border border-border rounded-md">
+        <CVTableRows table={table} isLoading={isTableDataLoading} />
 
-      <CVTableRows table={table} isLoading={isTableDataLoading} />
-
-      <div className="flex items-center justify-end px-2 pb-2">
-        {!isTableDataLoading && (
-          <CVTablePagination
-            limit={limit}
-            currentPage={page}
-            lastPage={cvsData.lastPage}
-            onLimitChange={handleOnLimitChange}
-            onPrevPage={handleOnPrevPage}
-            onNextPage={handleOnNextPage}
-            onFirstPage={handleOnFirstPage}
-            onLastPage={handleOnLastPage}
-          />
-        )}
+        <div className="flex items-center justify-end px-2 pb-2">
+          {!isTableDataLoading && (
+            <CVTablePagination
+              limit={limit}
+              currentPage={page}
+              lastPage={cvsData.lastPage}
+              onLimitChange={handleOnLimitChange}
+              onPrevPage={handleOnPrevPage}
+              onNextPage={handleOnNextPage}
+              onFirstPage={handleOnFirstPage}
+              onLastPage={handleOnLastPage}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
