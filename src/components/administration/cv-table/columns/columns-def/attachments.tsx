@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { CVRow, RowAttachment } from "./types";
+import type { CVRow, RowAttachment } from "../../types";
 import { Button } from "@/components/ui/button";
 import { FileText, Video } from "lucide-react";
 import {

@@ -8,7 +8,7 @@ import {
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { ArrowDownIcon, ArrowUpIcon, WandSparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { OnCleanSort, OnSort } from "../columns-def/types";
+import type { OnCleanSort, OnSort } from "../../types";
 
 export type SortingColumnHeaderProps = {
   id: "name" | "email";

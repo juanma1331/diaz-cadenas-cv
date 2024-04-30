@@ -7,16 +7,16 @@ import type {
   DateFiltering,
   Sorting,
   BatchActions,
-} from "@/components/administration/cv-table/columns/columns-def/types";
+  Handlers,
+  States,
+  Loading,
+} from "@/components/administration/cv-table/types";
 
 declare module "@tanstack/table-core" {
   interface TableMeta<TData extends RowData> {
-    filtering: Filtering;
-    dateFiltering: DateFiltering;
-    sorting: Sorting;
-    actions: Actions;
-    batchActions: BatchActions;
-    isActionColumnLoading: boolean;
+    handlers: Handlers;
+    states: States;
+    loading: Loading;
     tableData: RouterOuputs["getAllCVS"]["cvs"];
   }
 }

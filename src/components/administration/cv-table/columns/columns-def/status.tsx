@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { CVRow, Filtering } from "./types";
+import type { CVRow } from "../../types";
 import { StatusFilteringColumnHeader } from "../headers/status-filtering-column-header";
 import { CVS_STATUS } from "@/constants";
 import { Badge } from "@/components/ui/badge";
@@ -8,12 +8,12 @@ export function statusColumnDef(): ColumnDef<CVRow> {
   return {
     accessorKey: "status",
     header: ({ table }) => {
-      const { filtering } = table.options.meta!;
+      const { handlers, states } = table.options.meta!;
       return (
         <StatusFilteringColumnHeader
-          filteringState={filtering.filteringState}
-          onFilter={filtering.onFilteringChange}
-          onClearFilter={filtering.onClearFilter}
+          filteringState={states.filteringState}
+          onFilter={handlers.onFilter}
+          onClearFilter={handlers.onClearFilter}
         />
       );
     },

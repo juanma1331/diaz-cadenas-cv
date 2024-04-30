@@ -1,5 +1,5 @@
 import type { ColumnDef, Row, RowSelectionState } from "@tanstack/react-table";
-import type { Actions, BatchActions, CVRow } from "./types";
+import type { CVRow } from "../../types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,13 +37,13 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
   return {
     id: "actions",
     header: ({ table }) => {
-      const { isActionColumnLoading, batchActions } = table.options.meta!;
+      const { handlers, loading } = table.options.meta!;
       const rowSelectionState = table.getState().rowSelection;
       const rows = table.options.meta!.tableData;
       const someSelected = Object.keys(rowSelectionState).length > 0;
       const pageSelected = Object.values(rowSelectionState).some((v) => v);
 
-      if (isActionColumnLoading) {
+      if (loading.isChangeStatusLoading || loading.isDeleteLoading) {
         return (
           <RefreshCcw className="ml-3 h-3.5 w-3.5 text-slate-800 animate-spin" />
         );
@@ -80,7 +80,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs({
+                      handlers.onMarkAs({
                         ids: selectedRows({ rowSelectionState, rows }).map(
                           (r) => r.id
                         ),
@@ -94,7 +94,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs({
+                      handlers.onMarkAs({
                         ids: selectedRows({ rowSelectionState, rows }).map(
                           (r) => r.id
                         ),
@@ -108,7 +108,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs({
+                      handlers.onMarkAs({
                         ids: selectedRows({ rowSelectionState, rows }).map(
                           (r) => r.id
                         ),
@@ -129,7 +129,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs({
+                      handlers.onMarkAs({
                         ids: selectedRows({ rowSelectionState, rows }).map(
                           (r) => r.id
                         ),
@@ -143,7 +143,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs({
+                      handlers.onMarkAs({
                         ids: selectedRows({ rowSelectionState, rows }).map(
                           (r) => r.id
                         ),
@@ -157,7 +157,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs({
+                      handlers.onMarkAs({
                         ids: selectedRows({ rowSelectionState, rows }).map(
                           (r) => r.id
                         ),
@@ -178,7 +178,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs({
+                      handlers.onMarkAs({
                         ids: selectedRows({ rowSelectionState, rows }).map(
                           (r) => r.id
                         ),
@@ -192,7 +192,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs({
+                      handlers.onMarkAs({
                         ids: selectedRows({ rowSelectionState, rows }).map(
                           (r) => r.id
                         ),
@@ -206,7 +206,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs({
+                      handlers.onMarkAs({
                         ids: selectedRows({ rowSelectionState, rows }).map(
                           (r) => r.id
                         ),
@@ -227,7 +227,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <>
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs({
+                      handlers.onMarkAs({
                         ids: selectedRows({ rowSelectionState, rows }).map(
                           (r) => r.id
                         ),
@@ -241,7 +241,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs({
+                      handlers.onMarkAs({
                         ids: selectedRows({ rowSelectionState, rows }).map(
                           (r) => r.id
                         ),
@@ -255,7 +255,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
 
                   <DropdownMenuItem
                     onClick={() =>
-                      batchActions.onMarkAs({
+                      handlers.onMarkAs({
                         ids: selectedRows({ rowSelectionState, rows }).map(
                           (r) => r.id
                         ),
@@ -293,7 +293,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 <Button
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={() =>
-                    batchActions.onDelete(
+                    handlers.onDelete(
                       selectedRows({ rowSelectionState, rows }).map((r) => r.id)
                     )
                   }
@@ -307,7 +307,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
       );
     },
     cell: ({ row, table }) => {
-      const { actions } = table.options.meta!;
+      const { handlers } = table.options.meta!;
       return (
         <AlertDialog>
           <DropdownMenu>
@@ -322,7 +322,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
               {row.original.status !== CVS_STATUS.REVIEWED && (
                 <DropdownMenuItem
                   onClick={() =>
-                    actions.onMarkAs({
+                    handlers.onMarkAs({
                       ids: [row.original.id],
                       newStatus: CVS_STATUS.REVIEWED,
                     })
@@ -336,7 +336,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
               {row.original.status !== CVS_STATUS.REJECTED && (
                 <DropdownMenuItem
                   onClick={() =>
-                    actions.onMarkAs({
+                    handlers.onMarkAs({
                       ids: [row.original.id],
                       newStatus: CVS_STATUS.REJECTED,
                     })
@@ -350,7 +350,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
               {row.original.status !== CVS_STATUS.SELECTED && (
                 <DropdownMenuItem
                   onClick={() =>
-                    actions.onMarkAs({
+                    handlers.onMarkAs({
                       ids: [row.original.id],
                       newStatus: CVS_STATUS.SELECTED,
                     })
@@ -364,7 +364,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
               {row.original.status !== CVS_STATUS.PENDING && (
                 <DropdownMenuItem
                   onClick={() =>
-                    actions.onMarkAs({
+                    handlers.onMarkAs({
                       ids: [row.original.id],
                       newStatus: CVS_STATUS.PENDING,
                     })
@@ -398,7 +398,7 @@ export function actionsColumnDef(): ColumnDef<CVRow> {
                 {/* TODO: Fix this */}
                 <Button
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  onClick={() => actions.onDelete([row.original.id])}
+                  onClick={() => handlers.onDelete([row.original.id])}
                 >
                   Eliminar
                 </Button>

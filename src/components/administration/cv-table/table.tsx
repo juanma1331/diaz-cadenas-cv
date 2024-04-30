@@ -16,14 +16,12 @@ import { CVS_STATUS } from "@/constants";
 import { toast } from "sonner";
 import type { DateRange } from "react-day-picker";
 import type {
-  Actions,
-  BatchActions,
   CVRow,
-  DateFiltering,
   DateFilteringState,
-  Filtering,
-  Sorting,
-} from "./columns/columns-def/types";
+  Handlers,
+  Loading,
+  States,
+} from "./types";
 import nameColumnDef from "./columns/columns-def/name";
 import createdAtColumnDef from "./columns/columns-def/created-at";
 import { placeColumnDef } from "./columns/columns-def/place";
@@ -62,7 +60,9 @@ export type CVTableProps = {
 export default function CVTable({ search }: CVTableProps) {
   const [limit, setLimit] = useState<number>(10);
   const [page, setPage] = useState<number>(1);
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [rowSelectionState, setRowSelectionState] = useState<RowSelectionState>(
+    {}
+  );
   const [sortingState, setSortingState] = useState<SortingState>([]);
   const [filteringState, setFilteringState] = useState<ColumnFiltersState>([]);
   const [dateFilteringState, setDateFilteringState] =
@@ -86,7 +86,7 @@ export default function CVTable({ search }: CVTableProps) {
 
   const {
     data: cvsData,
-    isLoading: isCVSDataLoading,
+    isLoading: isTableDataLoading,
     isError: getAllCVSError,
   } = trpcReact.getAllCVS.useQuery(queryInput, {
     refetchOnWindowFocus: false,
@@ -95,7 +95,7 @@ export default function CVTable({ search }: CVTableProps) {
 
   const {
     mutate: changeStatus,
-    isLoading: changeStatusLoading,
+    isLoading: isChangeStatusLoading,
     isError: changeStatusError,
   } = trpcReact.changeStatus.useMutation({
     onSuccess: (input) => {
@@ -113,7 +113,7 @@ export default function CVTable({ search }: CVTableProps) {
 
   const {
     mutate: deleteCV,
-    isLoading: deleteCVLoading,
+    isLoading: isDeleteLoading,
     isError: deleteCVError,
   } = trpcReact.delete.useMutation({
     onSuccess: (input) => {
@@ -126,7 +126,7 @@ export default function CVTable({ search }: CVTableProps) {
           affectedRows > 1 ? "CVs" : "CV"
         } y todos sus adjuntos`;
         toast.success(message);
-        setRowSelection({});
+        setRowSelectionState({});
       } else {
         const message = `Has eliminado un CV de y todos sus adjuntos`;
         toast.success(message);
@@ -134,9 +134,8 @@ export default function CVTable({ search }: CVTableProps) {
     },
   });
 
-  const filtering: Filtering = {
-    filteringState: filteringState,
-    onFilteringChange: ({ id, value }) => {
+  const handlers: Handlers = {
+    onFilter: ({ id, value }) => {
       setFilteringState((prevFilters) => {
         const newFilters = prevFilters.filter((f) => f.id !== id);
         if (value) {
@@ -145,16 +144,10 @@ export default function CVTable({ search }: CVTableProps) {
         return newFilters;
       });
     },
-    onClearFilter: (id) => {
+    onClearFilter: (id) =>
       setFilteringState((prevFilters) => {
         return prevFilters.filter((f) => f.id !== id);
-      });
-    },
-  };
-
-  const dateFiltering: DateFiltering = {
-    dateFilteringState: dateFilteringState,
-    onCleanDateFiltering: () => setDateFilteringState(undefined),
+      }),
     onDateFilter: (dateFilter) => {
       if (dateFilter.type === "single") {
         setDateFilteringState({
@@ -170,60 +163,53 @@ export default function CVTable({ search }: CVTableProps) {
         });
       }
     },
-    onSort: (sort) => setSortingState([sort]),
-  };
-
-  const sorting: Sorting = {
-    sortingState: sortingState,
+    onClearDateFilter: () => setDateFilteringState(undefined),
     onSort: (sort) => {
       setSortingState([sort]);
     },
-    onCleanSort: () => {
-      setSortingState([]);
-    },
-  };
-
-  const actions: Actions = {
+    onCleanSort: () => setSortingState([]),
     onMarkAs: (params) => changeStatus(params),
     onDelete: (ids) => {
       deleteCV({ ids });
 
-      const id = ids[0]; // We only hace 1 item
-
-      const inSelection = rowSelection[id] !== undefined;
-
-      if (inSelection) {
-        const filtered = Object.entries(rowSelection).filter(
-          ([key]) => id !== key
-        );
-        setRowSelection(Object.fromEntries(filtered));
-      }
+      const filtered = Object.entries(rowSelectionState).filter(
+        ([key]) => !ids.includes(key)
+      );
+      setRowSelectionState(Object.fromEntries(filtered));
     },
   };
 
-  const batchActions: BatchActions = {
-    onMarkAs: (params) => changeStatus(params),
-    onDelete: (ids) => deleteCV({ ids }),
+  const loading: Loading = {
+    isTableDataLoading,
+    isChangeStatusLoading,
+    isDeleteLoading,
+  };
+
+  const states: States = {
+    filteringState,
+    dateFilteringState,
+    sortingState,
+    rowSelectionState,
   };
 
   const handleOnLimitChange = (newLimit: number) => {
-    setRowSelection({});
+    setRowSelectionState({});
     setLimit(newLimit);
   };
   const handleOnNextPage = () => {
-    setRowSelection({});
+    setRowSelectionState({});
     setPage((currentPage) => currentPage + 1);
   };
   const handleOnPrevPage = () => {
-    setRowSelection({});
+    setRowSelectionState({});
     setPage((prev) => Math.max(1, prev - 1));
   };
   const handleOnFirstPage = () => {
-    setRowSelection({});
+    setRowSelectionState({});
     setPage(1);
   };
   const handleOnLastPage = () => {
-    setRowSelection({});
+    setRowSelectionState({});
     setPage(cvsData?.lastPage ?? 0);
   };
 
@@ -231,20 +217,17 @@ export default function CVTable({ search }: CVTableProps) {
     columns,
     data: cvsData?.cvs ?? [],
     getCoreRowModel: getCoreRowModel(),
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: setRowSelectionState,
     enableRowSelection: true,
     enableMultiRowSelection: true,
     getRowId: (row) => row.id,
     state: {
-      rowSelection,
+      rowSelection: rowSelectionState,
     },
     meta: {
-      filtering: filtering,
-      sorting: sorting,
-      actions: actions,
-      batchActions: batchActions,
-      isActionColumnLoading: changeStatusLoading || deleteCVLoading,
-      dateFiltering: dateFiltering,
+      handlers,
+      loading,
+      states,
       tableData: cvsData?.cvs ?? [],
     },
   });
@@ -267,10 +250,10 @@ export default function CVTable({ search }: CVTableProps) {
         />
       </div>
 
-      <CVTableRows table={table} isLoading={isCVSDataLoading} />
+      <CVTableRows table={table} isLoading={isTableDataLoading} />
 
       <div className="flex items-center justify-end px-2 pb-2">
-        {!isCVSDataLoading && (
+        {!isTableDataLoading && (
           <CVTablePagination
             limit={limit}
             currentPage={page}

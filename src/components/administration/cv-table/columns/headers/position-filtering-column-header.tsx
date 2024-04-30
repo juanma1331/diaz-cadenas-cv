@@ -9,7 +9,7 @@ import {
 import { POSITIONS } from "@/constants";
 import type { ColumnFiltersState } from "@tanstack/react-table";
 import { ListFilter, Dot, WandSparkles } from "lucide-react";
-import type { OnClearFilter, OnFilter } from "../columns-def/types";
+import type { OnClearFilter, OnFilter } from "../../types";
 
 type PositionFilteringColumnHeaderProps = {
   filteringState: ColumnFiltersState;

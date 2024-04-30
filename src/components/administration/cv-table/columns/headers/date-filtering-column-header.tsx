@@ -16,18 +16,26 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { es } from "date-fns/locale";
-import type { DateFiltering } from "../columns-def/types";
+import type {
+  DateFilteringState,
+  OnClearDateFilter,
+  OnDateFilter,
+  OnSort,
+} from "../../types";
 import { addDays } from "date-fns";
 
 export type DateFilteringColumnHeaderProps = {
-  dateFiltering: DateFiltering;
+  dateFilteringState: DateFilteringState;
+  onDateFilter: OnDateFilter;
+  onClearDateFilter: OnClearDateFilter;
+  onSort: OnSort;
 };
 export function DateFilteringColumnHeader({
-  dateFiltering,
+  dateFilteringState,
+  onDateFilter,
+  onClearDateFilter,
+  onSort,
 }: DateFilteringColumnHeaderProps) {
-  const { onDateFilter, onSort, dateFilteringState, onCleanDateFiltering } =
-    dateFiltering;
-
   const [open, setOpen] = useState<boolean>(false);
   const [single, setSingle] = useState<Date | undefined>();
   const [range, setRange] = useState<DateRange | undefined>();
@@ -66,7 +74,7 @@ export function DateFilteringColumnHeader({
   }
 
   function handleOnClean() {
-    onCleanDateFiltering();
+    onClearDateFilter();
     setOpen(false);
   }
 

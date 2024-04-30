@@ -9,7 +9,7 @@ import {
 import { CVS_STATUS } from "@/constants";
 import type { ColumnFiltersState } from "@tanstack/react-table";
 import { ListFilter, Dot, WandSparkles } from "lucide-react";
-import type { OnFilter, OnClearFilter } from "../columns-def/types";
+import type { OnFilter, OnClearFilter } from "../../types";
 
 export type StatusFilteringColumnHeaderProps = {
   filteringState: ColumnFiltersState;

@@ -1,21 +1,21 @@
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import SortingColumnHeader from "../headers/sorting-column-header";
-import type { CVRow, Sorting } from "./types";
+import type { CVRow } from "../../types";
 
 export default function nameColumnDef(): ColumnDef<CVRow> {
   return {
     accessorKey: "name",
     header: ({ table }) => {
-      const { sorting } = table.options.meta!;
+      const { handlers, states } = table.options.meta!;
 
       return (
         <SortingColumnHeader
           id="name"
           title="Nombre"
-          isDesc={isDesc(sorting.sortingState, "name")}
-          isSorting={isSorting(sorting.sortingState, "name")}
-          onSort={sorting.onSort}
-          onCleanSort={sorting.onCleanSort}
+          isDesc={isDesc(states.sortingState, "name")}
+          isSorting={isSorting(states.sortingState, "name")}
+          onSort={handlers.onSort}
+          onCleanSort={handlers.onCleanSort}
         />
       );
     },

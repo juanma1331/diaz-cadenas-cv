@@ -2,6 +2,7 @@ import type {
   ColumnFilter,
   ColumnFiltersState,
   ColumnSort,
+  RowSelectionState,
   SortingState,
 } from "@tanstack/react-table";
 import type { DateRange } from "react-day-picker";
@@ -25,21 +26,21 @@ export type CVRow = {
 
 export type OnFilter = (filter: ColumnFilter) => void;
 export type OnClearFilter = (id: string) => void;
-
-export type Filtering = {
-  filteringState: ColumnFiltersState;
-  onFilteringChange: OnFilter;
-  onClearFilter: OnClearFilter;
-};
-
 export type OnSort = (sort: ColumnSort) => void;
 export type OnCleanSort = (id: string) => void;
-
-export type Sorting = {
-  sortingState: SortingState;
-  onSort: OnSort;
-  onCleanSort: OnCleanSort;
-};
+export type OnDateFilter = (filter: {
+  type: "single" | "range";
+  value: Date | DateRange;
+}) => void;
+export type OnClearDateFilter = () => void;
+export type OnMark = ({
+  ids,
+  newStatus,
+}: {
+  ids: Array<string>;
+  newStatus: number;
+}) => void;
+export type OnDelete = (ids: Array<string>) => void;
 
 export type DateFilteringState =
   | {
@@ -53,33 +54,26 @@ export type DateFilteringState =
     }
   | undefined;
 
-export type OnDateFilter = (filter: {
-  type: "single" | "range";
-  value: Date | DateRange;
-}) => void;
-
-export type DateFiltering = {
+export type Handlers = {
+  onFilter: OnFilter;
+  onClearFilter: OnClearFilter;
   onDateFilter: OnDateFilter;
+  onClearDateFilter: OnClearDateFilter;
   onSort: OnSort;
-  onCleanDateFiltering: () => void;
+  onCleanSort: OnCleanSort;
+  onMarkAs: OnMark;
+  onDelete: OnDelete;
+};
+
+export type States = {
+  filteringState: ColumnFiltersState;
+  sortingState: SortingState;
   dateFilteringState: DateFilteringState;
+  rowSelectionState: RowSelectionState;
 };
 
-export type OnMark = ({
-  ids,
-  newStatus,
-}: {
-  ids: Array<string>;
-  newStatus: number;
-}) => void;
-export type OnDelete = (ids: Array<string>) => void;
-
-export type Actions = {
-  onMarkAs: OnMark;
-  onDelete: OnDelete;
-};
-
-export type BatchActions = {
-  onMarkAs: OnMark;
-  onDelete: OnDelete;
+export type Loading = {
+  isTableDataLoading: boolean;
+  isChangeStatusLoading: boolean;
+  isDeleteLoading: boolean;
 };

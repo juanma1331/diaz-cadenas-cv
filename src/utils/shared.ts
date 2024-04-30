@@ -5,7 +5,7 @@ export function statusMap(status: number): string {
     case CVS_STATUS.PENDING:
       return "Pendiente";
     case CVS_STATUS.REJECTED:
-      return "Reachazado";
+      return "Rechazado";
     case CVS_STATUS.REVIEWED:
       return "Revisado";
     case CVS_STATUS.SELECTED:

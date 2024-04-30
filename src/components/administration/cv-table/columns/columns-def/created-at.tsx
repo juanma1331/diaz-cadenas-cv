@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { CVRow, DateFiltering } from "./types";
+import type { CVRow } from "../../types";
 import { DateFilteringColumnHeader } from "../headers/date-filtering-column-header";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -8,8 +8,15 @@ export default function createdAtColumnDef(): ColumnDef<CVRow> {
   return {
     accessorKey: "createdAt",
     header: ({ table }) => {
-      const { dateFiltering } = table.options.meta!;
-      return <DateFilteringColumnHeader dateFiltering={dateFiltering} />;
+      const { states, handlers } = table.options.meta!;
+      return (
+        <DateFilteringColumnHeader
+          dateFilteringState={states.dateFilteringState}
+          onDateFilter={handlers.onDateFilter}
+          onClearDateFilter={handlers.onClearDateFilter}
+          onSort={handlers.onSort}
+        />
+      );
     },
     cell: ({ row }) => {
       const createdAt = row.getValue("createdAt") as string;
