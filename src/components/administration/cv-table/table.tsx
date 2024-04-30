@@ -30,7 +30,6 @@ import { statusColumnDef } from "./columns/definitions/status";
 import { attachmentsColumnDef } from "./columns/definitions/attachments";
 import { selectionRowColumnDef } from "./columns/definitions/selection";
 import { actionsColumnDef } from "./columns/definitions/actions";
-import { statusMap } from "@/utils/shared";
 import emailColumnDef from "./columns/definitions/email";
 
 export type FilterType = {
