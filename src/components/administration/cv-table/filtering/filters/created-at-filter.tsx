@@ -11,6 +11,7 @@ import {
   CalendarDays,
   ArrowUpIcon,
   WandSparkles,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -30,7 +31,7 @@ export type DateFilteringColumnHeaderProps = {
   onClearDateFilter: OnClearDateFilter;
   onSort: OnSort;
 };
-export function DateFilteringColumnHeader({
+export default function CreatedAtFilter({
   dateFilteringState,
   onDateFilter,
   onClearDateFilter,
@@ -82,12 +83,18 @@ export function DateFilteringColumnHeader({
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
-          className={`-ml-3 h-8 data-[state=open]:bg-accent`}
+          className={`h-8 data-[state=open]:bg-accent`}
         >
-          <span className="text-slate-800">Enviado</span>
-          <ListFilter className={`h-3.5 w-3.5 ml-2 text-slate-800`} />
+          <div className="flex items-center gap-3">
+            <div className="flex items-center">
+              <CalendarDays className="mr-1.5 h-3.5 w-3.5 text-slate-800" />
+              <span className="text-slate-800">Enviado</span>
+            </div>
+
+            <ChevronDown className="h-3.5 w-3.5" />
+          </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-fit">

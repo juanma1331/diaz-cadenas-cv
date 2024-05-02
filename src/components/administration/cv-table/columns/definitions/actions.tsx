@@ -34,7 +34,7 @@ import {
 import type { RouterOuputs } from "@/server/utils";
 import { useEffect, useState } from "react";
 
-export function actionsColumnDef(): ColumnDef<CVRow> {
+export default function actionsColumnDef(): ColumnDef<CVRow> {
   return {
     id: "actions",
     header: ({ table }) => {

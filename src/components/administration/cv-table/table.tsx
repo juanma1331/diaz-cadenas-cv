@@ -18,19 +18,19 @@ import type { DateRange } from "react-day-picker";
 import type {
   CVRow,
   DateFilteringState,
+  FilteringState,
   Handlers,
   Loading,
   States,
 } from "./types";
 import nameColumnDef from "./columns/definitions/name";
 import createdAtColumnDef from "./columns/definitions/created-at";
-import { placeColumnDef } from "./columns/definitions/place";
-import { positionColumnDef } from "./columns/definitions/position";
-import { statusColumnDef } from "./columns/definitions/status";
-import { attachmentsColumnDef } from "./columns/definitions/attachments";
-import { selectionRowColumnDef } from "./columns/definitions/selection";
-import { actionsColumnDef } from "./columns/definitions/actions";
-import { statusMap } from "@/utils/shared";
+import placeColumnDef from "./columns/definitions/place";
+import positionColumnDef from "./columns/definitions/position";
+import statusColumnDef from "./columns/definitions/status";
+import attachmentsColumnDef from "./columns/definitions/attachments";
+import selectionRowColumnDef from "./columns/definitions/selection";
+import actionsColumnDef from "./columns/definitions/actions";
 import emailColumnDef from "./columns/definitions/email";
 import TableFilters from "./filtering/table-filters";
 
@@ -67,11 +67,13 @@ export default function CVTable({ search }: CVTableProps) {
     {}
   );
   const [sortingState, setSortingState] = useState<SortingState>([]);
-  const [filteringState, setFilteringState] = useState<ColumnFiltersState>([]);
+  const [filteringState, setFilteringState] = useState<FilteringState>([]);
   const [dateFilteringState, setDateFilteringState] =
     useState<DateFilteringState>();
 
   const utils = trpcReact.useUtils();
+
+  console.log(filteringState);
 
   const queryInput = useMemo(
     () => ({
@@ -94,6 +96,7 @@ export default function CVTable({ search }: CVTableProps) {
   } = trpcReact.getAllCVS.useQuery(queryInput, {
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,
+    enabled: false,
   });
 
   const {
@@ -138,19 +141,25 @@ export default function CVTable({ search }: CVTableProps) {
   });
 
   const handlers: Handlers = {
-    onFilter: ({ id, value }) => {
-      setFilteringState((prevFilters) => {
-        const newFilters = prevFilters.filter((f) => f.id !== id);
-        if (value) {
-          newFilters.push({ id: id, value: value });
-        }
-        return newFilters;
-      });
+    onFilter: (filters) => {
+      if (Array.isArray(filters)) {
+        setFilteringState((prevFilters) => [...prevFilters, ...filters]);
+      } else {
+        setFilteringState((prev) => [...prev, filters]);
+      }
     },
-    onClearFilter: (id) =>
-      setFilteringState((prevFilters) => {
-        return prevFilters.filter((f) => f.id !== id);
-      }),
+    onClearFilter: (filters) => {
+      if (Array.isArray(filters)) {
+        setFilteringState((prevFilters) => {
+          const idsToClear = filters.map((f) => f.id);
+          return prevFilters.filter((f) => !idsToClear.includes(f.id));
+        });
+      } else {
+        setFilteringState((prev) =>
+          prev.filter((f) => f.id !== filters.id && f.value !== filters.value)
+        );
+      }
+    },
     onDateFilter: (dateFilter) => {
       if (dateFilter.type === "single") {
         setDateFilteringState({
@@ -242,8 +251,15 @@ export default function CVTable({ search }: CVTableProps) {
   return (
     <div className="space-y-2">
       <h1 className="text-slate-800 text-xl pt-2">Currículums</h1>
-      <div className="flex items-center">
-        <TableFilters />
+      <div className="flex items-center p-2">
+        <TableFilters
+          dateFilteringState={dateFilteringState}
+          onFilter={handlers.onFilter}
+          onDateFilter={handlers.onDateFilter}
+          onClearFilter={handlers.onClearFilter}
+          onClearDateFilter={handlers.onClearDateFilter}
+          onSort={handlers.onSort}
+        />
       </div>
       <div className="space-y-2 border border-border rounded-md">
         <CVTableRows table={table} isLoading={isTableDataLoading} />

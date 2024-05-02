@@ -4,7 +4,7 @@ import type { CVRow } from "../../types";
 import { useEffect, useState } from "react";
 import type { RouterOuputs } from "@/server/utils";
 
-export function selectionRowColumnDef(): ColumnDef<CVRow> {
+export default function selectionRowColumnDef(): ColumnDef<CVRow> {
   return {
     id: "select-col",
     header: ({ table }) => {

@@ -1,22 +1,12 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { CVRow } from "../../types";
-import { StatusFilteringColumnHeader } from "../headers/status-filtering-column-header";
 import { CVS_STATUS } from "@/constants";
 import { Badge } from "@/components/ui/badge";
 
-export function statusColumnDef(): ColumnDef<CVRow> {
+export default function statusColumnDef(): ColumnDef<CVRow> {
   return {
     accessorKey: "status",
-    header: ({ table }) => {
-      const { handlers, states } = table.options.meta!;
-      return (
-        <StatusFilteringColumnHeader
-          filteringState={states.filteringState}
-          onFilter={handlers.onFilter}
-          onClearFilter={handlers.onClearFilter}
-        />
-      );
-    },
+    header: () => <span className="text-slate-800">Estado</span>,
     cell: ({ row }) => {
       const status = row.getValue("status") as CVRow["status"];
       let badgeColor = "";

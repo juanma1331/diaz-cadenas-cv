@@ -1,7 +1,5 @@
 import type { CVSStatusType } from "@/constants";
 import type {
-  ColumnFilter,
-  ColumnFiltersState,
   ColumnSort,
   RowSelectionState,
   SortingState,
@@ -25,8 +23,22 @@ export type CVRow = {
   attachments: RowAttachment[];
 };
 
-export type OnFilter = (filter: ColumnFilter) => void;
-export type OnClearFilter = (id: string) => void;
+export type ColumnFilter = { id: string; value: string | number };
+export type FilteringState = Array<ColumnFilter>;
+export type DateFilteringState =
+  | {
+      type: "single";
+      date: string;
+    }
+  | {
+      type: "range";
+      from: string;
+      to: string;
+    }
+  | undefined;
+
+export type OnFilter = (filters: FilteringState | ColumnFilter) => void;
+export type OnClearFilter = (filters: FilteringState | ColumnFilter) => void;
 export type OnSort = (sort: ColumnSort) => void;
 export type OnCleanSort = (id: string) => void;
 export type OnDateFilter = (filter: {
@@ -43,18 +55,6 @@ export type OnMark = ({
 }) => void;
 export type OnDelete = (ids: Array<string>) => void;
 
-export type DateFilteringState =
-  | {
-      type: "single";
-      date: string;
-    }
-  | {
-      type: "range";
-      from: string;
-      to: string;
-    }
-  | undefined;
-
 export type Handlers = {
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
@@ -67,7 +67,7 @@ export type Handlers = {
 };
 
 export type States = {
-  filteringState: ColumnFiltersState;
+  filteringState: FilteringState;
   sortingState: SortingState;
   dateFilteringState: DateFilteringState;
   rowSelectionState: RowSelectionState;

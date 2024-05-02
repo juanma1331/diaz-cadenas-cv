@@ -10,7 +10,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-export function attachmentsColumnDef(): ColumnDef<CVRow> {
+export default function attachmentsColumnDef(): ColumnDef<CVRow> {
   return {
     accessorKey: "attachments",
     header: () => <span className="text-slate-800">Adjuntos</span>,

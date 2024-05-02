@@ -1,58 +1,52 @@
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { POSITIONS } from "@/constants";
-import { Dot, Filter, ListFilter, WandSparkles } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
+import PositionFilter from "./filters/position-filter";
+import PlaceFilter from "./filters/place-filter";
+import StatusFilter from "./filters/status-filter";
+import type {
+  DateFilteringState,
+  OnClearDateFilter,
+  OnClearFilter,
+  OnDateFilter,
+  OnFilter,
+  OnSort,
+} from "../types";
+import CreatedAtFilter from "./filters/created-at-filter";
 
-export default function TableFilters() {
+export type TableFiltersProps = {
+  dateFilteringState: DateFilteringState;
+  onDateFilter: OnDateFilter;
+  onClearDateFilter: OnClearDateFilter;
+  onSort: OnSort;
+  onFilter: OnFilter;
+  onClearFilter: OnClearFilter;
+};
+
+export default function TableFilters({
+  dateFilteringState,
+  onDateFilter,
+  onClearDateFilter,
+  onFilter,
+  onClearFilter,
+  onSort,
+}: TableFiltersProps) {
   return (
     <div className="flex items-center gap-6">
       <div className="flex items-center gap-2">
-        <Filter className="w-3.5 h-3.5" />
+        <SlidersHorizontal className="h-3.5 w-3.5 mr-0.5" />
         <span className="text-sm font-bold">Filtros</span>
       </div>
 
-      <div>
-        <PositionFilter />
+      <div className="space-x-2.5">
+        <PositionFilter onFilter={onFilter} onClearFilter={onClearFilter} />
+        <PlaceFilter />
+        <StatusFilter />
+        <CreatedAtFilter
+          dateFilteringState={dateFilteringState}
+          onDateFilter={onDateFilter}
+          onClearDateFilter={onClearDateFilter}
+          onSort={onSort}
+        />
       </div>
     </div>
-  );
-}
-
-function PositionFilter() {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className={`h-8 data-[state=open]:bg-accent`}
-        >
-          <span className="text-slate-800">Puesto</span>
-          <ListFilter className={`h-3.5 w-3.5 ml-2 text-slate-800`} />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start">
-        {POSITIONS.map((position, i) => (
-          <DropdownMenuItem
-            key={`dropdown-filter-${position}-${i}`}
-            onClick={() => console.log("adding filter")}
-          >
-            <Dot />
-            {position}
-          </DropdownMenuItem>
-        ))}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => console.log("clearing filter")}>
-          <WandSparkles className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-          Limpiar
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }
