@@ -3,7 +3,9 @@ import PositionFilter from "./filters/position-filter";
 import PlaceFilter from "./filters/place-filter";
 import StatusFilter from "./filters/status-filter";
 import type {
+  ColumnFilter,
   DateFilteringState,
+  FilteringState,
   OnClearDateFilter,
   OnClearFilter,
   OnDateFilter,
@@ -49,4 +51,11 @@ export default function TableFilters({
       </div>
     </div>
   );
+}
+
+export function isOnFilteringState(
+  filter: ColumnFilter,
+  state: FilteringState
+) {
+  return state.some((f) => f.id === filter.id && f.value === filter.value);
 }

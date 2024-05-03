@@ -23,7 +23,10 @@ export type CVRow = {
   attachments: RowAttachment[];
 };
 
-export type ColumnFilter = { id: string; value: string | number };
+export type ColumnFilter = {
+  id: "position" | "place" | "status";
+  value: string | number;
+};
 export type FilteringState = Array<ColumnFilter>;
 export type DateFilteringState =
   | {
@@ -37,8 +40,8 @@ export type DateFilteringState =
     }
   | undefined;
 
-export type OnFilter = (filters: FilteringState | ColumnFilter) => void;
-export type OnClearFilter = (filters: FilteringState | ColumnFilter) => void;
+export type OnFilter = (f: ColumnFilter | FilteringState) => void;
+export type OnClearFilter = (f: ColumnFilter | FilteringState) => void;
 export type OnSort = (sort: ColumnSort) => void;
 export type OnCleanSort = (id: string) => void;
 export type OnDateFilter = (filter: {

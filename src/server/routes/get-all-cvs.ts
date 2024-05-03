@@ -12,6 +12,7 @@ import {
   gte,
   lt,
   eq,
+  or,
 } from "astro:db";
 import { count, type SQLWrapper } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
@@ -92,28 +93,47 @@ export const getAllCVSProcedure = publicProcedure
 
     // Filtering
     const filterConditions: (SQLWrapper | undefined)[] = [];
+    type FiltersRecord = Record<
+      "position" | "place" | "status",
+      Array<SQLWrapper>
+    >;
+    const filterGroups: FiltersRecord = {} as FiltersRecord;
 
     if (filters) {
-      filters.forEach((filter) => {
-        const { id, value } = filter;
+      filters.forEach((f) => {
+        const { id, value } = f;
+
+        if (!filterGroups[id]) {
+          filterGroups[id] = [];
+        }
+
         switch (id) {
-          case "place":
-            if (typeof value === "string") {
-              filterConditions.push(eq(CVS.place, value));
-            }
-            break;
           case "position":
             if (typeof value === "string") {
-              filterConditions.push(eq(CVS.position, value));
+              filterGroups[id].push(eq(CVS.position, value));
+            }
+            break;
+          case "place":
+            if (typeof value === "string") {
+              filterGroups[id].push(eq(CVS.place, value));
             }
             break;
           case "status":
             if (typeof value === "number") {
-              filterConditions.push(eq(CVS.status, value));
+              filterGroups[id].push(eq(CVS.status, value));
             }
             break;
           default:
             throw new TRPCError({ code: "BAD_REQUEST" });
+        }
+      });
+
+      Object.keys(filterGroups).forEach((key) => {
+        const group: Array<SQLWrapper> =
+          filterGroups[key as keyof typeof filterGroups];
+
+        if (group.length > 0) {
+          filterConditions.push(group.length > 1 ? or(...group) : group[0]);
         }
       });
     }
@@ -127,10 +147,8 @@ export const getAllCVSProcedure = publicProcedure
           filterConditions.push(nameFilter);
           break;
         case "email":
-          cvsQuery = cvsQuery.where(like(CVS.email, `${value}%`));
-          totalPagesQuery = totalPagesQuery.where(
-            like(CVS.email, `%${value}%`)
-          );
+          const emailFilter = like(CVS.name, `${value}%`);
+          filterConditions.push(emailFilter);
           break;
         default:
           throw new TRPCError({ code: "BAD_REQUEST" });

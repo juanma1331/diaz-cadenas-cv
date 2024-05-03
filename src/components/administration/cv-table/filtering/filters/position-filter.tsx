@@ -8,21 +8,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { POSITIONS } from "@/constants";
-import { Network, ChevronDown, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import type { OnClearFilter, OnFilter } from "../../types";
+import { Network, ChevronDown, Trash2, ChevronUp } from "lucide-react";
+import { useState } from "react";
+import type {
+  ColumnFilter,
+  FilteringState,
+  OnClearFilter,
+  OnFilter,
+} from "../../types";
 
 export type PositionFilterProps = {
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
 };
 
-interface FilterItem {
+interface FilterToggler {
   name: string;
   checked: boolean;
 }
 
-const filterItems: Array<FilterItem> = POSITIONS.map((p) => ({
+const initialTogglers: Array<FilterToggler> = POSITIONS.map((p) => ({
   name: p,
   checked: false,
 }));
@@ -31,10 +36,11 @@ export default function PositionFilter({
   onFilter,
   onClearFilter,
 }: PositionFilterProps) {
-  const [items, setItems] = useState<Array<FilterItem>>(filterItems);
+  const [togglers, setTogglers] =
+    useState<Array<FilterToggler>>(initialTogglers);
 
-  function handleOnCheckedChange(name: string, checked: boolean) {
-    setItems((prev) => {
+  function handleOnToggleOne(name: string, checked: boolean) {
+    setTogglers((prev) => {
       const index = prev.findIndex((i) => i.name === name);
 
       if (index >= 0) {
@@ -48,35 +54,66 @@ export default function PositionFilter({
       return prev;
     });
 
-    // Vas por aqui
+    const filter: ColumnFilter = { id: "position", value: name };
+
+    checked ? onFilter(filter) : onClearFilter(filter);
   }
 
-  function handleCleanSelection() {
-    const itemsToCleanFromFiltering = items.filter((i) => i.checked === true);
-    onClearFilter(
-      itemsToCleanFromFiltering.map((i) => ({ id: "position", value: i.name }))
-    );
+  function handleOnToggleAll(checked: boolean) {
+    const toggled = togglers.map((i) => ({ name: i.name, checked }));
 
-    setItems((prev) => prev.map((i) => ({ name: i.name, checked: false })));
+    setTogglers(toggled);
+
+    const filters: FilteringState = toggled.map((t) => ({
+      id: "position",
+      value: t.name,
+    }));
+
+    checked ? onFilter(filters) : onClearFilter(filters);
+  }
+
+  function handleClearAll() {
+    setTogglers((prev) => prev.map((i) => ({ name: i.name, checked: false })));
+
+    onClearFilter(togglers.map((i) => ({ id: "position", value: i.name })));
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className={`h-8 data-[state=open]:bg-accent`}
-        >
-          <div className="flex items-center gap-3">
-            <div className="flex items-center">
-              <Network className="mr-1.5 h-3.5 w-3.5 text-slate-800" />
-              <span className="text-slate-800">Posición</span>
-            </div>
+        {togglers.every((f) => f.checked === false) ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className={`h-8 data-[state=open]:bg-accent`}
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex items-center">
+                <Network className="mr-1.5 h-3.5 w-3.5 text-slate-800" />
+                <span className="text-slate-800">Posición</span>
+              </div>
 
-            <ChevronDown className="h-3.5 w-3.5" />
-          </div>
-        </Button>
+              <ChevronDown className="h-3.5 w-3.5" />
+            </div>
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            size="sm"
+            className={`h-8 border-primary bg-primary/20 text-primary hover:bg-primary/20 hover:text-primary`}
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex items-center">
+                <Network className="mr-1.5 h-3.5 w-3.5" />
+                <span className="truncate max-w-36">
+                  Posición: {activeTogglersName(togglers)}
+                </span>
+              </div>
+
+              <ChevronDown className="h-3.5 w-3.5" />
+            </div>
+          </Button>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-0 min-w-60" align="start">
         <div className="bg-muted/50">
@@ -93,24 +130,20 @@ export default function PositionFilter({
         <div className="p-6 ">
           <div className="flex items-center gap-2">
             <Checkbox
-              checked={items.every((i) => i.checked === true)}
+              checked={togglers.every((i) => i.checked === true)}
               id="position-filter-all"
-              onCheckedChange={(e) =>
-                setItems((prev) =>
-                  prev.map((i) => ({ name: i.name, checked: e as boolean }))
-                )
-              }
+              onCheckedChange={handleOnToggleAll}
             />
             <Label htmlFor="position-filter-all">Todos</Label>
           </div>
 
           <div className="px-3 mt-2">
-            {items.map((p) => (
-              <Item
+            {togglers.map((p) => (
+              <Toggler
                 name={p.name}
                 checked={p.checked}
                 key={`position-filter-${p.name}`}
-                onCheckedChange={handleOnCheckedChange}
+                onCheckedChange={handleOnToggleOne}
               />
             ))}
           </div>
@@ -123,8 +156,8 @@ export default function PositionFilter({
               type="button"
               className="p-0 h-fit"
               variant="link"
-              disabled={items.every((i) => i.checked === false)}
-              onClick={handleCleanSelection}
+              disabled={togglers.every((i) => i.checked === false)}
+              onClick={handleClearAll}
             >
               Limpiar Selección
             </Button>
@@ -135,10 +168,10 @@ export default function PositionFilter({
   );
 }
 
-interface ItemProps extends FilterItem {
+interface TogglerProps extends FilterToggler {
   onCheckedChange: (name: string, checked: boolean) => void;
 }
-function Item({ name, checked, onCheckedChange }: ItemProps) {
+function Toggler({ name, checked, onCheckedChange }: TogglerProps) {
   return (
     <div className="py-1 flex items-center gap-2">
       <Checkbox
@@ -154,4 +187,16 @@ function Item({ name, checked, onCheckedChange }: ItemProps) {
       </Label>
     </div>
   );
+}
+
+function activeTogglersName(togglers: Array<FilterToggler>) {
+  const actives = togglers.filter((f) => f.checked === true);
+
+  return actives.reduce((p, c, i) => {
+    if (actives.length < 2) return c.name;
+
+    return i !== actives.length - 1
+      ? p.concat(`${c.name}, `)
+      : p.concat(c.name);
+  }, "");
 }

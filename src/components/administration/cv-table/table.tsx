@@ -32,7 +32,7 @@ import attachmentsColumnDef from "./columns/definitions/attachments";
 import selectionRowColumnDef from "./columns/definitions/selection";
 import actionsColumnDef from "./columns/definitions/actions";
 import emailColumnDef from "./columns/definitions/email";
-import TableFilters from "./filtering/table-filters";
+import TableFilters, { isOnFilteringState } from "./filtering/table-filters";
 
 export type FilterType = {
   id: "place" | "position" | "status";
@@ -73,8 +73,6 @@ export default function CVTable({ search }: CVTableProps) {
 
   const utils = trpcReact.useUtils();
 
-  console.log(filteringState);
-
   const queryInput = useMemo(
     () => ({
       pagination: {
@@ -89,6 +87,8 @@ export default function CVTable({ search }: CVTableProps) {
     [page, limit, filteringState, dateFilteringState, sortingState, search]
   );
 
+  console.log(filteringState);
+
   const {
     data: cvsData,
     isLoading: isTableDataLoading,
@@ -96,7 +96,6 @@ export default function CVTable({ search }: CVTableProps) {
   } = trpcReact.getAllCVS.useQuery(queryInput, {
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,
-    enabled: false,
   });
 
   const {
@@ -141,22 +140,30 @@ export default function CVTable({ search }: CVTableProps) {
   });
 
   const handlers: Handlers = {
-    onFilter: (filters) => {
-      if (Array.isArray(filters)) {
-        setFilteringState((prevFilters) => [...prevFilters, ...filters]);
+    onFilter: (f) => {
+      if (Array.isArray(f)) {
+        const toAdd = f.filter((f) => !isOnFilteringState(f, filteringState));
+
+        setFilteringState((prevFilters) => [...prevFilters, ...toAdd]);
       } else {
-        setFilteringState((prev) => [...prev, filters]);
+        // Only add the filters if it's not already there
+        if (!isOnFilteringState(f, filteringState)) {
+          setFilteringState((prev) => [...prev, f]);
+        }
       }
     },
-    onClearFilter: (filters) => {
-      if (Array.isArray(filters)) {
+    onClearFilter: (f) => {
+      if (Array.isArray(f)) {
+        const toRemoveIDs = f
+          .filter((f) => isOnFilteringState(f, filteringState))
+          .map((f) => f.id);
+
         setFilteringState((prevFilters) => {
-          const idsToClear = filters.map((f) => f.id);
-          return prevFilters.filter((f) => !idsToClear.includes(f.id));
+          return prevFilters.filter((f) => !toRemoveIDs.includes(f.id));
         });
       } else {
         setFilteringState((prev) =>
-          prev.filter((f) => f.id !== filters.id && f.value !== filters.value)
+          prev.filter((f) => f.id !== f.id && f.value !== f.value)
         );
       }
     },
