@@ -90,7 +90,7 @@ export default function CreatedAtFilter({
           <div className="flex items-center gap-3">
             <div className="flex items-center">
               <CalendarDays className="mr-1.5 h-3.5 w-3.5 text-slate-800" />
-              <span className="text-slate-800">Enviado</span>
+              <span className="text-slate-800">Recibido</span>
             </div>
 
             <ChevronDown className="h-3.5 w-3.5" />
@@ -117,10 +117,6 @@ export default function CreatedAtFilter({
               <CalendarDays className="mr-2 h-3.5 w-3.5" />
               Rango
             </TabsTrigger>
-            <TabsTrigger value="desc">
-              <ArrowUpIcon className="mr-2 h-3.5 w-3.5" />
-              Asc
-            </TabsTrigger>
           </TabsList>
           <TabsContent value="single" className="space-y-2">
             <CalendarComponent
@@ -130,24 +126,6 @@ export default function CreatedAtFilter({
               onSelect={setSingle}
               initialFocus
             />
-            <div className="flex items-center justify-center pb-5">
-              {single && dateFilteringState?.type !== "single" && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleOnDateFilter("single")}
-                >
-                  Aplicar
-                </Button>
-              )}
-
-              {single && dateFilteringState?.type === "single" && (
-                <Button variant="outline" size="sm" onClick={handleOnClean}>
-                  <WandSparkles className="mr-2 h-4 w-4" />
-                  Limpiar
-                </Button>
-              )}
-            </div>
           </TabsContent>
           <TabsContent value="range" className="space-y-2">
             <CalendarComponent

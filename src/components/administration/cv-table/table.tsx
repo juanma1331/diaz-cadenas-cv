@@ -146,7 +146,6 @@ export default function CVTable({ search }: CVTableProps) {
 
         setFilteringState((prevFilters) => [...prevFilters, ...toAdd]);
       } else {
-        // Only add the filters if it's not already there
         if (!isOnFilteringState(f, filteringState)) {
           setFilteringState((prev) => [...prev, f]);
         }
@@ -163,7 +162,9 @@ export default function CVTable({ search }: CVTableProps) {
         });
       } else {
         setFilteringState((prev) =>
-          prev.filter((f) => f.id !== f.id && f.value !== f.value)
+          prev.filter(
+            (filter) => filter.id !== f.id || filter.value !== f.value
+          )
         );
       }
     },

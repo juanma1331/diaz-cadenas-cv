@@ -12,7 +12,11 @@ COMPLETAS
 [X] Al cambiar el status en una fila debemos ver el spinner en la misma fila.
 [X] Al eliminar un CV se debe mostrar el spinner en el botón de confirmación del modal.
 
+[ ] Crear un nuevo componente para los filtros.
+
 PENDIENTES
 [ ] La altura de la tabla no es suficiente en dispositivos > 1080px.
+[ ] Inconsistencias en los colores "on focus" de los items en la navegación lateral.
+[ ] No funciona tabulador para hacer focus en los checkboxes de los filtros.
 [ ] Hay que indicar que la tabla viene ordenada por fecha por defecto.
 [ ] Evitar layout shifting usando Fontsource.

@@ -6,7 +6,7 @@ import { es } from "date-fns/locale";
 export default function createdAtColumnDef(): ColumnDef<CVRow> {
   return {
     accessorKey: "createdAt",
-    header: () => <span className="text-slate-800">Enviado</span>,
+    header: () => <span className="text-slate-800">Recibido</span>,
     cell: ({ row }) => {
       const createdAt = row.getValue("createdAt") as string;
 

@@ -40,8 +40,8 @@ export default function TableFilters({
 
       <div className="space-x-2.5">
         <PositionFilter onFilter={onFilter} onClearFilter={onClearFilter} />
-        <PlaceFilter />
-        <StatusFilter />
+        <PlaceFilter onFilter={onFilter} onClearFilter={onClearFilter} />
+        <StatusFilter onFilter={onFilter} onClearFilter={onClearFilter} />
         <CreatedAtFilter
           dateFilteringState={dateFilteringState}
           onDateFilter={onDateFilter}

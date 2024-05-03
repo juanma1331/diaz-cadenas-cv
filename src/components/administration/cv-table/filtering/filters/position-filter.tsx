@@ -16,16 +16,13 @@ import type {
   OnClearFilter,
   OnFilter,
 } from "../../types";
+import type { FilterToggler } from "./types";
+import Toggler, { activeTogglersName } from "./shared";
 
 export type PositionFilterProps = {
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
 };
-
-interface FilterToggler {
-  name: string;
-  checked: boolean;
-}
 
 const initialTogglers: Array<FilterToggler> = POSITIONS.map((p) => ({
   name: p,
@@ -36,6 +33,7 @@ export default function PositionFilter({
   onFilter,
   onClearFilter,
 }: PositionFilterProps) {
+  const [open, setOpen] = useState<boolean>(false);
   const [togglers, setTogglers] =
     useState<Array<FilterToggler>>(initialTogglers);
 
@@ -78,22 +76,32 @@ export default function PositionFilter({
     onClearFilter(togglers.map((i) => ({ id: "position", value: i.name })));
   }
 
+  function handleDeleteFilter() {
+    handleClearAll();
+    setOpen(false);
+  }
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open}>
       <DropdownMenuTrigger asChild>
         {togglers.every((f) => f.checked === false) ? (
           <Button
             variant="outline"
             size="sm"
             className={`h-8 data-[state=open]:bg-accent`}
+            onClick={() => setOpen(true)}
+            onKeyDown={(e) => e.key === "Enter" && setOpen(true)}
           >
             <div className="flex items-center gap-3">
               <div className="flex items-center">
                 <Network className="mr-1.5 h-3.5 w-3.5 text-slate-800" />
                 <span className="text-slate-800">Posición</span>
               </div>
-
-              <ChevronDown className="h-3.5 w-3.5" />
+              {open ? (
+                <ChevronUp className="h-3.5 w-3.5" />
+              ) : (
+                <ChevronDown className="h-3.5 w-3.5" />
+              )}
             </div>
           </Button>
         ) : (
@@ -101,6 +109,8 @@ export default function PositionFilter({
             variant="outline"
             size="sm"
             className={`h-8 border-primary bg-primary/20 text-primary hover:bg-primary/20 hover:text-primary`}
+            onClick={() => setOpen(true)}
+            onKeyDown={(e) => e.key === "Enter" && setOpen(true)}
           >
             <div className="flex items-center gap-3">
               <div className="flex items-center">
@@ -110,17 +120,32 @@ export default function PositionFilter({
                 </span>
               </div>
 
-              <ChevronDown className="h-3.5 w-3.5" />
+              {open ? (
+                <ChevronUp className="h-3.5 w-3.5" />
+              ) : (
+                <ChevronDown className="h-3.5 w-3.5" />
+              )}
             </div>
           </Button>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="p-0 min-w-60" align="start">
+      <DropdownMenuContent
+        onInteractOutside={() => setOpen(false)}
+        className="p-0 min-w-60"
+        align="start"
+      >
         <div className="bg-muted/50">
           <div className="px-6 py-2 flex items-center justify-between">
             <p>Posición</p>
 
-            <Button variant="link" size="icon" type="button">
+            <Button
+              variant="link"
+              size="icon"
+              type="button"
+              className="h-5 w-5"
+              disabled={togglers.every((t) => t.checked === false)}
+              onClick={handleDeleteFilter}
+            >
               <Trash2 className="h-3.5 w-3.5 text-slate-800" />
             </Button>
           </div>
@@ -166,37 +191,4 @@ export default function PositionFilter({
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
-
-interface TogglerProps extends FilterToggler {
-  onCheckedChange: (name: string, checked: boolean) => void;
-}
-function Toggler({ name, checked, onCheckedChange }: TogglerProps) {
-  return (
-    <div className="py-1 flex items-center gap-2">
-      <Checkbox
-        onCheckedChange={(e) => onCheckedChange(name, !checked)}
-        checked={checked}
-        id={`position-filter-${name}`}
-      />
-      <Label
-        className="text-sm font-normal"
-        htmlFor={`position-filter-${name}`}
-      >
-        {name}
-      </Label>
-    </div>
-  );
-}
-
-function activeTogglersName(togglers: Array<FilterToggler>) {
-  const actives = togglers.filter((f) => f.checked === true);
-
-  return actives.reduce((p, c, i) => {
-    if (actives.length < 2) return c.name;
-
-    return i !== actives.length - 1
-      ? p.concat(`${c.name}, `)
-      : p.concat(c.name);
-  }, "");
 }
