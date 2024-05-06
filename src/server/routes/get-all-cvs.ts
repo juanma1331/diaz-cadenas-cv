@@ -221,6 +221,7 @@ export const getAllCVSProcedure = publicProcedure
     const { page, limit } = pagination;
     const offset = (page - 1) * limit;
     cvsQuery.offset(offset).limit(pagination.limit);
+    totalPagesQuery.offset(offset).limit(pagination.limit);
 
     // Select cvs attachments
     const cvsStartTime = Date.now();

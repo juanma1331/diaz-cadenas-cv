@@ -1,5 +1,8 @@
-import type { ColumnDef, SortingState } from "@tanstack/react-table";
-import SortingColumnHeader from "../headers/sorting-column-header";
+import type { ColumnDef } from "@tanstack/react-table";
+import SortingColumnHeader, {
+  isDesc,
+  isSorting,
+} from "../headers/sorting-column-header";
 import type { CVRow } from "../../types";
 
 export default function emailColumnDef(): ColumnDef<CVRow> {
@@ -20,12 +23,4 @@ export default function emailColumnDef(): ColumnDef<CVRow> {
       );
     },
   };
-}
-
-function isDesc(sortingState: SortingState, id: "name" | "email") {
-  return sortingState.some((s) => s.id === id && s.desc === true);
-}
-
-function isSorting(sortingState: SortingState, id: "name" | "email") {
-  return sortingState.some((s) => s.id === id);
 }

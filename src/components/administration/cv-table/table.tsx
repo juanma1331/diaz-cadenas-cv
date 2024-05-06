@@ -66,7 +66,9 @@ export default function CVTable({ search }: CVTableProps) {
   const [rowSelectionState, setRowSelectionState] = useState<RowSelectionState>(
     {}
   );
-  const [sortingState, setSortingState] = useState<SortingState>([]);
+  const [sortingState, setSortingState] = useState<SortingState>([
+    { id: "createdAt", desc: true },
+  ]);
   const [filteringState, setFilteringState] = useState<FilteringState>([]);
   const [dateFilteringState, setDateFilteringState] =
     useState<DateFilteringState>();
