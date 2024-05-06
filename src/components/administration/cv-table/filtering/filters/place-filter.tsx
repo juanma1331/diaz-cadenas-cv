@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -15,7 +14,7 @@ import {
   ChevronUp,
   Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   OnFilter,
   OnClearFilter,
@@ -30,36 +29,31 @@ import { Label } from "@/components/ui/label";
 export type PlaceFilterProps = {
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
+  filteringState: FilteringState;
 };
 
-const initialTogglers: Array<FilterToggler> = PLACES.map((p) => ({
-  name: p,
-  checked: false,
-}));
-
 export default function PlaceFilter({
+  filteringState,
   onFilter,
   onClearFilter,
 }: PlaceFilterProps) {
   const [open, setOpen] = useState<boolean>(false);
-  const [togglers, setTogglers] =
-    useState<Array<FilterToggler>>(initialTogglers);
+
+  const [togglers, setTogglers] = useState<Array<FilterToggler>>(
+    PLACES.map((p) => ({ name: p, checked: false }))
+  );
+
+  useEffect(() => {
+    const newTogglers = PLACES.map((p) => ({
+      name: p,
+      checked: filteringState.some((f) => f.id === "place" && f.value === p),
+    }));
+    setTogglers(newTogglers);
+  }, [filteringState]);
+
+  const isAnyFilterActive = togglers.some((toggle) => toggle.checked);
 
   function handleOnToggleOne(name: string, checked: boolean) {
-    setTogglers((prev) => {
-      const index = prev.findIndex((i) => i.name === name);
-
-      if (index >= 0) {
-        return [
-          ...prev.slice(0, index),
-          { name, checked },
-          ...prev.slice(index + 1),
-        ];
-      }
-
-      return prev;
-    });
-
     const filter: ColumnFilter = { id: "place", value: name };
 
     checked ? onFilter(filter) : onClearFilter(filter);
@@ -67,8 +61,6 @@ export default function PlaceFilter({
 
   function handleOnToggleAll(checked: boolean) {
     const toggled = togglers.map((i) => ({ name: i.name, checked }));
-
-    setTogglers(toggled);
 
     const filters: FilteringState = toggled.map((t) => ({
       id: "place",
@@ -92,18 +84,18 @@ export default function PlaceFilter({
   return (
     <DropdownMenu open={open}>
       <DropdownMenuTrigger asChild>
-        {togglers.every((f) => f.checked === false) ? (
+        {!isAnyFilterActive ? (
           <Button
             variant="outline"
             size="sm"
-            className={`h-8 data-[state=open]:bg-accent`}
+            className="h-8"
             onClick={() => setOpen(true)}
             onKeyDown={(e) => e.key === "Enter" && setOpen(true)}
           >
             <div className="flex items-center gap-3">
               <div className="flex items-center">
                 <LandPlot className="mr-1.5 h-3.5 w-3.5 text-slate-800" />
-                <span className="text-slate-800">Posición</span>
+                <span className="text-slate-800">Lugar</span>
               </div>
               {open ? (
                 <ChevronUp className="h-3.5 w-3.5" />

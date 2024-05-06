@@ -1,4 +1,4 @@
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, Trash2 } from "lucide-react";
 import PositionFilter from "./filters/position-filter";
 import PlaceFilter from "./filters/place-filter";
 import StatusFilter from "./filters/status-filter";
@@ -13,8 +13,12 @@ import type {
   OnSort,
 } from "../types";
 import CreatedAtFilter from "./filters/created-at-filter";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { WandSparkles } from "lucide-react";
 
 export type TableFiltersProps = {
+  filteringState: FilteringState;
   dateFilteringState: DateFilteringState;
   onDateFilter: OnDateFilter;
   onClearDateFilter: OnClearDateFilter;
@@ -24,6 +28,7 @@ export type TableFiltersProps = {
 };
 
 export default function TableFilters({
+  filteringState,
   dateFilteringState,
   onDateFilter,
   onClearDateFilter,
@@ -31,6 +36,11 @@ export default function TableFilters({
   onClearFilter,
   onSort,
 }: TableFiltersProps) {
+  function handleClearAllFilters() {
+    onClearDateFilter();
+    onClearFilter(filteringState.map((f) => f));
+  }
+
   return (
     <div className="flex items-center gap-6">
       <div className="flex items-center gap-2">
@@ -38,16 +48,50 @@ export default function TableFilters({
         <span className="text-sm font-bold">Filtros</span>
       </div>
 
-      <div className="space-x-2.5">
-        <PositionFilter onFilter={onFilter} onClearFilter={onClearFilter} />
-        <PlaceFilter onFilter={onFilter} onClearFilter={onClearFilter} />
-        <StatusFilter onFilter={onFilter} onClearFilter={onClearFilter} />
+      <div className="flex items-center gap-2">
+        <PositionFilter
+          filteringState={filteringState}
+          onFilter={onFilter}
+          onClearFilter={onClearFilter}
+        />
+        <PlaceFilter
+          filteringState={filteringState}
+          onFilter={onFilter}
+          onClearFilter={onClearFilter}
+        />
+        <StatusFilter
+          filteringState={filteringState}
+          onFilter={onFilter}
+          onClearFilter={onClearFilter}
+        />
+
+        <Separator
+          orientation="vertical"
+          className="mx-1 border h-7 rounded-md border-border"
+        />
+
         <CreatedAtFilter
           dateFilteringState={dateFilteringState}
           onDateFilter={onDateFilter}
           onClearDateFilter={onClearDateFilter}
-          onSort={onSort}
         />
+
+        <Separator
+          orientation="vertical"
+          className="mx-1 border h-7 rounded-md border-border"
+        />
+
+        <Button
+          className="h-8"
+          variant="outline"
+          disabled={
+            dateFilteringState === undefined && filteringState.length === 0
+          }
+          onClick={handleClearAllFilters}
+        >
+          <Trash2 className="mr-2 h-3.5 w-3.5" />
+          Limpiar
+        </Button>
       </div>
     </div>
   );

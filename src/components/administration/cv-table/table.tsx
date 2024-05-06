@@ -33,6 +33,7 @@ import selectionRowColumnDef from "./columns/definitions/selection";
 import actionsColumnDef from "./columns/definitions/actions";
 import emailColumnDef from "./columns/definitions/email";
 import TableFilters, { isOnFilteringState } from "./filtering/table-filters";
+import useDebounce from "@/components/hooks/use-debounce";
 
 export type FilterType = {
   id: "place" | "position" | "status";
@@ -73,6 +74,9 @@ export default function CVTable({ search }: CVTableProps) {
   const [dateFilteringState, setDateFilteringState] =
     useState<DateFilteringState>();
 
+  const debauncedFiltering = useDebounce<FilteringState>(filteringState, 500);
+  const debauncedSorting = useDebounce<SortingState>(sortingState, 500);
+
   const utils = trpcReact.useUtils();
 
   const queryInput = useMemo(
@@ -81,15 +85,20 @@ export default function CVTable({ search }: CVTableProps) {
         page: page,
         limit: limit,
       },
-      filters: filteringState as FilterType[],
+      filters: debauncedFiltering as FilterType[],
       dateFilters: dateFilteringState,
-      sorting: sortingState as [SortingType, ...SortingType[]],
+      sorting: debauncedSorting as [SortingType, ...SortingType[]],
       search: search,
     }),
-    [page, limit, filteringState, dateFilteringState, sortingState, search]
+    [
+      page,
+      limit,
+      debauncedFiltering,
+      dateFilteringState,
+      debauncedSorting,
+      search,
+    ]
   );
-
-  console.log(filteringState);
 
   const {
     data: cvsData,
@@ -263,6 +272,7 @@ export default function CVTable({ search }: CVTableProps) {
       <h1 className="text-slate-800 text-xl pt-2">Currículums</h1>
       <div className="flex items-center px-2 py-3">
         <TableFilters
+          filteringState={filteringState}
           dateFilteringState={dateFilteringState}
           onFilter={handlers.onFilter}
           onDateFilter={handlers.onDateFilter}

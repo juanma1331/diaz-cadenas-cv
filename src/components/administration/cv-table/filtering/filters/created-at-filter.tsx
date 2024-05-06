@@ -1,4 +1,8 @@
-import { type DateRange } from "react-day-picker";
+import {
+  type DateRange,
+  type SelectRangeEventHandler,
+  type SelectSingleEventHandler,
+} from "react-day-picker";
 import { useEffect, useState } from "react";
 import {
   DropdownMenu,
@@ -7,11 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  ListFilter,
   Calendar,
   CalendarDays,
-  ArrowUpIcon,
-  WandSparkles,
   ChevronDown,
   ChevronUp,
   Trash2,
@@ -24,53 +25,78 @@ import type {
   DateFilteringState,
   OnClearDateFilter,
   OnDateFilter,
-  OnSort,
 } from "../../types";
-import { addDays } from "date-fns";
+import { addDays, format, setDate } from "date-fns";
 
 export type DateFilteringColumnHeaderProps = {
   dateFilteringState: DateFilteringState;
   onDateFilter: OnDateFilter;
   onClearDateFilter: OnClearDateFilter;
-  onSort: OnSort;
 };
+
 export default function CreatedAtFilter({
   dateFilteringState,
   onDateFilter,
   onClearDateFilter,
-  onSort,
 }: DateFilteringColumnHeaderProps) {
-  const initialDate =
-    dateFilteringState && dateFilteringState.type === "single"
-      ? new Date(dateFilteringState.date)
-      : undefined;
-  const initialRange =
-    dateFilteringState && dateFilteringState.type === "range"
-      ? {
-          from: new Date(dateFilteringState.from),
-          to: new Date(dateFilteringState.to),
-        }
-      : undefined;
-
   const [open, setOpen] = useState<boolean>(false);
-  const [single, setSingle] = useState<Date | undefined>(initialDate);
-  const [range, setRange] = useState<DateRange | undefined>(initialRange);
+  const [single, setSingle] = useState<Date | undefined>();
+  const [range, setRange] = useState<DateRange | undefined>();
   const [text, setText] = useState<string>("");
-  useEffect(() => {
-    if (single) {
-      setRange(undefined);
-      onDateFilter({ type: "single", value: single });
-      setText("Fecha");
-    }
-  }, [single]);
 
   useEffect(() => {
-    if (range?.from && range.to) {
+    const dateFormat = "dd/MM/yyyy";
+
+    if (!dateFilteringState) {
       setSingle(undefined);
-      onDateFilter({ type: "range", value: range });
-      setText("Rango");
+      setRange(undefined);
+      setText("");
+      onClearDateFilter();
     }
-  }, [range]);
+
+    if (dateFilteringState?.type === "single") {
+      const newDate = new Date(dateFilteringState.date);
+      setSingle(newDate);
+      onDateFilter({
+        type: "single",
+        value: newDate,
+      });
+
+      setText(format(newDate, dateFormat));
+    }
+
+    if (dateFilteringState?.type === "range") {
+      const newRange = {
+        from: new Date(dateFilteringState.from),
+        to: new Date(dateFilteringState.to),
+      };
+      setRange(newRange);
+      onDateFilter({
+        type: "range",
+        value: newRange,
+      });
+
+      setText(
+        `Desde ${format(newRange.from, dateFormat)} Hasta ${format(
+          newRange.to,
+          dateFormat
+        )}`
+      );
+    }
+  }, [dateFilteringState]);
+
+  const selectSingleEventHandler: SelectSingleEventHandler = (date) => {
+    if (date) {
+      onDateFilter({ type: "single", value: date });
+    }
+  };
+
+  const selectRangeEventHandler: SelectRangeEventHandler = (range) => {
+    if (range) setRange(range);
+    if (range?.from && range.to) {
+      onDateFilter({ type: "range", value: range });
+    }
+  };
 
   function handleCleanAll() {
     setRange(undefined);
@@ -86,11 +112,11 @@ export default function CreatedAtFilter({
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        {range === undefined && single === undefined ? (
+        {dateFilteringState === undefined ? (
           <Button
             variant="outline"
             size="sm"
-            className={`h-8 data-[state=open]:bg-accent`}
+            className="h-8"
             onClick={() => setOpen(true)}
             onKeyDown={(e) => e.key === "Enter" && setOpen(true)}
           >
@@ -110,14 +136,14 @@ export default function CreatedAtFilter({
           <Button
             variant="outline"
             size="sm"
-            className={`h-8 border-primary bg-primary/20 text-primary hover:bg-primary/20 hover:text-primary`}
+            className="h-8 border-primary bg-primary/20 text-primary hover:bg-primary/20 hover:text-primary"
             onClick={() => setOpen(true)}
             onKeyDown={(e) => e.key === "Enter" && setOpen(true)}
           >
             <div className="flex items-center gap-3">
               <div className="flex items-center">
                 <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-                <span className="truncate max-w-36">Recibido: {text}</span>
+                <span className="truncate max-w-90">Recibido: {text}</span>
               </div>
 
               {open ? (
@@ -143,7 +169,7 @@ export default function CreatedAtFilter({
               size="icon"
               type="button"
               className="h-5 w-5"
-              disabled={false}
+              disabled={dateFilteringState === undefined}
               onClick={handleCleanAllAndClose}
             >
               <Trash2 className="h-3.5 w-3.5 text-slate-800" />
@@ -173,7 +199,7 @@ export default function CreatedAtFilter({
               locale={es}
               mode="single"
               selected={single}
-              onSelect={setSingle}
+              onSelect={selectSingleEventHandler}
               initialFocus
             />
           </TabsContent>
@@ -183,7 +209,7 @@ export default function CreatedAtFilter({
               mode="range"
               defaultMonth={range?.from}
               selected={range}
-              onSelect={setRange}
+              onSelect={selectRangeEventHandler}
               numberOfMonths={2}
             />
           </TabsContent>
@@ -196,7 +222,7 @@ export default function CreatedAtFilter({
               type="button"
               className="p-0 h-fit"
               variant="link"
-              disabled={false}
+              disabled={dateFilteringState === undefined}
               onClick={handleCleanAll}
             >
               Limpiar Selección

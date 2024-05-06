@@ -9,7 +9,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { POSITIONS } from "@/constants";
 import { Network, ChevronDown, Trash2, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   ColumnFilter,
   FilteringState,
@@ -22,36 +22,31 @@ import Toggler, { activeTogglersName } from "./shared";
 export type PositionFilterProps = {
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
+  filteringState: FilteringState;
 };
 
-const initialTogglers: Array<FilterToggler> = POSITIONS.map((p) => ({
-  name: p,
-  checked: false,
-}));
-
 export default function PositionFilter({
+  filteringState,
   onFilter,
   onClearFilter,
 }: PositionFilterProps) {
   const [open, setOpen] = useState<boolean>(false);
-  const [togglers, setTogglers] =
-    useState<Array<FilterToggler>>(initialTogglers);
+
+  const [togglers, setTogglers] = useState<Array<FilterToggler>>(
+    POSITIONS.map((p) => ({ name: p, checked: false }))
+  );
+
+  useEffect(() => {
+    const newTogglers = POSITIONS.map((p) => ({
+      name: p,
+      checked: filteringState.some((f) => f.id === "position" && f.value === p),
+    }));
+    setTogglers(newTogglers);
+  }, [filteringState]);
+
+  const isAnyFilterActive = togglers.some((toggle) => toggle.checked);
 
   function handleOnToggleOne(name: string, checked: boolean) {
-    setTogglers((prev) => {
-      const index = prev.findIndex((i) => i.name === name);
-
-      if (index >= 0) {
-        return [
-          ...prev.slice(0, index),
-          { name, checked },
-          ...prev.slice(index + 1),
-        ];
-      }
-
-      return prev;
-    });
-
     const filter: ColumnFilter = { id: "position", value: name };
 
     checked ? onFilter(filter) : onClearFilter(filter);
@@ -59,8 +54,6 @@ export default function PositionFilter({
 
   function handleOnToggleAll(checked: boolean) {
     const toggled = togglers.map((i) => ({ name: i.name, checked }));
-
-    setTogglers(toggled);
 
     const filters: FilteringState = toggled.map((t) => ({
       id: "position",
@@ -84,11 +77,11 @@ export default function PositionFilter({
   return (
     <DropdownMenu open={open}>
       <DropdownMenuTrigger asChild>
-        {togglers.every((f) => f.checked === false) ? (
+        {!isAnyFilterActive ? (
           <Button
             variant="outline"
             size="sm"
-            className={`h-8 data-[state=open]:bg-accent`}
+            className="h-8"
             onClick={() => setOpen(true)}
             onKeyDown={(e) => e.key === "Enter" && setOpen(true)}
           >
