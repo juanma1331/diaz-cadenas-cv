@@ -164,12 +164,13 @@ export default function CVTable({ search }: CVTableProps) {
     },
     onClearFilter: (f) => {
       if (Array.isArray(f)) {
-        const toRemoveIDs = f
+        const toRemoveFilterValues = f
           .filter((f) => isOnFilteringState(f, filteringState))
-          .map((f) => f.id);
-
+          .map((f) => f.value);
         setFilteringState((prevFilters) => {
-          return prevFilters.filter((f) => !toRemoveIDs.includes(f.id));
+          return prevFilters.filter(
+            (f) => !toRemoveFilterValues.includes(f.value)
+          );
         });
       } else {
         setFilteringState((prev) =>
@@ -278,7 +279,6 @@ export default function CVTable({ search }: CVTableProps) {
           onDateFilter={handlers.onDateFilter}
           onClearFilter={handlers.onClearFilter}
           onClearDateFilter={handlers.onClearDateFilter}
-          onSort={handlers.onSort}
         />
       </div>
       <div className="space-y-2 border border-border rounded-md">

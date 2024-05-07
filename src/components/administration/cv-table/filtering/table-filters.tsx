@@ -22,7 +22,6 @@ export type TableFiltersProps = {
   dateFilteringState: DateFilteringState;
   onDateFilter: OnDateFilter;
   onClearDateFilter: OnClearDateFilter;
-  onSort: OnSort;
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
 };
@@ -34,7 +33,6 @@ export default function TableFilters({
   onClearDateFilter,
   onFilter,
   onClearFilter,
-  onSort,
 }: TableFiltersProps) {
   function handleClearAllFilters() {
     onClearDateFilter();
@@ -49,21 +47,11 @@ export default function TableFilters({
       </div>
 
       <div className="flex items-center gap-2">
-        <PositionFilter
-          filteringState={filteringState}
-          onFilter={onFilter}
-          onClearFilter={onClearFilter}
-        />
-        <PlaceFilter
-          filteringState={filteringState}
-          onFilter={onFilter}
-          onClearFilter={onClearFilter}
-        />
-        <StatusFilter
-          filteringState={filteringState}
-          onFilter={onFilter}
-          onClearFilter={onClearFilter}
-        />
+        <PositionFilter onFilter={onFilter} onClearFilter={onClearFilter} />
+
+        <PlaceFilter onFilter={onFilter} onClearFilter={onClearFilter} />
+
+        <StatusFilter onFilter={onFilter} onClearFilter={onClearFilter} />
 
         <Separator
           orientation="vertical"

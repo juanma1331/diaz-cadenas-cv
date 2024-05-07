@@ -1,84 +1,86 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PLACES } from "@/constants";
+import { Label } from "@/components/ui/label";
+import { PLACES, POSITIONS } from "@/constants";
 import {
-  LandPlot,
+  Network,
   ChevronDown,
-  Dot,
-  WandSparkles,
-  ChevronUp,
   Trash2,
+  ChevronUp,
+  LandPlot,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import type {
-  OnFilter,
-  OnClearFilter,
-  FilteringState,
-  ColumnFilter,
-} from "../../types";
+import type { OnClearFilter, OnFilter } from "../../types";
 import type { FilterToggler } from "./types";
 import Toggler, { activeTogglersName } from "./shared";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 
-export type PlaceFilterProps = {
+export type PositionFilterProps = {
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
-  filteringState: FilteringState;
 };
 
+const FILTER_ID = "place";
+
 export default function PlaceFilter({
-  filteringState,
   onFilter,
   onClearFilter,
-}: PlaceFilterProps) {
+}: PositionFilterProps) {
   const [open, setOpen] = useState<boolean>(false);
-
   const [togglers, setTogglers] = useState<Array<FilterToggler>>(
-    PLACES.map((p) => ({ name: p, checked: false }))
+    PLACES.map((p) => ({ name: p, checked: true }))
   );
 
-  useEffect(() => {
-    const newTogglers = PLACES.map((p) => ({
-      name: p,
-      checked: filteringState.some((f) => f.id === "place" && f.value === p),
-    }));
-    setTogglers(newTogglers);
-  }, [filteringState]);
+  const isAnyFilterActive = togglers.some((toggle) => !toggle.checked);
 
-  const isAnyFilterActive = togglers.some((toggle) => toggle.checked);
+  useEffect(() => {
+    const toAdd = togglers.filter((t) => t.checked);
+    const toRemove = togglers.filter((t) => !t.checked);
+    onFilter(toAdd.map((a) => ({ id: FILTER_ID, value: a.name })));
+    onClearFilter(toRemove.map((a) => ({ id: FILTER_ID, value: a.name })));
+  }, [togglers]);
 
   function handleOnToggleOne(name: string, checked: boolean) {
-    const filter: ColumnFilter = { id: "place", value: name };
+    setTogglers((prev) => {
+      // Should not be able to uncheck all toggles
+      if (prev.filter((t) => t.checked).length === 1 && !checked) {
+        return prev;
+      }
 
-    checked ? onFilter(filter) : onClearFilter(filter);
+      const togglerToUpdateIndex = prev.findIndex((p) => p.name === name);
+      const togglerToUpdate = prev[togglerToUpdateIndex];
+
+      return [
+        ...prev.slice(0, togglerToUpdateIndex),
+        { ...togglerToUpdate, checked },
+        ...prev.slice(togglerToUpdateIndex + 1),
+      ];
+    });
   }
 
-  function handleOnToggleAll(checked: boolean) {
-    const toggled = togglers.map((i) => ({ name: i.name, checked }));
-
-    const filters: FilteringState = toggled.map((t) => ({
-      id: "place",
-      value: t.name,
-    }));
-
-    checked ? onFilter(filters) : onClearFilter(filters);
+  function handleToggleAll(checked: boolean) {
+    if (!checked) {
+      setTogglers((prev) => [
+        { ...prev[0], checked: true },
+        ...prev.slice(1).map((t) => ({ ...t, checked })),
+      ]);
+    } else {
+      setTogglers((prev) => prev.map((t) => ({ ...t, checked })));
+    }
   }
 
-  function handleClearAll() {
-    setTogglers((prev) => prev.map((i) => ({ name: i.name, checked: false })));
-
-    onClearFilter(togglers.map((i) => ({ id: "place", value: i.name })));
-  }
-
-  function handleDeleteFilter() {
-    handleClearAll();
+  function handleTrash() {
+    setTogglers((prev) => prev.map((t) => ({ ...t, checked: true })));
     setOpen(false);
+  }
+
+  function handleClearSelection() {
+    setTogglers((prev) => prev.map((t) => ({ ...t, checked: true })));
   }
 
   return (
@@ -135,7 +137,7 @@ export default function PlaceFilter({
         align="start"
       >
         <div className="bg-muted/50">
-          <div className="px-6 py-2 flex items-center justify-between">
+          <div className="px-6 py-3 flex items-center justify-between">
             <p>Lugar</p>
 
             <Button
@@ -144,7 +146,7 @@ export default function PlaceFilter({
               type="button"
               className="h-5 w-5"
               disabled={togglers.every((t) => t.checked === false)}
-              onClick={handleDeleteFilter}
+              onClick={handleTrash}
             >
               <Trash2 className="h-3.5 w-3.5 text-slate-800" />
             </Button>
@@ -155,19 +157,19 @@ export default function PlaceFilter({
         <div className="p-6 ">
           <div className="flex items-center gap-2">
             <Checkbox
-              checked={togglers.every((i) => i.checked === true)}
+              checked={togglers.every((t) => t.checked)}
               id="place-filter-all"
-              onCheckedChange={handleOnToggleAll}
+              onCheckedChange={handleToggleAll}
             />
             <Label htmlFor="place-filter-all">Todos</Label>
           </div>
 
           <div className="px-3 mt-2">
-            {togglers.map((p) => (
+            {togglers.map((toggler) => (
               <Toggler
-                name={p.name}
-                checked={p.checked}
-                key={`place-filter-${p.name}`}
+                name={toggler.name}
+                checked={toggler.checked}
+                key={`place-filter-${toggler.name}`}
                 onCheckedChange={handleOnToggleOne}
               />
             ))}
@@ -181,8 +183,8 @@ export default function PlaceFilter({
               type="button"
               className="p-0 h-fit"
               variant="link"
-              disabled={togglers.every((i) => i.checked === false)}
-              onClick={handleClearAll}
+              disabled={togglers.every((i) => i.checked === true)}
+              onClick={handleClearSelection}
             >
               Limpiar Selección
             </Button>

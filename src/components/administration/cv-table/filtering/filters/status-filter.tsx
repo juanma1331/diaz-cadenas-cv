@@ -21,20 +21,20 @@ import { Label } from "@/components/ui/label";
 import { statusMap } from "@/utils/shared";
 
 export type StatusFilterProps = {
-  filteringState: FilteringState;
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
 };
 
+const FILTER_ID = "status";
+
 const initialTogglers: Array<FilterToggler> = Object.entries(CVS_STATUS).map(
   ([_, v]) => ({
     name: statusMap(v),
-    checked: false,
+    checked: true,
   })
 );
 
 export default function StatusFilter({
-  filteringState,
   onFilter,
   onClearFilter,
 }: StatusFilterProps) {
@@ -42,48 +42,55 @@ export default function StatusFilter({
   const [togglers, setTogglers] =
     useState<Array<FilterToggler>>(initialTogglers);
 
+  const isAnyFilterActive = togglers.some((toggle) => !toggle.checked);
+
   useEffect(() => {
-    const newTogglers = initialTogglers.map((toggler) => ({
-      ...toggler,
-      checked: filteringState.some(
-        (f) => f.id === "status" && fromMappedStatus(toggler.name) === f.value
-      ),
-    }));
-    setTogglers(newTogglers);
-  }, [filteringState]);
-
-  const isAnyFilterActive = togglers.some((toggle) => toggle.checked);
-  function handleOnToggleOne(name: string, checked: boolean) {
-    const filter: ColumnFilter = {
-      id: "status",
-      value: fromMappedStatus(name),
-    };
-
-    checked ? onFilter(filter) : onClearFilter(filter);
-  }
-
-  function handleOnToggleAll(checked: boolean) {
-    const toggled = togglers.map((i) => ({ name: i.name, checked }));
-
-    const filters: FilteringState = toggled.map((t) => ({
-      id: "status",
-      value: fromMappedStatus(t.name),
-    }));
-
-    checked ? onFilter(filters) : onClearFilter(filters);
-  }
-
-  function handleClearAll() {
-    setTogglers((prev) => prev.map((i) => ({ name: i.name, checked: false })));
-
-    onClearFilter(
-      togglers.map((i) => ({ id: "status", value: fromMappedStatus(i.name) }))
+    const toAdd = togglers.filter((t) => t.checked);
+    const toRemove = togglers.filter((t) => !t.checked);
+    onFilter(
+      toAdd.map((a) => ({ id: FILTER_ID, value: fromMappedStatus(a.name) }))
     );
+    onClearFilter(
+      toRemove.map((a) => ({ id: FILTER_ID, value: fromMappedStatus(a.name) }))
+    );
+  }, [togglers]);
+
+  function handleOnToggleOne(name: string, checked: boolean) {
+    setTogglers((prev) => {
+      // Should not be able to uncheck all toggles
+      if (prev.filter((t) => t.checked).length === 1 && !checked) {
+        return prev;
+      }
+
+      const togglerToUpdateIndex = prev.findIndex((p) => p.name === name);
+      const togglerToUpdate = prev[togglerToUpdateIndex];
+
+      return [
+        ...prev.slice(0, togglerToUpdateIndex),
+        { ...togglerToUpdate, checked },
+        ...prev.slice(togglerToUpdateIndex + 1),
+      ];
+    });
   }
 
-  function handleDeleteFilter() {
-    handleClearAll();
+  function handleToggleAll(checked: boolean) {
+    if (!checked) {
+      setTogglers((prev) => [
+        { ...prev[0], checked: true },
+        ...prev.slice(1).map((t) => ({ ...t, checked })),
+      ]);
+    } else {
+      setTogglers((prev) => prev.map((t) => ({ ...t, checked })));
+    }
+  }
+
+  function handleTrash() {
+    setTogglers((prev) => prev.map((t) => ({ ...t, checked: true })));
     setOpen(false);
+  }
+
+  function handleClearSelection() {
+    setTogglers((prev) => prev.map((t) => ({ ...t, checked: true })));
   }
 
   return (
@@ -140,7 +147,7 @@ export default function StatusFilter({
         align="start"
       >
         <div className="bg-muted/50">
-          <div className="px-6 py-2 flex items-center justify-between">
+          <div className="px-6 py-3 flex items-center justify-between">
             <p>Estado</p>
 
             <Button
@@ -149,7 +156,7 @@ export default function StatusFilter({
               type="button"
               className="h-5 w-5"
               disabled={togglers.every((t) => t.checked === false)}
-              onClick={handleDeleteFilter}
+              onClick={handleTrash}
             >
               <Trash2 className="h-3.5 w-3.5 text-slate-800" />
             </Button>
@@ -162,7 +169,7 @@ export default function StatusFilter({
             <Checkbox
               checked={togglers.every((i) => i.checked === true)}
               id="status-filter-all"
-              onCheckedChange={handleOnToggleAll}
+              onCheckedChange={handleToggleAll}
             />
             <Label htmlFor="status-filter-all">Todos</Label>
           </div>
@@ -187,7 +194,7 @@ export default function StatusFilter({
               className="p-0 h-fit"
               variant="link"
               disabled={togglers.every((i) => i.checked === false)}
-              onClick={handleClearAll}
+              onClick={handleClearSelection}
             >
               Limpiar Selección
             </Button>
