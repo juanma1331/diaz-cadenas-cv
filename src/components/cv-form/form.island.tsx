@@ -3,8 +3,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useState } from "react";
 import CVForm from "./form";
-import { APP_URL } from "@/constants";
 import { Toaster } from "sonner";
+
+const APP_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:4321"
+    : "https://your-app.com";
 
 export default function CVFormIsland() {
   const [queryClient] = useState(() => new QueryClient());

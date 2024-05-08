@@ -13,7 +13,6 @@ import { trpcReact } from "@/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useState } from "react";
-import { APP_URL } from "@/constants";
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -40,6 +39,11 @@ const routeTree = rootRoute.addChildren([cvIndexRoute, cvDashboardRoute]);
 const router = createRouter({
   routeTree,
 });
+
+const APP_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:4321"
+    : "https://your-app.com";
 
 export default function AdministrationSPA() {
   const [queryClient] = useState(() => new QueryClient());

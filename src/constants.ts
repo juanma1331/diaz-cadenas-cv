@@ -36,5 +36,3 @@ export const POSITIONS = [
   "Reponedor",
   "Limpieza",
 ] as const;
-
-export const APP_URL = "http://localhost:4321";
