@@ -8,12 +8,7 @@ import {
 import { CVS_STATUS } from "@/constants";
 import { ChevronDown, ChevronUp, Trash2, FileCheck2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import type {
-  OnFilter,
-  OnClearFilter,
-  FilteringState,
-  ColumnFilter,
-} from "../../types";
+import type { OnFilter, OnClearFilter } from "../../types";
 import type { FilterToggler } from "./types";
 import Toggler, { activeTogglersName } from "./shared";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -23,6 +18,7 @@ import { statusMap } from "@/utils/shared";
 export type StatusFilterProps = {
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
+  isFiltering: boolean;
 };
 
 const FILTER_ID = "status";
@@ -30,19 +26,18 @@ const FILTER_ID = "status";
 const initialTogglers: Array<FilterToggler> = Object.entries(CVS_STATUS).map(
   ([_, v]) => ({
     name: statusMap(v),
-    checked: true,
+    checked: false,
   })
 );
 
 export default function StatusFilter({
   onFilter,
   onClearFilter,
+  isFiltering,
 }: StatusFilterProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [togglers, setTogglers] =
     useState<Array<FilterToggler>>(initialTogglers);
-
-  const isAnyFilterActive = togglers.some((toggle) => !toggle.checked);
 
   useEffect(() => {
     const toAdd = togglers.filter((t) => t.checked);
@@ -57,11 +52,6 @@ export default function StatusFilter({
 
   function handleOnToggleOne(name: string, checked: boolean) {
     setTogglers((prev) => {
-      // Should not be able to uncheck all toggles
-      if (prev.filter((t) => t.checked).length === 1 && !checked) {
-        return prev;
-      }
-
       const togglerToUpdateIndex = prev.findIndex((p) => p.name === name);
       const togglerToUpdate = prev[togglerToUpdateIndex];
 
@@ -73,30 +63,25 @@ export default function StatusFilter({
     });
   }
 
-  function handleToggleAll(checked: boolean) {
-    if (!checked) {
-      setTogglers((prev) => [
-        { ...prev[0], checked: true },
-        ...prev.slice(1).map((t) => ({ ...t, checked })),
-      ]);
-    } else {
-      setTogglers((prev) => prev.map((t) => ({ ...t, checked })));
+  useEffect(() => {
+    if (!isFiltering) {
+      setTogglers((prev) => prev.map((t) => ({ ...t, checked: false })));
     }
-  }
+  }, [isFiltering]);
 
   function handleTrash() {
-    setTogglers((prev) => prev.map((t) => ({ ...t, checked: true })));
+    setTogglers((prev) => prev.map((t) => ({ ...t, checked: false })));
     setOpen(false);
   }
 
   function handleClearSelection() {
-    setTogglers((prev) => prev.map((t) => ({ ...t, checked: true })));
+    setTogglers((prev) => prev.map((t) => ({ ...t, checked: false })));
   }
 
   return (
     <DropdownMenu open={open}>
       <DropdownMenuTrigger asChild>
-        {!isAnyFilterActive ? (
+        {!isFiltering ? (
           <Button
             variant="outline"
             size="sm"
@@ -165,25 +150,14 @@ export default function StatusFilter({
         </div>
 
         <div className="p-6 ">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              checked={togglers.every((i) => i.checked === true)}
-              id="status-filter-all"
-              onCheckedChange={handleToggleAll}
+          {togglers.map((p) => (
+            <Toggler
+              name={p.name}
+              checked={p.checked}
+              key={`status-filter-${p.name}`}
+              onCheckedChange={handleOnToggleOne}
             />
-            <Label htmlFor="status-filter-all">Todos</Label>
-          </div>
-
-          <div className="px-3 mt-2">
-            {togglers.map((p) => (
-              <Toggler
-                name={p.name}
-                checked={p.checked}
-                key={`status-filter-${p.name}`}
-                onCheckedChange={handleOnToggleOne}
-              />
-            ))}
-          </div>
+          ))}
         </div>
 
         <div className="bg-muted/70">

@@ -11,9 +11,13 @@ import { Button } from "@/components/ui/button";
 import type { OnCleanSort, OnSort } from "../../types";
 import type { SortingState } from "@tanstack/react-table";
 import { useState } from "react";
+import type { z } from "zod";
+import type { sortSchema } from "@/server/routes/get-all-cvs";
+
+type ID = z.infer<typeof sortSchema>["id"];
 
 export type SortingColumnHeaderProps = {
-  id: "name" | "email" | "createdAt";
+  id: ID;
   title: string;
   isDesc: boolean;
   isSorting: boolean;
@@ -31,13 +35,9 @@ export default function SortingColumnHeader({
   function handleOnClick() {
     if (!isSorting) {
       onSort({ id: id, desc: true });
-    }
-
-    if (isSorting && isDesc) {
+    } else if (isDesc) {
       onSort({ id: id, desc: false });
-    }
-
-    if (isSorting && !isDesc) {
+    } else {
       onCleanSort(id);
     }
   }
@@ -52,9 +52,9 @@ export default function SortingColumnHeader({
       <span className="text-slate-800">{title}</span>
       {isSorting ? (
         isDesc ? (
-          <ArrowDownIcon className="ml-2 h-3.5 w-3.5 text-slate-800" />
+          <ArrowDownIcon className="ml-2 h-3.5 w-3.5 text-primary" />
         ) : (
-          <ArrowUpIcon className="ml-2 h-3.5 w-3.5 text-slate-800" />
+          <ArrowUpIcon className="ml-2 h-3.5 w-3.5 text-primary" />
         )
       ) : (
         <CaretSortIcon className="ml-2 h-3.5 w-3.5 text-slate-800" />
@@ -63,16 +63,10 @@ export default function SortingColumnHeader({
   );
 }
 
-export function isDesc(
-  sortingState: SortingState,
-  id: "name" | "email" | "createdAt"
-) {
+export function isDesc(sortingState: SortingState, id: ID) {
   return sortingState.some((s) => s.id === id && s.desc === true);
 }
 
-export function isSorting(
-  sortingState: SortingState,
-  id: "name" | "email" | "createdAt"
-) {
+export function isSorting(sortingState: SortingState, id: ID) {
   return sortingState.some((s) => s.id === id);
 }

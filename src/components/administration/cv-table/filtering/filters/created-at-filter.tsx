@@ -28,6 +28,8 @@ import type {
 } from "../../types";
 import { addDays, format, setDate } from "date-fns";
 
+const DATE_FORMAT = "dd/MM/yyyy";
+
 export type DateFilteringColumnHeaderProps = {
   dateFilteringState: DateFilteringState;
   onDateFilter: OnDateFilter;
@@ -45,58 +47,27 @@ export default function CreatedAtFilter({
   const [text, setText] = useState<string>("");
 
   useEffect(() => {
-    const dateFormat = "dd/MM/yyyy";
-
-    if (!dateFilteringState) {
-      setSingle(undefined);
+    if (single) {
       setRange(undefined);
-      setText("");
       onClearDateFilter();
+      onDateFilter({ type: "single", value: single });
+      setText(format(single, DATE_FORMAT));
     }
+  }, [single]);
 
-    if (dateFilteringState?.type === "single") {
-      const newDate = new Date(dateFilteringState.date);
-      setSingle(newDate);
-      onDateFilter({
-        type: "single",
-        value: newDate,
-      });
-
-      setText(format(newDate, dateFormat));
-    }
-
-    if (dateFilteringState?.type === "range") {
-      const newRange = {
-        from: new Date(dateFilteringState.from),
-        to: new Date(dateFilteringState.to),
-      };
-      setRange(newRange);
-      onDateFilter({
-        type: "range",
-        value: newRange,
-      });
-
+  useEffect(() => {
+    if (range && range.from && range.to) {
+      setSingle(undefined);
+      onClearDateFilter();
+      onDateFilter({ type: "range", value: range });
       setText(
-        `Desde ${format(newRange.from, dateFormat)} Hasta ${format(
-          newRange.to,
-          dateFormat
+        `Desde ${format(range.from, DATE_FORMAT)} hasta ${format(
+          range.to,
+          DATE_FORMAT
         )}`
       );
     }
-  }, [dateFilteringState]);
-
-  const selectSingleEventHandler: SelectSingleEventHandler = (date) => {
-    if (date) {
-      onDateFilter({ type: "single", value: date });
-    }
-  };
-
-  const selectRangeEventHandler: SelectRangeEventHandler = (range) => {
-    if (range) setRange(range);
-    if (range?.from && range.to) {
-      onDateFilter({ type: "range", value: range });
-    }
-  };
+  }, [range]);
 
   function handleCleanAll() {
     setRange(undefined);
@@ -161,7 +132,7 @@ export default function CreatedAtFilter({
         onInteractOutside={() => setOpen(false)}
       >
         <div className="bg-muted/50">
-          <div className="px-6 py-2 flex items-center justify-between">
+          <div className="px-6 py-3 flex items-center justify-between">
             <p>Recibido</p>
 
             <Button
@@ -199,7 +170,7 @@ export default function CreatedAtFilter({
               locale={es}
               mode="single"
               selected={single}
-              onSelect={selectSingleEventHandler}
+              onSelect={setSingle}
               initialFocus
             />
           </TabsContent>
@@ -209,7 +180,7 @@ export default function CreatedAtFilter({
               mode="range"
               defaultMonth={range?.from}
               selected={range}
-              onSelect={selectRangeEventHandler}
+              onSelect={setRange}
               numberOfMonths={2}
             />
           </TabsContent>

@@ -39,7 +39,7 @@ export const dateFilterSchema = z
   );
 
 export const sortSchema = z.object({
-  id: z.enum(["name", "email", "createdAt"]),
+  id: z.enum(["name", "email", "createdAt", "place", "position", "status"]),
   desc: z.boolean(),
 });
 
@@ -147,7 +147,7 @@ export const getAllCVSProcedure = publicProcedure
           filterConditions.push(nameFilter);
           break;
         case "email":
-          const emailFilter = like(CVS.name, `${value}%`);
+          const emailFilter = like(CVS.email, `${value}%`);
           filterConditions.push(emailFilter);
           break;
         default:
@@ -164,7 +164,7 @@ export const getAllCVSProcedure = publicProcedure
           const { date } = dateFilters;
           const singleDate = new Date(date);
           const dayInMilis = 86400000;
-          const nextDay = new Date(singleDate.getTime() + dayInMilis); // Add a day in miliseconds
+          const nextDay = new Date(singleDate.getTime() + dayInMilis);
           const dateFilter = and(
             gte(CVS.createdAt, singleDate),
             lt(CVS.createdAt, nextDay)
@@ -211,6 +211,20 @@ export const getAllCVSProcedure = publicProcedure
           totalPagesQuery.orderBy(
             desc ? descFun(CVS.createdAt) : asc(CVS.createdAt)
           );
+          break;
+        case "place":
+          cvsQuery.orderBy(desc ? descFun(CVS.place) : asc(CVS.place));
+          totalPagesQuery.orderBy(desc ? descFun(CVS.place) : asc(CVS.place));
+          break;
+        case "position":
+          cvsQuery.orderBy(desc ? descFun(CVS.position) : asc(CVS.position));
+          totalPagesQuery.orderBy(
+            desc ? descFun(CVS.position) : asc(CVS.position)
+          );
+          break;
+        case "status":
+          cvsQuery.orderBy(desc ? descFun(CVS.status) : asc(CVS.status));
+          totalPagesQuery.orderBy(desc ? descFun(CVS.status) : asc(CVS.status));
           break;
         default:
           throw new TRPCError({ code: "BAD_REQUEST" });

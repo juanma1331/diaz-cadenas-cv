@@ -22,7 +22,10 @@ export default function nameColumnDef(): ColumnDef<CVRow> {
   };
 }
 
-function isDesc(sortingState: SortingState, id: "name" | "email") {
+function isDesc(
+  sortingState: SortingState,
+  id: "name" | "email" | "position" | "status" | "place" | "createdAt"
+) {
   return sortingState.some((s) => s.id === id && s.desc === true);
 }
 

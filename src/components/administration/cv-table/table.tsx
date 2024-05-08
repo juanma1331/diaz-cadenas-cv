@@ -10,7 +10,6 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 import { type Search } from "./search";
-import CVTableFilters from "./filters";
 import CVTablePagination from "./pagination";
 import { CVS_STATUS } from "@/constants";
 import { toast } from "sonner";
@@ -32,7 +31,7 @@ import attachmentsColumnDef from "./columns/definitions/attachments";
 import selectionRowColumnDef from "./columns/definitions/selection";
 import actionsColumnDef from "./columns/definitions/actions";
 import emailColumnDef from "./columns/definitions/email";
-import TableFilters, { isOnFilteringState } from "./filtering/table-filters";
+import TableFilters, { isOnFilteringState } from "./filtering/filters";
 import useDebounce from "@/components/hooks/use-debounce";
 
 export type FilterType = {
@@ -269,9 +268,9 @@ export default function CVTable({ search }: CVTableProps) {
   }
 
   return (
-    <div className="space-y-2">
-      <h1 className="text-slate-800 text-xl pt-2">Currículums</h1>
-      <div className="flex items-center px-2 py-3">
+    <div>
+      <h1 className="text-foreground text-xl py-3">Currículums</h1>
+      <div className="flex items-center px-2 pb-3">
         <TableFilters
           filteringState={filteringState}
           dateFilteringState={dateFilteringState}

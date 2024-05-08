@@ -47,11 +47,23 @@ export default function TableFilters({
       </div>
 
       <div className="flex items-center gap-2">
-        <PositionFilter onFilter={onFilter} onClearFilter={onClearFilter} />
+        <PositionFilter
+          isFiltering={filteringState.some((f) => f.id === "position")}
+          onFilter={onFilter}
+          onClearFilter={onClearFilter}
+        />
 
-        <PlaceFilter onFilter={onFilter} onClearFilter={onClearFilter} />
+        <PlaceFilter
+          isFiltering={filteringState.some((f) => f.id === "place")}
+          onFilter={onFilter}
+          onClearFilter={onClearFilter}
+        />
 
-        <StatusFilter onFilter={onFilter} onClearFilter={onClearFilter} />
+        <StatusFilter
+          isFiltering={filteringState.some((f) => f.id === "status")}
+          onFilter={onFilter}
+          onClearFilter={onClearFilter}
+        />
 
         <Separator
           orientation="vertical"

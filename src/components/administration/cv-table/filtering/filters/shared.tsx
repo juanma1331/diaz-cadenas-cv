@@ -1,6 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import type { FilterToggler } from "./types";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 export interface TogglerProps extends FilterToggler {
   onCheckedChange: (name: string, checked: boolean) => void;
@@ -11,9 +12,9 @@ export default function Toggler({
   onCheckedChange,
 }: TogglerProps) {
   return (
-    <div className="py-1 flex items-center gap-2">
-      <Checkbox
-        onCheckedChange={(e) => onCheckedChange(name, !checked)}
+    <div className="py-1 flex items-center gap-4">
+      <Switch
+        onCheckedChange={(check) => onCheckedChange(name, check)}
         checked={checked}
         id={`position-filter-${name}`}
       />

@@ -15,23 +15,23 @@ import type { FilterToggler } from "./types";
 import Toggler, { activeTogglersName } from "./shared";
 
 export type PositionFilterProps = {
+  isFiltering: boolean;
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
 };
 
 const FILTER_ID = "position";
 
-const initialTogglers = POSITIONS.map((p) => ({ name: p, checked: true }));
+const initialTogglers = POSITIONS.map((p) => ({ name: p, checked: false }));
 
 export default function PositionFilter({
   onFilter,
   onClearFilter,
+  isFiltering,
 }: PositionFilterProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [togglers, setTogglers] =
     useState<Array<FilterToggler>>(initialTogglers);
-
-  const isAnyFilterActive = togglers.some((toggle) => !toggle.checked);
 
   useEffect(() => {
     const toAdd = togglers.filter((t) => t.checked);
@@ -42,11 +42,6 @@ export default function PositionFilter({
 
   function handleOnToggleOne(name: string, checked: boolean) {
     setTogglers((prev) => {
-      // Should not be able to uncheck all toggles
-      if (prev.filter((t) => t.checked).length === 1 && !checked) {
-        return prev;
-      }
-
       const togglerToUpdateIndex = prev.findIndex((p) => p.name === name);
       const togglerToUpdate = prev[togglerToUpdateIndex];
 
@@ -58,30 +53,25 @@ export default function PositionFilter({
     });
   }
 
-  function handleToggleAll(checked: boolean) {
-    if (!checked) {
-      setTogglers((prev) => [
-        { ...prev[0], checked: true },
-        ...prev.slice(1).map((t) => ({ ...t, checked })),
-      ]);
-    } else {
-      setTogglers((prev) => prev.map((t) => ({ ...t, checked })));
+  useEffect(() => {
+    if (!isFiltering) {
+      setTogglers((prev) => prev.map((t) => ({ ...t, checked: false })));
     }
-  }
+  }, [isFiltering]);
 
   function handleTrash() {
-    setTogglers((prev) => prev.map((t) => ({ ...t, checked: true })));
+    setTogglers((prev) => prev.map((t) => ({ ...t, checked: false })));
     setOpen(false);
   }
 
   function handleClearSelection() {
-    setTogglers((prev) => prev.map((t) => ({ ...t, checked: true })));
+    setTogglers((prev) => prev.map((t) => ({ ...t, checked: false })));
   }
 
   return (
     <DropdownMenu open={open}>
       <DropdownMenuTrigger asChild>
-        {!isAnyFilterActive ? (
+        {!isFiltering ? (
           <Button
             variant="outline"
             size="sm"
@@ -149,26 +139,15 @@ export default function PositionFilter({
           <DropdownMenuSeparator className="m-0 bg-gray-200" />
         </div>
 
-        <div className="p-6 ">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              checked={togglers.every((t) => t.checked)}
-              id="position-filter-all"
-              onCheckedChange={handleToggleAll}
+        <div className="p-6">
+          {togglers.map((toggler) => (
+            <Toggler
+              name={toggler.name}
+              checked={toggler.checked}
+              key={`position-filter-${toggler.name}`}
+              onCheckedChange={handleOnToggleOne}
             />
-            <Label htmlFor="position-filter-all">Todos</Label>
-          </div>
-
-          <div className="px-3 mt-2">
-            {togglers.map((toggler) => (
-              <Toggler
-                name={toggler.name}
-                checked={toggler.checked}
-                key={`position-filter-${toggler.name}`}
-                onCheckedChange={handleOnToggleOne}
-              />
-            ))}
-          </div>
+          ))}
         </div>
 
         <div className="bg-muted/70">
@@ -178,7 +157,7 @@ export default function PositionFilter({
               type="button"
               className="p-0 h-fit"
               variant="link"
-              disabled={togglers.every((i) => i.checked === true)}
+              disabled={togglers.every((i) => i.checked === false)}
               onClick={handleClearSelection}
             >
               Limpiar Selección

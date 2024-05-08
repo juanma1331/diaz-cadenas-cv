@@ -2,11 +2,28 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { CVRow } from "../../types";
 import { CVS_STATUS } from "@/constants";
 import { Badge } from "@/components/ui/badge";
+import SortingColumnHeader, {
+  isDesc,
+  isSorting,
+} from "../headers/sorting-column-header";
 
 export default function statusColumnDef(): ColumnDef<CVRow> {
   return {
     accessorKey: "status",
-    header: () => <span className="text-slate-800">Estado</span>,
+    header: ({ table }) => {
+      const { handlers, states } = table.options.meta!;
+
+      return (
+        <SortingColumnHeader
+          id="status"
+          title="Estado"
+          isDesc={isDesc(states.sortingState, "status")}
+          isSorting={isSorting(states.sortingState, "status")}
+          onSort={handlers.onSort}
+          onCleanSort={handlers.onCleanSort}
+        />
+      );
+    },
     cell: ({ row }) => {
       const status = row.getValue("status") as CVRow["status"];
       let badgeColor = "";

@@ -11,16 +11,16 @@ export function AdministrationLayout({ children }: AdministrationLayoutProps) {
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
+            <div className="font-semibold flex items-center gap-2">
               <Package2 className="h-6 w-6" />
               <span className="">Díaz Cadenas</span>
-            </Link>
+            </div>
           </div>
           <div className="flex-1">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+            <nav className="grid items-start px-2 gap-2 text-sm font-medium lg:px-4">
               <Link
                 to="/cvs"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1"
                 activeProps={{
                   className:
                     "bg-primary text-primary-foreground hover:text-primary-foreground",
@@ -31,7 +31,7 @@ export function AdministrationLayout({ children }: AdministrationLayoutProps) {
               </Link>
               <Link
                 to="/dashboard"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1"
                 activeProps={{
                   className:
                     "bg-primary text-primary-foreground hover:text-primary-foreground",

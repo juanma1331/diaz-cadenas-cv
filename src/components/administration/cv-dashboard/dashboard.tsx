@@ -29,8 +29,8 @@ export default function CVDashboard({ date }: { date: string }) {
 
   return (
     <ScrollArea className="h-[820px] overflow-auto">
-      <div className="space-y-6">
-        <h1 className="text-foreground text-xl pt-4">Dashboard</h1>
+      <div className="">
+        <h1 className="text-foreground text-xl pt-3">Dashboard</h1>
 
         {isLoading ? (
           <div className="h-96 flex items-center justify-center">
@@ -38,7 +38,7 @@ export default function CVDashboard({ date }: { date: string }) {
           </div>
         ) : (
           <>
-            <div className="flex gap-12">
+            <div className="flex gap-12 mt-3">
               <div className="space-y-2">
                 <h2 className="text-muted-foreground">Recibidos</h2>
 
@@ -93,7 +93,7 @@ export default function CVDashboard({ date }: { date: string }) {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 mt-3">
               <h2 className="text-muted-foreground">Análisis</h2>
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
