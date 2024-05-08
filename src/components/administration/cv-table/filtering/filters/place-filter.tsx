@@ -123,7 +123,7 @@ export default function PlaceFilter({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         onInteractOutside={() => setOpen(false)}
-        className="p-0 min-w-60"
+        className="p-0 min-w-72"
         align="start"
       >
         <div className="bg-muted/50">
