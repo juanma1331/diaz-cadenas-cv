@@ -45,16 +45,17 @@ function defaultCV(id: string) {
   };
 }
 
-type Operation = {
+type CVCreation = {
   qty: number;
   attributes?: Partial<typeof CVS.$inferInsert>;
 };
 
-async function generateCVs(operations: Array<Operation>) {
+async function generateCVs(operations: Array<CVCreation>) {
   const queries = [];
   for (const operation of operations) {
     for (let i = 0; i < operation.qty; i++) {
       const cvId = generateId(15);
+
       const CV = {
         ...defaultCV(cvId),
         ...operation.attributes,
