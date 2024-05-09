@@ -24,3 +24,4 @@ PENDIENTES
 [ ] Hacer comprobaciones de seguridad.
 [ ] La altura de la tabla no es suficiente en dispositivos > 1080px.
 [ ] No funciona tabulador para hacer focus en los checkboxes de los filtros.
+[ ] Arreglar problema con la importación de db en insert-cv (eliminar inyección)

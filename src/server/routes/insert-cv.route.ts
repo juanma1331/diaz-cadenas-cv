@@ -30,6 +30,9 @@ const inputSchema = z.object({
   attachments: z.array(uploadedFileSchema),
 });
 
+// TODO: Why importing stuff from "astro:db" make all that code public on client?
+// As a temporal fix inject all needed db stuff on trpc context.
+
 export const insertCVProdedure = publicProcedure
   .input(inputSchema)
   .mutation(async ({ input, ctx }) => {
