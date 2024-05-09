@@ -1,5 +1,6 @@
 ---
 import "../styles/globals.css";
+import "@fontsource/jost";
 const { title } = Astro.props;
 const { classNames } = Astro.props;
 ---
@@ -13,7 +14,7 @@ const { classNames } = Astro.props;
     <title>{title}</title>
   </head>
 
-  <body class={` font-jost ${classNames}`}>
+  <body class={`font-jost ${classNames}`}>
     <slot />
   </body>
 </html>

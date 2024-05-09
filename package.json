@@ -15,6 +15,7 @@
     "@astrojs/netlify": "^5.2.0",
     "@astrojs/react": "^3.1.0",
     "@astrojs/tailwind": "^5.1.0",
+    "@fontsource/jost": "^5.0.18",
     "@hookform/resolvers": "^3.3.4",
     "@lucia-auth/adapter-drizzle": "^1.0.7",
     "@radix-ui/react-alert-dialog": "^1.0.5",

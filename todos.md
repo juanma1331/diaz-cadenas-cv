@@ -16,10 +16,11 @@ COMPLETAS
 [X] Inconsistencias en los colores "on focus" de los items en la navegación lateral.
 [X] Hay que indicar que la tabla viene ordenada por fecha por defecto.
 
-[X] Corregido los filtros y añadido autenticación
+[X] Refactorizado componente para filtros.
+[X] Añadida autenticación mediante usuario y contraseña.
+[X] Evitar layout shifting usando Fontsource.
 
 PENDIENTES
 [ ] Hacer comprobaciones de seguridad.
 [ ] La altura de la tabla no es suficiente en dispositivos > 1080px.
 [ ] No funciona tabulador para hacer focus en los checkboxes de los filtros.
-[ ] Evitar layout shifting usando Fontsource.
