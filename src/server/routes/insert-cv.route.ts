@@ -30,8 +30,6 @@ const inputSchema = z.object({
   attachments: z.array(uploadedFileSchema),
 });
 
-export type UploadedFile = z.infer<typeof uploadedFileSchema>;
-
 export const insertCVProdedure = publicProcedure
   .input(inputSchema)
   .mutation(async ({ input, ctx }) => {

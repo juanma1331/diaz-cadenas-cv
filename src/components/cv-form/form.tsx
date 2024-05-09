@@ -1,7 +1,6 @@
 import { useUploadThing } from "../../utils/uploadthing";
 import CVFormFields, { type FormValues } from "./fields";
 import { trpcReact } from "../../client";
-import type { UploadedFile } from "@/server/routes/insert-cv.route";
 import { useEffect, useState } from "react";
 import type { RouterInputs } from "@/server/utils";
 import { Button } from "../ui/button";
@@ -50,7 +49,7 @@ export default function CVForm() {
       email: values.email,
       place: values.place,
       position: values.position,
-      attachments: uploadedFiles as UploadedFile[],
+      attachments: uploadedFiles,
     });
     setMode("success");
   }
