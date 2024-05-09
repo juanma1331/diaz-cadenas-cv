@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import CVTableRows from "./rows";
 import { trpcReact } from "@/client";
 import {
   useReactTable,
-  type ColumnFiltersState,
   type SortingState,
   getCoreRowModel,
   type RowSelectionState,
@@ -11,7 +10,6 @@ import {
 } from "@tanstack/react-table";
 import { type Search } from "./search";
 import CVTablePagination from "./pagination";
-import { CVS_STATUS } from "@/constants";
 import { toast } from "sonner";
 import type { DateRange } from "react-day-picker";
 import type {

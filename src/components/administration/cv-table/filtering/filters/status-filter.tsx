@@ -7,13 +7,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CVS_STATUS } from "@/constants";
 import { ChevronDown, ChevronUp, Trash2, FileCheck2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import type { OnFilter, OnClearFilter, ColumnFilter } from "../../types";
+import { useState } from "react";
+import type {
+  OnFilter,
+  OnClearFilter,
+  ColumnFilter,
+} from "@/components/administration/cv-table/types";
 import type { FilterToggler } from "./types";
-import Toggler, { activeTogglersName } from "./shared";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { statusMap } from "@/utils/shared";
+import Toggler, { activeTogglersName } from "./filter-toggler";
 
 export type StatusFilterProps = {
   togglers: Array<FilterToggler>;
@@ -22,15 +23,6 @@ export type StatusFilterProps = {
   isFiltering: boolean;
   onClearFromID: (id: ColumnFilter["id"]) => void;
 };
-
-const FILTER_ID = "status";
-
-const initialTogglers: Array<FilterToggler> = Object.entries(CVS_STATUS).map(
-  ([_, v]) => ({
-    name: statusMap(v),
-    checked: false,
-  })
-);
 
 export default function StatusFilter({
   togglers,
@@ -159,16 +151,16 @@ export default function StatusFilter({
   );
 }
 
-function fromMappedStatus(status: string) {
+function fromMappedStatus(status: string): number {
   switch (status) {
     case "Pendiente":
-      return CVS_STATUS.PENDING as number;
+      return CVS_STATUS.PENDING;
     case "Revisado":
-      return CVS_STATUS.REVIEWED as number;
+      return CVS_STATUS.REVIEWED;
     case "Rechazado":
-      return CVS_STATUS.REJECTED as number;
+      return CVS_STATUS.REJECTED;
     case "Seleccionado":
-      return CVS_STATUS.SELECTED as number;
+      return CVS_STATUS.SELECTED;
     default:
       throw new Error("Invalid status");
   }

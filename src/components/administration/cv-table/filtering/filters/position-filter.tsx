@@ -7,9 +7,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Network, ChevronDown, Trash2, ChevronUp } from "lucide-react";
 import { useState } from "react";
-import type { ColumnFilter, OnClearFilter, OnFilter } from "../../types";
+import type {
+  ColumnFilter,
+  OnClearFilter,
+  OnFilter,
+} from "@/components/administration/cv-table/types";
 import type { FilterToggler } from "./types";
-import Toggler, { activeTogglersName } from "./shared";
+import Toggler, { activeTogglersName } from "./filter-toggler";
 
 export type PositionFilterProps = {
   togglers: Array<FilterToggler>;

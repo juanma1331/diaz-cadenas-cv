@@ -1,5 +1,4 @@
-import { CircleUser, Search } from "lucide-react";
-import { Input } from "../ui/input";
+import { CircleUser } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,

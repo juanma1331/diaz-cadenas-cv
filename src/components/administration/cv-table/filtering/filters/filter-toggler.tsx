@@ -1,4 +1,3 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import type { FilterToggler } from "./types";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";

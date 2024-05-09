@@ -1,8 +1,4 @@
-import {
-  type DateRange,
-  type SelectRangeEventHandler,
-  type SelectSingleEventHandler,
-} from "react-day-picker";
+import { type DateRange } from "react-day-picker";
 import { useEffect, useState } from "react";
 import {
   DropdownMenu,
@@ -25,8 +21,8 @@ import type {
   DateFilteringState,
   OnClearDateFilter,
   OnDateFilter,
-} from "../../types";
-import { addDays, format, setDate } from "date-fns";
+} from "@/components/administration/cv-table/types";
+import { format } from "date-fns";
 
 const DATE_FORMAT = "dd/MM/yyyy";
 

@@ -1,24 +1,19 @@
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
-import { PLACES, POSITIONS } from "@/constants";
-import {
-  Network,
-  ChevronDown,
-  Trash2,
-  ChevronUp,
-  LandPlot,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import type { ColumnFilter, OnClearFilter, OnFilter } from "../../types";
+import { ChevronDown, Trash2, ChevronUp, LandPlot } from "lucide-react";
+import { useState } from "react";
+import type {
+  ColumnFilter,
+  OnClearFilter,
+  OnFilter,
+} from "@/components/administration/cv-table/types";
 import type { FilterToggler } from "./types";
-import Toggler, { activeTogglersName } from "./shared";
+import Toggler, { activeTogglersName } from "./filter-toggler";
 
 export type PositionFilterProps = {
   togglers: Array<FilterToggler>;

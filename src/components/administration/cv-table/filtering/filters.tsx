@@ -10,12 +10,10 @@ import type {
   OnClearFilter,
   OnDateFilter,
   OnFilter,
-  OnSort,
 } from "../types";
 import CreatedAtFilter from "./filters/created-at-filter";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { WandSparkles } from "lucide-react";
 import { CVS_STATUS, PLACES, POSITIONS } from "@/constants";
 import { statusMap } from "@/utils/shared";
 

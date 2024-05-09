@@ -40,7 +40,6 @@ export default function Video({ onAddToForm }: VideoProps) {
 
   // Start new recording on component mount
   useEffect(() => {
-    // TODO: We should check if device has webcam
     const startNewRecording = async () => await newRecording();
 
     startNewRecording();
