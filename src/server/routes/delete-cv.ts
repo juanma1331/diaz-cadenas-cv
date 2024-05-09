@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure } from "../utils";
+import { adminProcedure } from "../utils";
 import { db, CVS, eq, ATTACHMENTS } from "astro:db";
 import { TRPCError } from "@trpc/server";
 import { UTApi } from "uploadthing/server";
@@ -12,7 +12,7 @@ export const outputSchema = z.object({
   affectedRows: z.number(),
 });
 
-export const deleteCVProcedure = publicProcedure
+export const deleteCVProcedure = adminProcedure
   .input(inputSchema)
   .output(outputSchema)
   .mutation(async ({ input }) => {

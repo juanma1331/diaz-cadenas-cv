@@ -5,7 +5,7 @@ const USERS = defineTable({
   columns: {
     id: column.text({ primaryKey: true, optional: false, unique: true }),
     username: column.text({ unique: true, optional: false }),
-    password: column.text({ optional: true }),
+    password: column.text({ optional: false }),
   },
 });
 

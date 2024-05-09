@@ -9,6 +9,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import CVTableSearch, { type OnSearch } from "./cv-table/search";
+import { useRef } from "react";
 
 export type CVIndexPageHeaderProps = {
   onSearch: OnSearch;
@@ -17,6 +18,12 @@ export type CVIndexPageHeaderProps = {
 export default function CVIndexPageHeader({
   onSearch,
 }: CVIndexPageHeaderProps) {
+  const ref = useRef<HTMLFormElement | null>(null);
+
+  function handleSendForm() {
+    if (ref.current) ref.current.submit();
+  }
+
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <div className="w-full flex-1">
@@ -32,10 +39,10 @@ export default function CVIndexPageHeader({
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSendForm}>
+            Salir
+            <form ref={ref} action="/api/auth/logout" method="post"></form>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

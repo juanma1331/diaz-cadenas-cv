@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure } from "../utils";
+import { adminProcedure } from "../utils";
 import {
   inArray,
   db,
@@ -81,15 +81,13 @@ export const outputSchema = z.object({
   lastPage: z.number(),
 });
 
-export const getAllCVSProcedure = publicProcedure
+export const getAllCVSProcedure = adminProcedure
   .input(inputSchema)
   .output(outputSchema)
-  .query(async ({ input }) => {
+  .query(async ({ input, ctx }) => {
     const { pagination, sorting, filters, dateFilters, search } = input;
     let cvsQuery = db.select().from(CVS).$dynamic();
     let totalPagesQuery = db.select({ count: count() }).from(CVS).$dynamic();
-
-    console.log(input);
 
     // Filtering
     const filterConditions: (SQLWrapper | undefined)[] = [];

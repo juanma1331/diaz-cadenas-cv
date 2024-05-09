@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure } from "../utils";
+import { adminProcedure } from "../utils";
 import { db, CVS, ATTACHMENTS, gte, and, lte } from "astro:db";
 import { sum, countDistinct } from "drizzle-orm";
 import {
@@ -43,7 +43,7 @@ export const outputSchema = z.object({
   total: z.number(),
 });
 
-export const getDashboardDataProcedure = publicProcedure
+export const getDashboardDataProcedure = adminProcedure
   .input(inputSchema)
   .output(outputSchema)
   .query(async ({ input }) => {

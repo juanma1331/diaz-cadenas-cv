@@ -13,12 +13,13 @@ COMPLETAS
 [X] Al eliminar un CV se debe mostrar el spinner en el botón de confirmación del modal.
 
 [X] Crear un nuevo componente para los filtros.
+[X] Inconsistencias en los colores "on focus" de los items en la navegación lateral.
+[X] Hay que indicar que la tabla viene ordenada por fecha por defecto.
+
+[X] Corregido los filtros y añadido autenticación
 
 PENDIENTES
 [ ] Hacer comprobaciones de seguridad.
-[ ] Añadir autenticación por contraseña
 [ ] La altura de la tabla no es suficiente en dispositivos > 1080px.
-[ ] Inconsistencias en los colores "on focus" de los items en la navegación lateral.
 [ ] No funciona tabulador para hacer focus en los checkboxes de los filtros.
-[ ] Hay que indicar que la tabla viene ordenada por fecha por defecto.
 [ ] Evitar layout shifting usando Fontsource.

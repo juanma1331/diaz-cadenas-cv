@@ -1,10 +1,24 @@
-import { db, CVS, ATTACHMENTS } from "astro:db";
-import { generateId } from "lucia";
+import { db, CVS, ATTACHMENTS, USERS } from "astro:db";
+import { generateId, generateIdFromEntropySize } from "lucia";
 import { faker } from "@faker-js/faker";
+import { Argon2id } from "oslo/password";
 
 // https://astro.build/db/seed
 export default async function seed() {
-  await generateCVs([{ qty: 1000 }]);
+  await createDefaultUser();
+  await createCVs([{ qty: 1000 }]);
+}
+
+async function createDefaultUser() {
+  const password = await new Argon2id().hash("password");
+  const username = "fakeuser";
+  const id = generateIdFromEntropySize(10);
+
+  await db.insert(USERS).values({
+    id,
+    username,
+    password,
+  });
 }
 
 function defaultCV(id: string) {
@@ -50,7 +64,7 @@ type CVCreation = {
   attributes?: Partial<typeof CVS.$inferInsert>;
 };
 
-async function generateCVs(operations: Array<CVCreation>) {
+async function createCVs(operations: Array<CVCreation>) {
   const queries = [];
   for (const operation of operations) {
     for (let i = 0; i < operation.qty; i++) {

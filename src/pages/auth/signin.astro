@@ -1,0 +1,10 @@
+---
+import { LoginForm } from "@/components/login-form";
+import BaseLayout from "@/layouts/base.astro";
+---
+
+<BaseLayout title="Acceso Administración - Díaz Cadenas">
+  <main class="grid place-items-center h-screen">
+    <LoginForm client:load />
+  </main>
+</BaseLayout>

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure } from "../utils";
+import { adminProcedure } from "../utils";
 import { db, CVS, eq } from "astro:db";
 import { TRPCError } from "@trpc/server";
 import type { BatchItem } from "drizzle-orm/batch";
@@ -25,7 +25,7 @@ const outputSchema = z.object({
   newStatus: z.string(),
 });
 
-export const changeStatusProcedure = publicProcedure
+export const changeStatusProcedure = adminProcedure
   .input(inputSchema)
   .output(outputSchema)
   .mutation(async ({ input }) => {
