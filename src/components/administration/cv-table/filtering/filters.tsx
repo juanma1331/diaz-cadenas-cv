@@ -16,6 +16,8 @@ import CreatedAtFilter from "./filters/created-at-filter";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { WandSparkles } from "lucide-react";
+import { CVS_STATUS, PLACES, POSITIONS } from "@/constants";
+import { statusMap } from "@/utils/shared";
 
 export type TableFiltersProps = {
   filteringState: FilteringState;
@@ -34,9 +36,13 @@ export default function TableFilters({
   onFilter,
   onClearFilter,
 }: TableFiltersProps) {
-  function handleClearAllFilters() {
+  function handleClearAll() {
     onClearDateFilter();
     onClearFilter(filteringState.map((f) => f));
+  }
+
+  function handleClearFromID(id: ColumnFilter["id"]) {
+    onClearFilter(filteringState.filter((f) => f.id === id));
   }
 
   return (
@@ -48,18 +54,42 @@ export default function TableFilters({
 
       <div className="flex items-center gap-2">
         <PositionFilter
+          togglers={POSITIONS.map((p) => ({
+            name: p,
+            checked: isOnFilteringState(
+              { id: "position", value: p },
+              filteringState
+            ),
+          }))}
+          onClearFromID={handleClearFromID}
           isFiltering={filteringState.some((f) => f.id === "position")}
           onFilter={onFilter}
           onClearFilter={onClearFilter}
         />
 
         <PlaceFilter
+          togglers={PLACES.map((p) => ({
+            name: p,
+            checked: isOnFilteringState(
+              { id: "place", value: p },
+              filteringState
+            ),
+          }))}
+          onClearFromID={handleClearFromID}
           isFiltering={filteringState.some((f) => f.id === "place")}
           onFilter={onFilter}
           onClearFilter={onClearFilter}
         />
 
         <StatusFilter
+          togglers={Object.entries(CVS_STATUS).map(([_, v]) => ({
+            name: statusMap(v),
+            checked: isOnFilteringState(
+              { id: "status", value: v },
+              filteringState
+            ),
+          }))}
+          onClearFromID={handleClearFromID}
           isFiltering={filteringState.some((f) => f.id === "status")}
           onFilter={onFilter}
           onClearFilter={onClearFilter}
@@ -87,7 +117,7 @@ export default function TableFilters({
           disabled={
             dateFilteringState === undefined && filteringState.length === 0
           }
-          onClick={handleClearAllFilters}
+          onClick={handleClearAll}
         >
           <Trash2 className="mr-2 h-3.5 w-3.5" />
           Limpiar

@@ -8,7 +8,7 @@ import {
 import { CVS_STATUS } from "@/constants";
 import { ChevronDown, ChevronUp, Trash2, FileCheck2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { OnFilter, OnClearFilter } from "../../types";
+import type { OnFilter, OnClearFilter, ColumnFilter } from "../../types";
 import type { FilterToggler } from "./types";
 import Toggler, { activeTogglersName } from "./shared";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,9 +16,11 @@ import { Label } from "@/components/ui/label";
 import { statusMap } from "@/utils/shared";
 
 export type StatusFilterProps = {
+  togglers: Array<FilterToggler>;
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
   isFiltering: boolean;
+  onClearFromID: (id: ColumnFilter["id"]) => void;
 };
 
 const FILTER_ID = "status";
@@ -31,51 +33,29 @@ const initialTogglers: Array<FilterToggler> = Object.entries(CVS_STATUS).map(
 );
 
 export default function StatusFilter({
+  togglers,
+  isFiltering,
   onFilter,
   onClearFilter,
-  isFiltering,
+  onClearFromID,
 }: StatusFilterProps) {
   const [open, setOpen] = useState<boolean>(false);
-  const [togglers, setTogglers] =
-    useState<Array<FilterToggler>>(initialTogglers);
-
-  useEffect(() => {
-    const toAdd = togglers.filter((t) => t.checked);
-    const toRemove = togglers.filter((t) => !t.checked);
-    onFilter(
-      toAdd.map((a) => ({ id: FILTER_ID, value: fromMappedStatus(a.name) }))
-    );
-    onClearFilter(
-      toRemove.map((a) => ({ id: FILTER_ID, value: fromMappedStatus(a.name) }))
-    );
-  }, [togglers]);
 
   function handleOnToggleOne(name: string, checked: boolean) {
-    setTogglers((prev) => {
-      const togglerToUpdateIndex = prev.findIndex((p) => p.name === name);
-      const togglerToUpdate = prev[togglerToUpdateIndex];
-
-      return [
-        ...prev.slice(0, togglerToUpdateIndex),
-        { ...togglerToUpdate, checked },
-        ...prev.slice(togglerToUpdateIndex + 1),
-      ];
-    });
+    if (checked) {
+      onFilter({ id: "status", value: fromMappedStatus(name) });
+    } else {
+      onClearFilter({ id: "status", value: fromMappedStatus(name) });
+    }
   }
 
-  useEffect(() => {
-    if (!isFiltering) {
-      setTogglers((prev) => prev.map((t) => ({ ...t, checked: false })));
-    }
-  }, [isFiltering]);
-
-  function handleTrash() {
-    setTogglers((prev) => prev.map((t) => ({ ...t, checked: false })));
+  function handleClearAndClose() {
+    onClearFromID("status");
     setOpen(false);
   }
 
   function handleClearSelection() {
-    setTogglers((prev) => prev.map((t) => ({ ...t, checked: false })));
+    onClearFromID("status");
   }
 
   return (
@@ -141,7 +121,7 @@ export default function StatusFilter({
               type="button"
               className="h-5 w-5"
               disabled={togglers.every((t) => t.checked === false)}
-              onClick={handleTrash}
+              onClick={handleClearAndClose}
             >
               <Trash2 className="h-3.5 w-3.5 text-slate-800" />
             </Button>

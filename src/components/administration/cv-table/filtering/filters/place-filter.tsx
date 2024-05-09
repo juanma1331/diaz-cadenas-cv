@@ -16,61 +16,42 @@ import {
   LandPlot,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { OnClearFilter, OnFilter } from "../../types";
+import type { ColumnFilter, OnClearFilter, OnFilter } from "../../types";
 import type { FilterToggler } from "./types";
 import Toggler, { activeTogglersName } from "./shared";
 
 export type PositionFilterProps = {
+  togglers: Array<FilterToggler>;
   isFiltering: boolean;
   onFilter: OnFilter;
   onClearFilter: OnClearFilter;
+  onClearFromID: (id: ColumnFilter["id"]) => void;
 };
 
-const FILTER_ID = "place";
-
 export default function PlaceFilter({
+  togglers,
+  isFiltering,
   onFilter,
   onClearFilter,
-  isFiltering,
+  onClearFromID,
 }: PositionFilterProps) {
   const [open, setOpen] = useState<boolean>(false);
-  const [togglers, setTogglers] = useState<Array<FilterToggler>>(
-    PLACES.map((p) => ({ name: p, checked: false }))
-  );
-
-  useEffect(() => {
-    const toAdd = togglers.filter((t) => t.checked);
-    const toRemove = togglers.filter((t) => !t.checked);
-    onFilter(toAdd.map((a) => ({ id: FILTER_ID, value: a.name })));
-    onClearFilter(toRemove.map((a) => ({ id: FILTER_ID, value: a.name })));
-  }, [togglers]);
 
   function handleOnToggleOne(name: string, checked: boolean) {
-    setTogglers((prev) => {
-      const togglerToUpdateIndex = prev.findIndex((p) => p.name === name);
-      const togglerToUpdate = prev[togglerToUpdateIndex];
-
-      return [
-        ...prev.slice(0, togglerToUpdateIndex),
-        { ...togglerToUpdate, checked },
-        ...prev.slice(togglerToUpdateIndex + 1),
-      ];
-    });
+    if (checked) {
+      onFilter({ id: "place", value: name });
+    } else {
+      onClearFilter({ id: "place", value: name });
+    }
   }
 
-  useEffect(() => {
-    if (!isFiltering) {
-      setTogglers((prev) => prev.map((t) => ({ ...t, checked: false })));
-    }
-  }, [isFiltering]);
-
   function handleTrash() {
-    setTogglers((prev) => prev.map((t) => ({ ...t, checked: false })));
+    onClearFromID("place");
     setOpen(false);
   }
 
   function handleClearSelection() {
-    setTogglers((prev) => prev.map((t) => ({ ...t, checked: false })));
+    onClearFromID("place");
   }
 
   return (
