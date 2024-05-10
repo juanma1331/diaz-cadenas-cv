@@ -2,11 +2,11 @@
 import AdministrationSPA from "@/components/administration/administration";
 import BaseLayout from "@/layouts/base.astro";
 
-// const user = Astro.locals.user;
+const user = Astro.locals.user;
 
-// if (!user) {
-//   return Astro.redirect("/auth/signin");
-// }
+if (!user) {
+  return Astro.redirect("/auth/signin");
+}
 ---
 
 <BaseLayout title="Administración - Díaz Cadenas">
