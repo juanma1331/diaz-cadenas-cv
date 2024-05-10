@@ -6,14 +6,19 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (context.request.method !== "GET") {
     const originHeader = context.request.headers.get("Origin");
     const hostHeader = context.request.headers.get("Host");
-    if (
-      !originHeader ||
-      !hostHeader ||
-      !verifyRequestOrigin(originHeader, [hostHeader])
-    ) {
-      return new Response(null, {
-        status: 403,
-      });
+    const isUploadThingCallback =
+      context.request.headers.get("uploadthing-hook") !== null;
+
+    if (!isUploadThingCallback) {
+      if (
+        !originHeader ||
+        !hostHeader ||
+        !verifyRequestOrigin(originHeader, [hostHeader])
+      ) {
+        return new Response(null, {
+          status: 403,
+        });
+      }
     }
   }
 
