@@ -8,7 +8,7 @@ import { Toaster } from "sonner";
 const APP_URL =
   import.meta.env.MODE === "development"
     ? "http://localhost:4321"
-    : "https://quimera-405.netlify.app";
+    : "https://diaz-cadenas-cv.vercel.app";
 
 export default function CVFormIsland() {
   const [queryClient] = useState(() => new QueryClient());
