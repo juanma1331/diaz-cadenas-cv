@@ -43,7 +43,7 @@ const router = createRouter({
 const APP_URL =
   import.meta.env.MODE === "development"
     ? "http://localhost:4321"
-    : "https://your-app.com";
+    : "https://quimera-405.netlify.app";
 
 export default function AdministrationSPA() {
   const [queryClient] = useState(() => new QueryClient());
