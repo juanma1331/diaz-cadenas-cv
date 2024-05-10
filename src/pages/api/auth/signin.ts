@@ -28,9 +28,9 @@ export async function POST(context: APIContext): Promise<Response> {
     });
   }
 
-  const existingUser = (
-    await db.select().from(USERS).where(eq(USERS.username, username))
-  ).at(0);
+  // const existingUser = (
+  //   await db.select().from(USERS).where(eq(USERS.username, username))
+  // ).at(0);
 
   // NOTE:
   // Returning immediately allows malicious actors to figure out valid usernames from response times,
@@ -41,22 +41,22 @@ export async function POST(context: APIContext): Promise<Response> {
     generateIdFromEntropySize(10)
   );
 
-  const verifiedPassowrd = await new Argon2id().verify(
-    existingUser ? existingUser.password : randomPassword,
-    password
-  );
+  // const verifiedPassowrd = await new Argon2id().verify(
+  //   existingUser ? existingUser.password : randomPassword,
+  //   password
+  // );
 
-  if (!verifiedPassowrd || !existingUser) {
-    return new Response("Incorrect username or password", { status: 400 });
-  }
+  // if (!verifiedPassowrd || !existingUser) {
+  //   return new Response("Incorrect username or password", { status: 400 });
+  // }
 
-  const session = await lucia.createSession(existingUser.id, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  context.cookies.set(
-    sessionCookie.name,
-    sessionCookie.value,
-    sessionCookie.attributes
-  );
+  // const session = await lucia.createSession(existingUser.id, {});
+  // const sessionCookie = lucia.createSessionCookie(session.id);
+  // context.cookies.set(
+  //   sessionCookie.name,
+  //   sessionCookie.value,
+  //   sessionCookie.attributes
+  // );
 
   return context.redirect("/cvs");
 }
