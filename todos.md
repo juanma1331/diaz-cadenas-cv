@@ -21,7 +21,7 @@ COMPLETAS
 [X] Evitar layout shifting usando Fontsource.
 
 PENDIENTES
-[ ] Hacer comprobaciones de seguridad.
+[ ] Añadir rate limitting a la subida de imagenes y a la inserción en db.
 [ ] La altura de la tabla no es suficiente en dispositivos > 1080px.
 [ ] No funciona tabulador para hacer focus en los checkboxes de los filtros.
 [ ] Arreglar problema con la importación de db en insert-cv (eliminar inyección)
