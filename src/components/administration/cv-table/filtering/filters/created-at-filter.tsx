@@ -65,6 +65,13 @@ export default function CreatedAtFilter({
     }
   }, [range]);
 
+  useEffect(() => {
+    if (!dateFilteringState) {
+      setSingle(undefined);
+      setRange(undefined);
+    }
+  }, [dateFilteringState]);
+
   function handleCleanAll() {
     setRange(undefined);
     setSingle(undefined);
