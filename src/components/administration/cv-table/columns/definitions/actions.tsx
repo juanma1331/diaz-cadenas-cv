@@ -58,7 +58,9 @@ export default function actionsColumnDef(): ColumnDef<CVRow> {
       }, [loading.isChangeStatusLoading]);
 
       useEffect(() => {
-        if (deleteDialogOpen) setDeleteDialogOpen(false);
+        if (!loading.isDeleteLoading && !loading.isTableDataLoading) {
+          setDeleteDialogOpen(false);
+        }
       }, [loading.isDeleteLoading]);
 
       if (isLoading) {
@@ -345,7 +347,9 @@ export default function actionsColumnDef(): ColumnDef<CVRow> {
                     )
                   }
                 >
-                  {loading.isDeleteLoading && <RowSpinner />}
+                  {(loading.isDeleteLoading || loading.isTableDataLoading) && (
+                    <RowSpinner />
+                  )}
                   Eliminar
                 </Button>
               </AlertDialogAction>
