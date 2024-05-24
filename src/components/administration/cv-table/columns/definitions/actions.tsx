@@ -54,8 +54,10 @@ export default function actionsColumnDef(): ColumnDef<CVRow> {
       };
 
       useEffect(() => {
-        if (isLoading) setIsLoading(false);
-      }, [loading.isChangeStatusLoading]);
+        if (!loading.isChangeStatusLoading && !loading.isTableDataLoading) {
+          setIsLoading(false);
+        }
+      }, [loading.isChangeStatusLoading, loading.isTableDataLoading]);
 
       useEffect(() => {
         if (!loading.isDeleteLoading && !loading.isTableDataLoading) {
@@ -364,8 +366,10 @@ export default function actionsColumnDef(): ColumnDef<CVRow> {
       const { handlers, loading } = table.options.meta!;
 
       useEffect(() => {
-        if (isLoading) setIsLoading(false);
-      }, [loading.isChangeStatusLoading]);
+        if (!loading.isChangeStatusLoading && !loading.isTableDataLoading) {
+          setIsLoading(false);
+        }
+      }, [loading.isChangeStatusLoading, loading.isTableDataLoading]);
 
       useEffect(() => {
         if (dialogOpen) setDialogOpen(false);
@@ -488,7 +492,7 @@ export default function actionsColumnDef(): ColumnDef<CVRow> {
 
 function RowSpinner() {
   return (
-    <RefreshCcw className="mr-2 h-3.5 w-3.5 text-primary-foreground animate-spin" />
+    <RefreshCcw className="ml-2 h-3.5 w-3.5 text-foreground animate-spin" />
   );
 }
 
