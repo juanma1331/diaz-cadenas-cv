@@ -350,7 +350,7 @@ export default function actionsColumnDef(): ColumnDef<CVRow> {
                   }
                 >
                   {(loading.isDeleteLoading || loading.isTableDataLoading) && (
-                    <RowSpinner />
+                    <RefreshCcw className="mr-2 h-3.5 w-3.5 text-destructive-foreground animate-spin" />
                   )}
                   Eliminar
                 </Button>
@@ -478,7 +478,9 @@ export default function actionsColumnDef(): ColumnDef<CVRow> {
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={() => handlers.onDelete([row.original.id])}
                 >
-                  {loading.isDeleteLoading && <RowSpinner />}
+                  {loading.isDeleteLoading && (
+                    <RefreshCcw className="mr-2 h-3.5 w-3.5 text-destructive-foreground animate-spin" />
+                  )}
                   Eliminar
                 </Button>
               </AlertDialogAction>
