@@ -112,6 +112,7 @@ export default function CVTable({ search }: CVTableProps) {
     isError: changeStatusError,
   } = trpcReact.changeStatus.useMutation({
     onSuccess: (input) => {
+      setRowSelectionState({});
       utils.getAllCVS.invalidate(queryInput);
 
       const { affectedRows, newStatus } = input;
@@ -130,6 +131,7 @@ export default function CVTable({ search }: CVTableProps) {
     isError: deleteCVError,
   } = trpcReact.delete.useMutation({
     onSuccess: (input) => {
+      setRowSelectionState({});
       utils.getAllCVS.invalidate(queryInput);
 
       const { affectedRows } = input;
